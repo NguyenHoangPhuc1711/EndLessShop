@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanh toán &amp; đơn hàng | Endless</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/checkout.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header__inner container">
+      <a href="index.html#trang-chu" class="logo"><img src="../img/T%C3%AAn%20th%C6%B0%C6%A1ng%20hi%E1%BB%87u.png" alt="Endless"></a>
+      <nav class="nav" aria-label="Điều hướng chính">
+        <a href="index.html#trang-chu">Trang chủ</a>
+        <div class="nav-menu">
+          <button class="nav-menu__trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="productMegaMenu">Sản Phẩm <span aria-hidden="true">⌄</span></button>
+          <div class="mega-menu" id="productMegaMenu" aria-hidden="true">
+            <div class="mega-menu__column">
+              <h2>Khám phá</h2>
+              <a class="mega-menu__feature" href="index.html#san-pham"><span class="mega-menu__eyebrow">ENDLESS COLLECTION</span><strong>Tất cả sản phẩm</strong><span>Khám phá những thiết kế dành cho nhịp sống của bạn.</span></a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Áo</h2>
+              <a href="index.html?category=ao#san-pham">Tất cả áo</a>
+              <a href="index.html?category=ao&amp;q=thun#san-pham">Áo thun</a>
+              <a href="index.html?category=ao&amp;q=sơ-mi#san-pham">Áo sơ mi</a>
+              <a href="index.html?category=ao&amp;q=khoác#san-pham">Áo khoác</a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Quần &amp; váy</h2>
+              <a href="index.html?category=quan#san-pham">Quần</a>
+              <a href="index.html?category=quan&amp;q=jean#san-pham">Quần jean</a>
+              <a href="index.html?category=vay#san-pham">Váy</a>
+              <a href="index.html?category=vay&amp;q=chân-váy#san-pham">Chân váy</a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Phụ kiện</h2>
+              <a href="index.html?category=phukien#san-pham">Tất cả phụ kiện</a>
+              <a href="index.html?category=phukien&amp;q=mũ#san-pham">Mũ lưỡi trai</a>
+              <a href="index.html?category=phukien&amp;q=túi#san-pham">Túi tote</a>
+              <a href="index.html?category=phukien&amp;q=thắt-lưng#san-pham">Thắt lưng</a>
+            </div>
+          </div>
+        </div>
+        <a href="checkout.html#thanh-toan" aria-current="page">Thanh Toán</a>
+        <a href="checkout.html#lich-su">Lịch Sử Giao Dịch</a>
+        <a href="checkout.html#lien-he">Liên Hệ</a>
+      </nav>
+      <a class="btn btn--ghost checkout-back-link" href="index.html#san-pham">← Tiếp tục mua sắm</a>
+    </div>
+  </header>
+
+  <main class="checkout-page">
+    <section class="checkout-intro container">
+      <p class="checkout-eyebrow">ENDLESS / ĐẶT HÀNG</p>
+      <h1>Thanh toán <span>&amp; đơn hàng</span></h1>
+      <p>Hoàn tất thông tin giao hàng hoặc xem lại các giao dịch của bạn.</p>
+    </section>
+
+    <div class="container checkout-layout">
+      <section class="checkout-panel" id="thanh-toan">
+        <div class="checkout-panel__heading">
+          <span class="checkout-step">01</span>
+          <div>
+            <h2>Thông tin giao hàng</h2>
+            <p>Nhập thông tin để cửa hàng gửi đơn đến bạn.</p>
+          </div>
+        </div>
+        <form id="checkoutForm" class="checkout-form">
+          <div class="checkout-form__fields">
+            <label>Họ và tên
+              <input type="text" id="fullName" name="fullName" autocomplete="name" required>
+            </label>
+            <label>Số điện thoại
+              <input type="tel" id="phone" name="phone" autocomplete="tel" pattern="[0-9]{9,11}" title="Nhập số điện thoại gồm 9 đến 11 chữ số" required>
+            </label>
+            <label class="checkout-form__wide">Địa chỉ nhận hàng
+              <input type="text" id="address" name="address" autocomplete="street-address" required>
+            </label>
+            <label class="checkout-form__wide">Ghi chú <span>(không bắt buộc)</span>
+              <textarea id="note" name="note" rows="3"></textarea>
+            </label>
+          </div>
+          <fieldset class="payment-methods">
+            <legend>Phương thức thanh toán</legend>
+            <label><input type="radio" name="payment" value="cod" checked> <span><strong>Thanh toán khi nhận hàng</strong><small>COD · Trả tiền khi nhận đơn</small></span></label>
+            <label><input type="radio" name="payment" value="transfer"> <span><strong>Chuyển khoản ngân hàng</strong><small>Cửa hàng sẽ gửi thông tin chuyển khoản sau khi xác nhận</small></span></label>
+          </fieldset>
+          <p class="checkout-notice" id="checkoutNotice" role="status"></p>
+          <button type="submit" class="btn btn--primary btn--full" id="placeOrderBtn">Xác nhận đặt hàng</button>
+        </form>
+        <div class="checkout-success" id="checkoutSuccess" hidden aria-live="polite"></div>
+      </section>
+
+      <aside class="checkout-panel order-summary" aria-labelledby="orderSummaryTitle">
+        <div class="checkout-panel__heading">
+          <span class="checkout-step">02</span>
+          <div>
+            <h2 id="orderSummaryTitle">Đơn hàng của bạn</h2>
+            <p id="summaryItemCount">Đang tải giỏ hàng...</p>
+          </div>
+        </div>
+        <div class="order-summary__items" id="checkoutItems"></div>
+        <div class="checkout-voucher" aria-label="Mã giảm giá">
+          <label for="checkoutVoucherInput">Mã giảm giá</label>
+          <div class="checkout-voucher__controls">
+            <input type="text" id="checkoutVoucherInput" placeholder="Nhập mã ưu đãi" autocomplete="off" aria-describedby="checkoutVoucherMessage">
+            <button type="button" class="btn btn--ghost" id="checkoutVoucherApply">Áp dụng</button>
+          </div>
+          <div class="checkout-voucher__suggestions">
+            <button type="button" class="voucher-chip" data-voucher="ENDLESS10">ENDLESS10 <span>−10%</span></button>
+            <button type="button" class="voucher-chip" data-voucher="FREESHIP">FREESHIP <span>−30.000đ</span></button>
+          </div>
+          <p class="checkout-voucher__message" id="checkoutVoucherMessage" role="status"></p>
+          <button type="button" class="checkout-voucher__remove" id="checkoutVoucherRemove" hidden>Xóa mã ưu đãi</button>
+        </div>
+        <div class="order-summary__total">
+          <p><span>Tạm tính</span><strong id="checkoutSubtotal">0đ</strong></p>
+          <p class="order-summary__discount" id="checkoutDiscountRow" hidden><span>Ưu đãi</span><strong id="checkoutDiscount"></strong></p>
+          <p class="order-summary__grand-total"><span>Tổng thanh toán</span><strong id="checkoutTotal">0đ</strong></p>
+        </div>
+        <a class="checkout-edit-cart" href="index.html#san-pham">← Quay lại cửa hàng</a>
+      </aside>
+    </div>
+
+    <section class="container transaction-section" id="lich-su">
+      <div class="transaction-heading">
+        <div>
+          <p class="checkout-eyebrow">TÀI KHOẢN CỦA BẠN</p>
+          <h2>Lịch sử giao dịch</h2>
+        </div>
+        <a class="btn btn--ghost" href="#thanh-toan">Đến thanh toán ↑</a>
+      </div>
+      <div class="transaction-list" id="transactionList" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="footer" id="lien-he">
+    <div class="container footer__inner">
+      <div>
+        <a href="index.html#trang-chu" class="logo logo--footer"><img src="../img/T%C3%AAn%20th%C6%B0%C6%A1ng%20hi%E1%BB%87u.png" alt="Endless"></a>
+        <p>Thời trang tối giản cho cuộc sống thường ngày.</p>
+      </div>
+      <div>
+        <h4>Liên hệ</h4>
+        <p>Email: EndlessGroup@gmail.com</p>
+        <p>Điện thoại: 0971438198</p>
+        <p>Địa chỉ: 84, Đường ABC, Hà Nội</p>
+      </div>
+      <div>
+        <h4>Điều hướng</h4>
+        <p><a href="index.html#san-pham">Sản phẩm</a></p>
+        <p><a href="#thanh-toan">Thanh toán</a></p>
+        <p><a href="#lich-su">Lịch sử giao dịch</a></p>
+      </div>
+    </div>
+    <p class="footer__bottom">© 2026 Endless Store. Cửa Hàng Thời Trang Online.</p>
+  </footer>
+  <script src="js/navigation.js"></script>
+  <script src="js/checkout.js"></script>
+</body>
+</html>
