@@ -27,6 +27,10 @@ function escapeHtml(value) {
   });
 }
 
+function resolveProductImagePath(path) {
+  return String(path || "").replace(/^(\.\.\/)+img\//, "img/");
+}
+
 function getTotals(items) {
   const subtotal = items.reduce(function (sum, item) {
     return sum + Number(item.price) * Number(item.qty);
@@ -55,7 +59,7 @@ function renderCheckoutSummary() {
   } else {
     itemsWrap.innerHTML = usableItems.map(function (item) {
       return '<article class="checkout-item">' +
-        '<img src="' + escapeHtml(item.image || "") + '" alt="">' +
+        '<img src="' + escapeHtml(resolveProductImagePath(item.image)) + '" alt="">' +
         '<div class="checkout-item__details"><h3>' + escapeHtml(item.name) + '</h3>' +
         '<p>Size ' + escapeHtml(item.size || "—") + ' · ' + escapeHtml(item.color || "—") + '</p>' +
         '<span>Số lượng: ' + Number(item.qty) + '</span></div>' +
@@ -133,7 +137,7 @@ function renderTransactions() {
       '<details class="transaction-card__details"><summary>Chi tiết đơn hàng (' + orderItems.length + ')</summary>' +
       '<ul>' + orderItems.map(function (item) {
         return '<li class="transaction-item">' +
-          '<img class="transaction-item__image" src="' + escapeHtml(item.image || "") + '" alt="' + escapeHtml(item.name || "Sản phẩm") + '" loading="lazy">' +
+          '<img class="transaction-item__image" src="' + escapeHtml(resolveProductImagePath(item.image)) + '" alt="' + escapeHtml(item.name || "Sản phẩm") + '" loading="lazy">' +
           '<div class="transaction-item__info"><strong>' + escapeHtml(item.name || "Sản phẩm") + '</strong>' +
           '<span>Size ' + escapeHtml(item.size || "—") + ' · Màu ' + escapeHtml(item.color || "—") + '</span>' +
           '<span>Số lượng: ' + (Number(item.qty) || 0) + ' × ' + formatPrice(Number(item.price) || 0) + '</span></div>' +

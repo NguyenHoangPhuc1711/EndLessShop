@@ -43,6 +43,10 @@ function formatPrice(number) {
   return number.toLocaleString("vi-VN") + "đ";
 }
 
+function resolveProductImagePath(path) {
+  return String(path || "").replace(/^(\.\.\/)+img\//, "img/");
+}
+
 
 function findProductById(id) {
   return products.find(function (item) {
@@ -568,7 +572,7 @@ function renderCart() {
     cart.forEach(function (item, index) {
       html +=
         "<div class='cart-item'>" +
-          "<img src='" + item.image + "'>" +
+          "<img src='" + resolveProductImagePath(item.image) + "'>" +
           "<div class='cart-item__info'>" +
             "<p>" + item.name + "</p>" +
             "<p class='cart-item__meta'>Size " + item.size + " · " + item.color + "</p>" +
