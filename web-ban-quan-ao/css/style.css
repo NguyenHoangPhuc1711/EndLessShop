@@ -501,15 +501,15 @@ img {
 
 .hero__backdrop {
   position: absolute;
-  inset: 0 0 0 auto;
+  inset: 0;
   z-index: 0;
-  width: 50%;
-  background-color: #e3e8db;
-  background-image: url("../img/header.png");
+  width: 100%;
+  background-image:
+    linear-gradient(90deg, rgba(252, 250, 245, 0.96) 0%, rgba(252, 250, 245, 0.88) 34%, rgba(252, 250, 245, 0.2) 68%, rgba(252, 250, 245, 0.04) 100%),
+    url("../../img/banner-essentials.jpg");
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
-  animation: heroBackdropFloat 6s ease-in-out infinite;
+  background-size: cover;
 }
 @keyframes heroBackdropFloat {
   0%, 100% { background-position: center center; }
@@ -758,20 +758,30 @@ img {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px 22px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
 }
 
 .product-card {
   cursor: pointer;
   position: relative;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(25, 38, 30, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.product-card:hover {
+  border-color: rgba(73, 102, 78, 0.35);
+  box-shadow: 0 10px 24px rgba(25, 38, 30, 0.1);
 }
 
 /* hiệu ứng xuất hiện dần khi cuộn tới (IntersectionObserver gắn class is-visible trong app.js) */
 .product-card.reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .product-card.reveal.is-visible {
   opacity: 1;
@@ -781,15 +791,14 @@ img {
 .product-card__image {
   position: relative;
   overflow: hidden;
-  border-radius: 6px;
-  margin-bottom: 10px;
+  border-radius: 10px;
+  margin-bottom: 12px;
   aspect-ratio: 5 / 6;
-  background: #f0f3ef;
+  background: #f5f1e8;
   transition: background 0.2s ease, box-shadow 0.25s ease;
 }
 .product-card:hover .product-card__image {
-  background: #e8eee8;
-  box-shadow: 0 14px 30px rgba(25, 38, 30, 0.12);
+  background: #f0ebe0;
 }
 .product-card__image img {
   width: 100%;
@@ -798,7 +807,7 @@ img {
   transition: transform 0.35s ease;
 }
 .product-card:hover .product-card__image img {
-  transform: scale(1.06);
+  transform: scale(1.03);
 }
 .product-card:hover .product-card__name {
   color: var(--color-accent);
@@ -1360,13 +1369,17 @@ img {
   .hero__inner { min-height: 460px; }
   .hero__title { font-size: 48px; }
   .hero__text { max-width: 46%; }
-  .hero__backdrop { width: 46%; }
+  .hero__backdrop {
+    background-image:
+      linear-gradient(90deg, rgba(252, 250, 245, 0.98) 0%, rgba(252, 250, 245, 0.86) 48%, rgba(252, 250, 245, 0.25) 100%),
+      url("../../img/banner-essentials.jpg");
+  }
   .hero__float-badge { left: 6%; font-size: 11px; padding: 8px 12px; }
   .shop__inner { flex-direction: column; }
   .filters { width: 100%; padding-right: 0; border-right: 0; }
   .filters h3 { margin-bottom: 0; }
   .filter-group { padding: 12px 0; }
-  .product-grid { grid-template-columns: repeat(2, 1fr); }
+  .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .product-modal__content { flex-direction: column; }
   .search-box input { width: 140px; }
   .footer__inner { flex-wrap: wrap; gap: 24px; }
@@ -1376,7 +1389,12 @@ img {
 @media (max-width: 520px) {
   .product-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
   .hero { padding: 24px 0; }
-  .hero__backdrop { inset: auto 0 0; width: 100%; height: 40%; background-size: contain; }
+  .hero__backdrop {
+    background-image:
+      linear-gradient(180deg, rgba(252, 250, 245, 0.98) 0%, rgba(252, 250, 245, 0.8) 38%, rgba(252, 250, 245, 0.16) 100%),
+      url("../../img/banner-essentials.jpg");
+    background-position: center;
+  }
   .hero__inner { align-items: flex-start; min-height: 580px; padding-top: 92px; padding-bottom: 240px; }
   .hero__text { max-width: 34ch; padding: 0; }
   .hero__eyebrow { margin-bottom: 14px; }
