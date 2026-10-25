@@ -193,7 +193,7 @@
 
 
   <div class="overlay" id="productOverlay"></div>
-  <div class="product-modal" id="productModal">
+  <div class="product-modal" id="productModal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Chi tiết sản phẩm" tabindex="-1" inert>
     <button class="modal-close" id="closeProductModal">✕</button>
     <div class="product-modal__content" id="productModalContent">
 
@@ -202,9 +202,9 @@
 
 
   <div class="overlay" id="sizeOverlay"></div>
-  <div class="size-modal" id="sizeModal">
+  <div class="size-modal" id="sizeModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="sizeModalTitle" tabindex="-1" inert>
     <button class="modal-close" id="closeSizeModal">✕</button>
-    <h3>Hướng dẫn chọn size</h3>
+    <h3 id="sizeModalTitle">Hướng dẫn chọn size</h3>
     <table class="size-table" id="sizeTable">
 
     </table>
@@ -212,9 +212,9 @@
 
 
   <div class="overlay" id="cartOverlay"></div>
-  <aside class="cart-drawer" id="cartDrawer">
+  <aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="cartDrawerTitle" tabindex="-1" inert>
     <div class="cart-drawer__header">
-      <h3>Giỏ hàng</h3>
+      <h3 id="cartDrawerTitle">Giỏ hàng</h3>
       <button class="modal-close" id="closeCartDrawer">✕</button>
     </div>
 
@@ -240,9 +240,9 @@
 
 
   <div class="overlay" id="wishlistOverlay"></div>
-  <aside class="cart-drawer" id="wishlistDrawer">
+  <aside class="cart-drawer" id="wishlistDrawer" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="wishlistDrawerTitle" tabindex="-1" inert>
     <div class="cart-drawer__header">
-      <h3>Sản phẩm yêu thích</h3>
+      <h3 id="wishlistDrawerTitle">Sản phẩm yêu thích</h3>
       <button class="modal-close" id="closeWishlistDrawer">✕</button>
     </div>
     <div class="cart-items" id="wishlistItems">
@@ -252,6 +252,7 @@
 
 
   <script src="js/navigation.js"></script>
+  <script src="js/utils.js"></script>
   <script src="js/products.js"></script>
   <script src="js/app.js"></script>
 </body>

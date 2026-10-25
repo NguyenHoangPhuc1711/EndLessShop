@@ -164,7 +164,6 @@ img {
   transition: color 0.18s ease, border-color 0.18s ease;
 }
 .nav-menu__trigger:hover,
-.nav-menu:focus-within .nav-menu__trigger,
 .nav-menu.is-open .nav-menu__trigger {
   border-bottom-color: var(--color-accent);
   color: var(--color-accent);
@@ -174,8 +173,6 @@ img {
   font-size: 17px;
   transition: transform 0.2s ease;
 }
-.nav-menu:hover .nav-menu__trigger span,
-.nav-menu:focus-within .nav-menu__trigger span,
 .nav-menu.is-open .nav-menu__trigger span {
   transform: rotate(180deg);
 }
@@ -207,8 +204,6 @@ img {
   height: 14px;
   content: "";
 }
-.nav-menu:hover .mega-menu,
-.nav-menu:focus-within .mega-menu,
 .nav-menu.is-open .mega-menu {
   opacity: 1;
   visibility: visible;
@@ -766,6 +761,10 @@ img {
   cursor: pointer;
   position: relative;
 }
+.product-card:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
 
 /* hiệu ứng xuất hiện dần khi cuộn tới (IntersectionObserver gắn class is-visible trong app.js) */
 .product-card.reveal {
@@ -905,6 +904,10 @@ img {
 .overlay.active {
   opacity: 1;
   pointer-events: auto;
+}
+
+body.no-scroll {
+  overflow: hidden;
 }
 
 .modal-close {

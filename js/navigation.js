@@ -4,6 +4,7 @@ document.querySelectorAll(".nav-menu").forEach(function (menu) {
   const trigger = menu.querySelector(".nav-menu__trigger");
   const header = menu.closest(".header");
   const panel = menu.querySelector(".mega-menu");
+  let pointerMenuWasOpen = false;
 
   function setMenuOpen(isOpen) {
     menu.classList.toggle("is-open", isOpen);
@@ -24,12 +25,17 @@ document.querySelectorAll(".nav-menu").forEach(function (menu) {
   menu.addEventListener("mouseleave", function () {
     if (window.matchMedia("(hover: hover)").matches) setMenuOpen(false);
   });
+  menu.addEventListener("focusout", function (event) {
+    if (!menu.contains(event.relatedTarget)) setMenuOpen(false);
+  });
 
-  trigger.addEventListener("click", function () {
-    const isOpen = window.matchMedia("(hover: none)").matches
-      ? menu.classList.toggle("is-open")
-      : true;
-    setMenuOpen(isOpen);
+  trigger.addEventListener("pointerdown", function () {
+    pointerMenuWasOpen = menu.classList.contains("is-open");
+  });
+
+  trigger.addEventListener("click", function (event) {
+    event.stopPropagation();
+    setMenuOpen(event.detail > 0 ? !pointerMenuWasOpen : !menu.classList.contains("is-open"));
   });
 
   menu.addEventListener("keydown", function (event) {
