@@ -501,15 +501,16 @@ img {
 
 .hero__backdrop {
   position: absolute;
-  inset: 0;
+  inset: 0 0 0 auto;
   z-index: 0;
-  width: 100%;
-  background-image:
-    linear-gradient(90deg, rgba(252, 250, 245, 0.96) 0%, rgba(252, 250, 245, 0.88) 34%, rgba(252, 250, 245, 0.2) 68%, rgba(252, 250, 245, 0.04) 100%),
-    url("../img/banner-essentials.jpg");
+  width: 50%;
+  background-color: #e3e8db;
+  /* Relative to css/: works at / and at /EndLessShop/ with sibling img/. */
+  background-image: url("../img/id1.jpg");
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
+  animation: heroBackdropFloat 6s ease-in-out infinite;
 }
 @keyframes heroBackdropFloat {
   0%, 100% { background-position: center center; }
@@ -1231,6 +1232,11 @@ img {
   text-align: center;
   padding: 40px 0;
 }
+
+.catalog-notice { color: var(--color-ink-light); font-size: 13px; margin: 12px 0; }
+#catalogStatus:not(:empty) { padding: 16px 0; }
+#retryCatalog[hidden], #checkoutCatalogRetry[hidden] { display: none; }
+.product-grid > .empty-msg { grid-column: 1 / -1; }
 
 .cart-drawer__footer {
   padding: 20px 24px;

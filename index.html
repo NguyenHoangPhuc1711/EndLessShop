@@ -6,11 +6,10 @@
   <title>Endless | Thời trang tối giản</title>
 
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
 
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/account.css">
 </head>
 <body>
 
@@ -74,6 +73,7 @@
         <button id="cartBtn" class="icon-btn" title="Giỏ hàng">
           <span id="cartIcon">🛍</span> <span id="cartCount" class="badge">0</span>
         </button>
+        <div class="account-control" data-account-control><a class="account-signin" href="login.html" data-account-login><svg class="account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-2a8 8 0 0 1 16 0v2"></path></svg><span>Đăng nhập</span></a></div>
       </div>
 
     </div>
@@ -152,7 +152,7 @@
 
       <div class="shop__main">
         <div class="shop__toolbar">
-          <p id="resultCount">Đang hiển thị tất cả sản phẩm</p>
+          <p id="resultCount">Đang tải sản phẩm…</p>
           <select id="sortSelect">
             <option value="default">Mới nhất</option>
             <option value="asc">Giá: Thấp đến cao</option>
@@ -161,7 +161,10 @@
         </div>
 
 
-        <div class="product-grid" id="productGrid"></div>
+        <p id="catalogStatus" role="status" aria-live="polite">Đang tải sản phẩm từ cửa hàng…</p>
+        <button type="button" id="retryCatalog" class="btn btn--ghost" hidden>Thử tải lại sản phẩm</button>
+        <p id="catalogNotice" class="catalog-notice" role="status"></p>
+        <div class="product-grid" id="productGrid" aria-busy="true"></div>
       </div>
 
     </div>
@@ -177,8 +180,8 @@
       <div>
         <h4>Liên hệ</h4>
         <p>Email: EndlessGroup@gmail.com</p>
-        <p>Điện thoại: 0389699762</p>
-        <p>Địa chỉ: 120 yên lãng, quận Ba Đình, Hà Nội</p>
+        <p>Điện thoại: 0971438198</p>
+        <p>Địa chỉ: 84, Đường ABC, Hà Nội</p>
       </div>
       <div>
         <h4>Chính sách</h4>
@@ -251,8 +254,11 @@
   </aside>
 
 
+  <script src="js/config.js"></script>
   <script src="js/navigation.js"></script>
   <script src="js/products.js"></script>
+  <script src="js/catalog.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/account.js"></script>
 </body>
 </html>

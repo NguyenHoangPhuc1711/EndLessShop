@@ -3,10 +3,14 @@
 
 
 
-let cart = JSON.parse(localStorage.getItem("moc_cart")) || [];
+let products = [];
+let catalogReady = false;
+let catalogLoading = false;
+let cart = [];
+const escapeHtml = EndlessCatalog.escapeHtml;
 
 
-let wishlist = JSON.parse(localStorage.getItem("moc_wishlist")) || [];
+let wishlist = [];
 
 
 let currentProduct = null;
@@ -43,10 +47,6 @@ function formatPrice(number) {
   return number.toLocaleString("vi-VN") + "đ";
 }
 
-function resolveProductImagePath(path) {
-  return String(path || "").replace(/^(\.\.\/)+img\//, "img/");
-}
-
 
 function findProductById(id) {
   return products.find(function (item) {
@@ -56,12 +56,14 @@ function findProductById(id) {
 
 
 function saveCart() {
-  localStorage.setItem("moc_cart", JSON.stringify(cart));
+  EndlessCatalog.write("moc_cart", JSON.stringify(cart));
+  showStorageNotice();
 }
 
 
 function saveWishlist() {
-  localStorage.setItem("moc_wishlist", JSON.stringify(wishlist));
+  EndlessCatalog.write("moc_wishlist", JSON.stringify(wishlist));
+  showStorageNotice();
 }
 
 
@@ -130,7 +132,7 @@ function renderProducts(list) {
 
     let colorDots = "";
     product.colors.forEach(function (color) {
-      colorDots += "<span class='color-dot' style='background:" + colorToHex(color) + "' title='" + color + "'></span>";
+      colorDots += "<span class='color-dot' style='background:" + colorToHex(color) + "' title='" + escapeHtml(color) + "'></span>";
     });
 
     const badgeHtml = product.isNew ? "<span class='product-card__badge'>Mới</span>" : "";
@@ -139,9 +141,9 @@ function renderProducts(list) {
       "<div class='product-card reveal' data-id='" + product.id + "'>" +
         "<div class='product-card__image'>" +
           badgeHtml +
-          "<img src='" + product.images[0] + "' alt='" + product.name + "' loading='lazy'>" +
+          "<img src='" + escapeHtml(product.images[0]) + "' alt='" + escapeHtml(product.name) + "' loading='lazy'>" +
         "</div>" +
-        "<p class='product-card__name'>" + product.name + "</p>" +
+        "<p class='product-card__name'>" + escapeHtml(product.name) + "</p>" +
         "<p class='product-card__price'>" + formatPrice(product.price) + "</p>" +
         "<div class='product-card__colors'>" + colorDots + "</div>" +
       "</div>";
@@ -204,7 +206,7 @@ function colorToHex(colorName) {
     "Xám": "#9b968d",
     "Nâu": "#7a5230"
   };
-  return map[colorName] || "#cccccc";
+  return Object.hasOwn(map, colorName) ? map[colorName] : "#cccccc";
 }
 
 
@@ -268,6 +270,7 @@ function getFilteredProducts() {
 
 
 function updateProductGrid() {
+  if (!catalogReady) return;
   const result = getFilteredProducts();
   renderProducts(result);
 
@@ -304,6 +307,7 @@ function hideSearchSuggestions() {
 }
 
 function renderSearchSuggestions() {
+  if (!catalogReady) return;
   const input = document.getElementById("searchInput");
   const query = input.value.trim();
   const suggestions = document.getElementById("searchSuggestions");
@@ -320,9 +324,9 @@ function renderSearchSuggestions() {
     suggestions.innerHTML = "<p class='search-suggestions__empty'>Không tìm thấy sản phẩm phù hợp.</p>";
   } else {
     suggestions.innerHTML = matches.map(function (product) {
-      return "<button type='button' class='search-suggestion' role='option' aria-label='" + product.name + ", " + formatPrice(product.price) + "' data-id='" + product.id + "'>" +
-        "<img src='" + product.images[0] + "' alt='' loading='lazy'>" +
-        "<span class='search-suggestion__info'><span class='search-suggestion__name'>" + product.name + "</span><span class='search-suggestion__category'>" + categoryNames[product.category] + "</span></span>" +
+      return "<button type='button' class='search-suggestion' role='option' aria-label='" + escapeHtml(product.name) + ", " + formatPrice(product.price) + "' data-id='" + product.id + "'>" +
+        "<img src='" + escapeHtml(product.images[0]) + "' alt='' loading='lazy'>" +
+        "<span class='search-suggestion__info'><span class='search-suggestion__name'>" + escapeHtml(product.name) + "</span><span class='search-suggestion__category'>" + categoryNames[product.category] + "</span></span>" +
         "<span class='search-suggestion__price'>" + formatPrice(product.price) + "</span>" +
       "</button>";
     }).join("");
@@ -344,7 +348,9 @@ function renderSearchSuggestions() {
 
 
 function openProductModal(id) {
+  if (!catalogReady) return;
   currentProduct = findProductById(id);
+  if (!currentProduct) return;
   currentImageIndex = 0;
   selectedSize = null;
   selectedColor = null;
@@ -361,21 +367,21 @@ function renderProductModal() {
   let thumbsHtml = "";
   product.images.forEach(function (img, index) {
     const activeClass = index === currentImageIndex ? "active" : "";
-    thumbsHtml += "<img src='" + img + "' alt='" + product.name + " - ảnh " + (index + 1) + "' class='" + activeClass + "' data-index='" + index + "'>";
+    thumbsHtml += "<img src='" + escapeHtml(img) + "' alt='" + escapeHtml(product.name) + " - ảnh " + (index + 1) + "' class='" + activeClass + "' data-index='" + index + "'>";
   });
 
 
   let sizeHtml = "";
   product.sizes.forEach(function (size) {
     const selectedClass = size === selectedSize ? "selected" : "";
-    sizeHtml += "<button type='button' class='option-chip " + selectedClass + "' data-size='" + size + "' aria-pressed='" + (size === selectedSize) + "'>" + size + "</button>";
+    sizeHtml += "<button type='button' class='option-chip " + selectedClass + "' data-size='" + escapeHtml(size) + "' aria-pressed='" + (size === selectedSize) + "'>" + escapeHtml(size) + "</button>";
   });
 
 
   let colorHtml = "";
   product.colors.forEach(function (color) {
     const selectedClass = color === selectedColor ? "selected" : "";
-    colorHtml += "<button type='button' class='option-chip color-chip " + selectedClass + "' data-color='" + color + "' aria-pressed='" + (color === selectedColor) + "'><span class='color-dot' style='background:" + colorToHex(color) + "'></span>" + color + "</button>";
+    colorHtml += "<button type='button' class='option-chip color-chip " + selectedClass + "' data-color='" + escapeHtml(color) + "' aria-pressed='" + (color === selectedColor) + "'><span class='color-dot' style='background:" + colorToHex(color) + "'></span>" + escapeHtml(color) + "</button>";
   });
 
 
@@ -386,8 +392,8 @@ function renderProductModal() {
     if (sp) {
       suggestHtml +=
         "<div class='pm-suggest-item' data-id='" + sp.id + "'>" +
-          "<img src='" + sp.images[0] + "' alt='" + sp.name + "'>" +
-          "<p>" + sp.name + "</p>" +
+          "<img src='" + escapeHtml(sp.images[0]) + "' alt='" + escapeHtml(sp.name) + "'>" +
+          "<p>" + escapeHtml(sp.name) + "</p>" +
         "</div>";
     }
   });
@@ -397,13 +403,13 @@ function renderProductModal() {
   const canShowSizeChart = product.category !== "phukien";
   const html =
     "<div class='pm-gallery'>" +
-      "<div class='pm-gallery__main'><img src='" + product.images[currentImageIndex] + "' id='pmMainImage'></div>" +
+      "<div class='pm-gallery__main'><img src='" + escapeHtml(product.images[currentImageIndex]) + "' id='pmMainImage'></div>" +
       "<div class='pm-gallery__thumbs' id='pmThumbs'>" + thumbsHtml + "</div>" +
     "</div>" +
     "<div class='pm-info'>" +
-      "<h2>" + product.name + "</h2>" +
+      "<h2>" + escapeHtml(product.name) + "</h2>" +
       "<p class='pm-price'>" + formatPrice(product.price) + "</p>" +
-      "<p class='pm-desc'>" + product.description + "</p>" +
+      "<p class='pm-desc'>" + escapeHtml(product.description) + "</p>" +
 
       "<div class='pm-option-label'>Chọn kích cỡ" + (canShowSizeChart ? " <button id='openSizeChartBtn'>Hướng dẫn chọn size</button>" : "") + "</div>" +
       "<div class='pm-options' id='pmSizes'>" + sizeHtml + "</div>" +
@@ -475,7 +481,7 @@ function attachProductModalEvents() {
     document.getElementById("qtyValue").textContent = currentQty;
   });
   document.getElementById("qtyPlus").addEventListener("click", function () {
-    currentQty++;
+    if (currentQty < 999) currentQty++;
     document.getElementById("qtyValue").textContent = currentQty;
   });
 
@@ -516,7 +522,7 @@ function closeProductModal() {
 function renderSizeChart() {
   let rows = "<tr><th>Size</th><th>Vòng ngực (cm)</th><th>Vòng eo (cm)</th><th>Chiều cao (cm)</th></tr>";
   sizeChart.forEach(function (row) {
-    rows += "<tr><td>" + row.size + "</td><td>" + row.chest + "</td><td>" + row.waist + "</td><td>" + row.height + "</td></tr>";
+    rows += "<tr><td>" + escapeHtml(row.size) + "</td><td>" + escapeHtml(row.chest) + "</td><td>" + escapeHtml(row.waist) + "</td><td>" + escapeHtml(row.height) + "</td></tr>";
   });
   document.getElementById("sizeTable").innerHTML = rows;
 }
@@ -525,6 +531,7 @@ function renderSizeChart() {
 
 
 function addCurrentProductToCart() {
+  if (!catalogReady || !currentProduct) return;
   if (currentProduct.sizes.length && !selectedSize) {
     alert("Vui lòng chọn kích cỡ trước khi thêm vào giỏ hàng.");
     return;
@@ -540,7 +547,7 @@ function addCurrentProductToCart() {
   });
 
   if (existingItem) {
-    existingItem.qty += currentQty;
+    existingItem.qty = Math.min(999, existingItem.qty + currentQty);
   } else {
     cart.push({
       id: currentProduct.id,
@@ -549,7 +556,8 @@ function addCurrentProductToCart() {
       image: currentProduct.images[currentImageIndex],
       size: selectedSize,
       color: selectedColor,
-      qty: currentQty
+      qty: currentQty,
+      catalogSource: "sql-v1"
     });
   }
 
@@ -563,6 +571,7 @@ function addCurrentProductToCart() {
 
 
 function renderCart() {
+  if (!catalogReady) return;
   const wrap = document.getElementById("cartItems");
 
   if (cart.length === 0) {
@@ -572,10 +581,10 @@ function renderCart() {
     cart.forEach(function (item, index) {
       html +=
         "<div class='cart-item'>" +
-          "<img src='" + resolveProductImagePath(item.image) + "'>" +
+          "<img src='" + escapeHtml(item.image) + "'>" +
           "<div class='cart-item__info'>" +
-            "<p>" + item.name + "</p>" +
-            "<p class='cart-item__meta'>Size " + item.size + " · " + item.color + "</p>" +
+            "<p>" + escapeHtml(item.name) + "</p>" +
+            "<p class='cart-item__meta'>Size " + escapeHtml(item.size) + " · " + escapeHtml(item.color) + "</p>" +
             "<div class='cart-item__qty'>" +
               "<button class='cart-minus' data-index='" + index + "'>-</button>" +
               "<span>" + item.qty + "</span>" +
@@ -591,6 +600,7 @@ function renderCart() {
 
   attachCartEvents();
   updateCartTotal();
+  showStorageNotice();
 }
 
 function attachCartEvents() {
@@ -611,7 +621,7 @@ function attachCartEvents() {
   document.querySelectorAll(".cart-plus").forEach(function (btn) {
     btn.addEventListener("click", function () {
       const index = Number(btn.getAttribute("data-index"));
-      cart[index].qty++;
+      if (cart[index].qty < 999) cart[index].qty++;
       saveCart();
       renderCart();
       updateCartCount();
@@ -660,14 +670,14 @@ function applyVoucher() {
   const code = codeInput.value.trim().toUpperCase();
   const messageBox = document.getElementById("voucherMessage");
 
-  if (voucherList[code]) {
+  if (Object.hasOwn(voucherList, code)) {
     appliedVoucher = voucherList[code];
-    localStorage.setItem("moc_voucher", code);
+    EndlessCatalog.write("moc_voucher", code);
     messageBox.textContent = "Đã áp dụng: " + appliedVoucher.label;
     messageBox.className = "voucher-message success";
   } else {
     appliedVoucher = null;
-    localStorage.removeItem("moc_voucher");
+    EndlessCatalog.write("moc_voucher", null);
     messageBox.textContent = "Mã giảm giá không hợp lệ.";
     messageBox.className = "voucher-message error";
   }
@@ -695,6 +705,7 @@ function updateWishlistCount() {
 }
 
 function renderWishlist() {
+  if (!catalogReady) return;
   const wrap = document.getElementById("wishlistItems");
 
   if (wishlist.length === 0) {
@@ -708,9 +719,9 @@ function renderWishlist() {
     if (!product) return;
     html +=
       "<div class='cart-item' data-id='" + product.id + "'>" +
-        "<img src='" + product.images[0] + "'>" +
+        "<img src='" + escapeHtml(product.images[0]) + "'>" +
         "<div class='cart-item__info'>" +
-          "<p>" + product.name + "</p>" +
+          "<p>" + escapeHtml(product.name) + "</p>" +
           "<p class='cart-item__meta'>" + formatPrice(product.price) + "</p>" +
           "<button class='cart-item__remove' data-id='" + product.id + "'>Bỏ yêu thích</button>" +
         "</div>" +
@@ -742,6 +753,7 @@ function renderWishlist() {
 
 
 function initEvents() {
+  document.getElementById("retryCatalog").addEventListener("click", loadCatalog);
 
   const searchInput = document.getElementById("searchInput");
   const debouncedSearch = debounce(function () {
@@ -761,7 +773,7 @@ function initEvents() {
   document.getElementById("sortSelect").addEventListener("change", updateProductGrid);
 
 
-  document.querySelectorAll(".filter-category, .filter-size, .filter-color, .filter-price")
+  document.querySelectorAll(".filter-category, .filter-price")
     .forEach(function (input) {
       input.addEventListener("change", updateProductGrid);
     });
@@ -829,20 +841,68 @@ function initEvents() {
 
 
 
-function init() {
+async function loadCatalog() {
+  if (catalogLoading) return;
+  catalogLoading = true;
+  catalogReady = false;
+  products = [];
+  hideSearchSuggestions();
+  document.getElementById("productGrid").replaceChildren();
+  document.getElementById("productGrid").setAttribute("aria-busy", "true");
+  document.getElementById("resultCount").textContent = "Đang tải sản phẩm…";
+  document.getElementById("catalogStatus").textContent = "Đang tải sản phẩm từ cửa hàng…";
+  document.getElementById("retryCatalog").hidden = true;
+  setCatalogControls(false);
+  try {
+    products = await EndlessCatalog.fetchProducts();
+    cart = EndlessCatalog.reconcileCart(EndlessCatalog.readArray("moc_cart"), products);
+    wishlist = EndlessCatalog.reconcileWishlist(EndlessCatalog.readArray("moc_wishlist"), products);
+    // Only reconcile/save after a successful API response. API errors never overwrite the old cart.
+    saveCart();
+    saveWishlist();
+    const code = EndlessCatalog.readText("moc_voucher");
+    appliedVoucher = Object.hasOwn(voucherList, code || "") ? voucherList[code] : null;
+    catalogReady = true;
+    initializeCatalogView();
+    document.getElementById("catalogStatus").textContent = products.length ? "" : "Cửa hàng hiện chưa có sản phẩm.";
+    setCatalogControls(true);
+  } catch {
+    products = [];
+    catalogReady = false;
+    document.getElementById("resultCount").textContent = "Chưa tải được sản phẩm";
+    document.getElementById("catalogStatus").textContent = "Không tải được danh sách sản phẩm từ API. Vui lòng kiểm tra kết nối và thử lại.";
+    document.getElementById("retryCatalog").hidden = false;
+  } finally {
+    catalogLoading = false;
+    document.getElementById("productGrid").setAttribute("aria-busy", "false");
+    showStorageNotice();
+  }
+}
+
+function setCatalogControls(enabled) {
+  document.querySelectorAll(".filters input, .filters button, #searchInput, #sortSelect, #cartBtn, #wishlistBtn, #checkoutBtn, #applyVoucherBtn")
+    .forEach(function (element) { element.disabled = !enabled; });
+}
+
+function showStorageNotice() {
+  document.getElementById("catalogNotice").textContent = EndlessCatalog.notice();
+}
+
+function initializeCatalogView() {
   renderFilterOptions();
   const params = new URLSearchParams(window.location.search);
   const category = params.get("category");
   if (category && ["ao", "quan", "vay", "phukien"].includes(category)) {
     const categoryFilter = document.querySelector(".filter-category[value='" + category + "']");
     if (categoryFilter) categoryFilter.checked = true;
-    const keyword = params.get("q");
-    if (keyword) document.getElementById("searchInput").value = keyword.replace(/-/g, " ");
   }
+  const keyword = params.get("q");
+  if (keyword) document.getElementById("searchInput").value = keyword.replace(/-/g, " ");
   updateProductGrid();
   updateCartCount();
   updateWishlistCount();
-  initEvents();
+  if (params.get("panel") === "cart") { renderCart(); openBox("cartOverlay", "cartDrawer"); }
+  if (params.get("panel") === "wishlist") { renderWishlist(); openBox("wishlistOverlay", "wishlistDrawer"); }
 }
 
 function renderFilterOptions() {
@@ -850,14 +910,17 @@ function renderFilterOptions() {
   const allColors = Array.from(new Set(products.flatMap(function (product) { return product.colors; })));
 
   document.getElementById("filterSizes").innerHTML = allSizes.map(function (size) {
-    return "<label><input type='checkbox' class='filter-size' value='" + size + "'> " + size + "</label>";
+    return "<label><input type='checkbox' class='filter-size' value='" + escapeHtml(size) + "'> " + escapeHtml(size) + "</label>";
   }).join("");
 
   document.getElementById("filterColors").innerHTML = allColors.map(function (color) {
-    return "<label class='filter-color-option'><input type='checkbox' class='filter-color' value='" + color + "'><span class='color-dot' style='background:" + colorToHex(color) + "'></span><span>" + color + "</span></label>";
+    return "<label class='filter-color-option'><input type='checkbox' class='filter-color' value='" + escapeHtml(color) + "'><span class='color-dot' style='background:" + colorToHex(color) + "'></span><span>" + escapeHtml(color) + "</span></label>";
   }).join("");
 
+  document.querySelectorAll(".filter-size, .filter-color").forEach(function (input) {
+    input.addEventListener("change", updateProductGrid);
+  });
 }
 
 
-document.addEventListener("DOMContentLoaded", init);
+document.addEventListener("DOMContentLoaded", function () { initEvents(); loadCatalog(); });

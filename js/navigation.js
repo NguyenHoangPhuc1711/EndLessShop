@@ -13,7 +13,7 @@ document.querySelectorAll(".nav-menu").forEach(function (menu) {
     panel.style.opacity = isOpen ? "1" : "0";
     panel.style.pointerEvents = isOpen ? "auto" : "none";
     panel.style.transform = isOpen ? "translateY(0)" : "translateY(8px)";
-    if (isOpen && window.matchMedia("(max-width: 900px)").matches) {
+    if (isOpen && window.matchMedia("(max-width: 1179px)").matches) {
       menu.style.setProperty("--mega-menu-top", header.getBoundingClientRect().bottom + 8 + "px");
     }
   }

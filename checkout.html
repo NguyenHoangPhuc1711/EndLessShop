@@ -4,15 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thanh toán &amp; đơn hàng | Endless</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/checkout.css">
+  <link rel="stylesheet" href="css/account.css">
 </head>
 <body>
   <header class="header">
     <div class="header__inner container">
+
+
       <a href="index.html#trang-chu" class="logo"><img src="img/T%C3%AAn%20th%C6%B0%C6%A1ng%20hi%E1%BB%87u.png" alt="Endless"></a>
+
+
       <nav class="nav" aria-label="Điều hướng chính">
         <a href="index.html#trang-chu">Trang chủ</a>
         <div class="nav-menu">
@@ -45,11 +48,22 @@
             </div>
           </div>
         </div>
-        <a href="checkout.html#thanh-toan" aria-current="page">Thanh Toán</a>
+        <a href="checkout.html#thanh-toan">Thanh Toán</a>
         <a href="checkout.html#lich-su">Lịch Sử Giao Dịch</a>
-        <a href="checkout.html#lien-he">Liên Hệ</a>
+        <a href="index.html#lien-he">Liên Hệ</a>
       </nav>
-      <a class="btn btn--ghost checkout-back-link" href="index.html#san-pham">← Tiếp tục mua sắm</a>
+
+
+      <form class="search-box header-search" action="index.html" method="get" role="search"><input type="search" name="q" placeholder="Tìm sản phẩm…" aria-label="Tìm sản phẩm"></form>
+
+
+      <div class="header__icons">
+        <a href="checkout.html#lich-su" class="icon-btn page-orders-shortcut" title="Thanh toán và lịch sử giao dịch" aria-label="Thanh toán và lịch sử giao dịch">↗</a>
+        <a href="index.html?panel=wishlist#san-pham" class="icon-btn" title="Sản phẩm yêu thích" aria-label="Sản phẩm yêu thích">♡ <span class="badge" data-wishlist-badge>0</span></a>
+        <a href="index.html?panel=cart#san-pham" class="icon-btn" title="Giỏ hàng" aria-label="Giỏ hàng">🛍 <span class="badge" data-cart-badge>0</span></a>
+        <div class="account-control" data-account-control><a class="account-signin" href="login.html" data-account-login><svg class="account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-2a8 8 0 0 1 16 0v2"></path></svg><span>Đăng nhập</span></a></div>
+      </div>
+
     </div>
   </header>
 
@@ -58,6 +72,7 @@
       <p class="checkout-eyebrow">ENDLESS / ĐẶT HÀNG</p>
       <h1>Thanh toán <span>&amp; đơn hàng</span></h1>
       <p>Hoàn tất thông tin giao hàng hoặc xem lại các giao dịch của bạn.</p>
+      <a class="btn btn--ghost checkout-back-link" href="index.html#san-pham">← Tiếp tục mua sắm</a>
     </section>
 
     <div class="container checkout-layout">
@@ -87,9 +102,12 @@
           <fieldset class="payment-methods">
             <legend>Phương thức thanh toán</legend>
             <label><input type="radio" name="payment" value="cod" checked> <span><strong>Thanh toán khi nhận hàng</strong><small>COD · Trả tiền khi nhận đơn</small></span></label>
-            <label><input type="radio" name="payment" value="transfer"> <span><strong>Chuyển khoản ngân hàng</strong><small>Cửa hàng sẽ gửi thông tin chuyển khoản sau khi xác nhận</small></span></label>
           </fieldset>
           <p class="checkout-notice" id="checkoutNotice" role="status"></p>
+          <p id="checkoutCatalogNotice" class="catalog-notice" role="status"></p>
+          <button type="button" id="checkoutCatalogRetry" class="btn btn--ghost" hidden>Thử tải lại sản phẩm</button>
+          <p id="checkoutLogin" hidden><a class="btn btn--ghost" href="account.html">Đăng nhập để đặt hàng</a></p>
+          <p class="checkout-notice">Đơn COD được lưu trên máy chủ. Chỉ thanh toán khi nhận hàng.</p>
           <button type="submit" class="btn btn--primary btn--full" id="placeOrderBtn">Xác nhận đặt hàng</button>
         </form>
         <div class="checkout-success" id="checkoutSuccess" hidden aria-live="polite"></div>
@@ -131,10 +149,12 @@
         <div>
           <p class="checkout-eyebrow">TÀI KHOẢN CỦA BẠN</p>
           <h2>Lịch sử giao dịch</h2>
+          <p>100 đơn gần nhất của tài khoản đang đăng nhập.</p>
         </div>
         <a class="btn btn--ghost" href="#thanh-toan">Đến thanh toán ↑</a>
       </div>
       <div class="transaction-list" id="transactionList" aria-live="polite"></div>
+      <button type="button" class="btn btn--ghost" id="historyRetry">Tải lại lịch sử</button>
     </section>
   </main>
 
@@ -159,7 +179,10 @@
     </div>
     <p class="footer__bottom">© 2026 Endless Store. Cửa Hàng Thời Trang Online.</p>
   </footer>
+  <script src="js/config.js"></script>
   <script src="js/navigation.js"></script>
+  <script src="js/catalog.js"></script>
   <script src="js/checkout.js"></script>
+  <script src="js/account.js"></script>
 </body>
 </html>
