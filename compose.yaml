@@ -1,0 +1,53 @@
+name: endlessshop
+services:
+  backend:
+    image: endlessshop-backend:local
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      PORT: "3000"
+      DB_SERVER: ${DB_SERVER:-sqlserver}
+      DB_PORT: ${DB_PORT:-1433}
+      DB_DATABASE: ${DB_DATABASE:-web_thoi_trang}
+      DB_USER: ${DB_USER:-endless_runtime}
+      DB_PASSWORD: ${DB_PASSWORD:?Run scripts/start-backend.ps1 first}
+      DB_ENCRYPT: ${DB_ENCRYPT:-true}
+      DB_TRUST_SERVER_CERTIFICATE: ${DB_TRUST_SERVER_CERTIFICATE:-true}
+      SESSION_SECRET: ${SESSION_SECRET:?Run scripts/start-backend.ps1 to generate session secret}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+      SESSION_COOKIE_SAMESITE: ${SESSION_COOKIE_SAMESITE:-lax}
+      APP_ORIGINS: ${APP_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      TRUST_PROXY: ${TRUST_PROXY:-0}
+    networks:
+      database: {}
+      tunnel:
+        ipv4_address: 172.30.251.3
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    restart: unless-stopped
+    profiles: [tunnel]
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      tunnel:
+        ipv4_address: 172.30.251.2
+networks:
+  database:
+    external: true
+    name: endlessshop_network
+  tunnel:
+    ipam:
+      config:
+        - subnet: 172.30.251.0/29

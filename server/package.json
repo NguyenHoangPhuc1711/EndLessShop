@@ -1,0 +1,22 @@
+{
+  "name": "endlessshop-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Express + SQL Server foundation for EndLessShop",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "db:init": "node scripts/init-db.js",
+    "verify": "node scripts/verify.js",
+    "verify:auth": "node scripts/verify-auth.js"
+  },
+  "dependencies": {
+    "argon2": "^0.45.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.7.2",
+    "express-session": "^1.19.0",
+    "mssql": "^12.0.0"
+  }
+}
