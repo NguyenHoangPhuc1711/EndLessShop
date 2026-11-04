@@ -1,0 +1,14 @@
+{
+  "name": "endless-shop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Endless clothing store with an Express API and SQL Server",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check js/app.js && node --check js/checkout.js && node --check js/products.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "mssql": "^11.0.1"
+  }
+}

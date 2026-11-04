@@ -182,6 +182,19 @@
 
   Object.assign(root.Endless, {
     products: products,
+    loadProducts: async function () {
+      const response = await fetch("/api/products");
+      if (!response.ok) {
+        throw new Error("Không tải được dữ liệu sản phẩm từ máy chủ (" + response.status + ").");
+      }
+
+      const data = await response.json();
+      if (!Array.isArray(data)) {
+        throw new Error("Máy chủ trả về dữ liệu sản phẩm không hợp lệ.");
+      }
+
+      products.splice(0, products.length, ...data);
+    },
     outfitSuggestions: outfitSuggestions,
     sizeChart: sizeChart
   });

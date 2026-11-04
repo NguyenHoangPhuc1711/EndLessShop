@@ -163,7 +163,7 @@ function renderTransactions() {
   }).join("");
 }
 
-function placeOrder(event) {
+async function placeOrder(event) {
   event.preventDefault();
   if (cart.length === 0) {
     document.getElementById("checkoutNotice").textContent = "Giỏ hàng trống. Vui lòng quay lại cửa hàng để chọn sản phẩm.";
@@ -172,59 +172,67 @@ function placeOrder(event) {
 
   const form = event.currentTarget;
   const formData = new FormData(form);
-  const totals = getTotals(cart);
-  const payment = formData.get("payment");
-  const order = {
-    code: "ENDLESS" + Math.floor(100000 + Math.random() * 900000),
-    date: new Date().toLocaleString("vi-VN"),
-    status: "Đang xử lý",
-    payment: payment,
-    paymentLabel: payment === "transfer" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng (COD)",
-    items: cart.map(function (item) {
-      return {
-        id: item.id,
-        name: item.name,
-        image: item.image,
-        size: item.size,
-        color: item.color,
-        price: Number(item.price),
-        qty: Number(item.qty)
-      };
-    }),
-    subtotal: totals.subtotal,
-    discount: totals.discount,
-    voucherCode: totals.voucher ? voucherCode : null,
-    total: totals.total,
-    delivery: {
-      fullName: formData.get("fullName"),
-      phone: formData.get("phone"),
-      address: formData.get("address"),
-      note: formData.get("note")
-    }
-  };
+  const submitButton = document.getElementById("placeOrderBtn");
+  const notice = document.getElementById("checkoutNotice");
+  submitButton.disabled = true;
+  notice.textContent = "Đang lưu đơn hàng...";
 
-  orders.push(order);
-  localStorage.setItem(orderStorageKey, JSON.stringify(orders));
-  localStorage.setItem(cartStorageKey, JSON.stringify([]));
-  localStorage.removeItem(voucherStorageKey);
-  cart.length = 0;
-  voucherCode = null;
-  form.hidden = true;
-  const success = document.getElementById("checkoutSuccess");
-  success.hidden = false;
-  success.innerHTML = '<div class="success-icon">✓</div><h2>Đặt hàng thành công!</h2><p>Mã đơn hàng: <strong>' + escapeHtml(order.code) + '</strong></p><p>Cửa hàng sẽ liên hệ xác nhận trong thời gian sớm nhất.</p><a class="btn btn--primary" href="#lich-su">Xem lịch sử giao dịch</a>';
-  success.insertAdjacentHTML("beforeend", '<button type="button" class="btn btn--ghost" id="newOrderBtn">Tạo đơn hàng khác</button>');
-  document.getElementById("newOrderBtn").addEventListener("click", function () {
-    form.reset();
-    form.hidden = false;
-    success.hidden = true;
-    success.textContent = "";
+  try {
+    const response = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: cart.map(function (item) {
+          return {
+            id: item.id,
+            size: item.size,
+            color: item.color,
+            qty: Number(item.qty)
+          };
+        }),
+        payment: formData.get("payment"),
+        voucherCode: voucherCode,
+        delivery: {
+          fullName: formData.get("fullName"),
+          phone: formData.get("phone"),
+          address: formData.get("address"),
+          note: formData.get("note")
+        }
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Không thể lưu đơn hàng.");
+    }
+
+    const order = result.order;
+    orders.push(order);
+    localStorage.setItem(orderStorageKey, JSON.stringify(orders));
+    localStorage.setItem(cartStorageKey, JSON.stringify([]));
+    localStorage.removeItem(voucherStorageKey);
+    cart.length = 0;
+    voucherCode = null;
+    form.hidden = true;
+    const success = document.getElementById("checkoutSuccess");
+    success.hidden = false;
+    success.innerHTML = '<div class="success-icon">✓</div><h2>Đặt hàng thành công!</h2><p>Mã đơn hàng: <strong>' + escapeHtml(order.code) + '</strong></p><p>Cửa hàng sẽ liên hệ xác nhận trong thời gian sớm nhất.</p><a class="btn btn--primary" href="#lich-su">Xem lịch sử giao dịch</a>';
+    success.insertAdjacentHTML("beforeend", '<button type="button" class="btn btn--ghost" id="newOrderBtn">Tạo đơn hàng khác</button>');
+    document.getElementById("newOrderBtn").addEventListener("click", function () {
+      form.reset();
+      form.hidden = false;
+      success.hidden = true;
+      success.textContent = "";
+      renderCheckoutSummary();
+      document.getElementById("fullName").focus();
+    });
     renderCheckoutSummary();
-    document.getElementById("fullName").focus();
-  });
-  renderCheckoutSummary();
-  renderTransactions();
-  document.getElementById("checkoutNotice").textContent = "";
+    renderTransactions();
+    notice.textContent = "";
+  } catch (error) {
+    notice.textContent = error.message || "Không thể lưu đơn hàng. Vui lòng thử lại.";
+  } finally {
+    submitButton.disabled = false;
+  }
 }
 
 document.getElementById("checkoutForm").addEventListener("submit", placeOrder);

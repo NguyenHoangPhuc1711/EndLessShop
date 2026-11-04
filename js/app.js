@@ -913,7 +913,16 @@ function initEvents() {
 
 
 
-function init() {
+async function init() {
+  try {
+    await window.Endless.loadProducts();
+  } catch (error) {
+    console.error("Không thể khởi tạo cửa hàng từ dữ liệu máy chủ:", error);
+    document.getElementById("productGrid").innerHTML =
+      "<p class='empty-msg'>Không thể tải sản phẩm. Vui lòng kiểm tra kết nối máy chủ rồi tải lại trang.</p>";
+    return;
+  }
+
   renderFilterOptions();
   const params = new URLSearchParams(window.location.search);
   const category = params.get("category");
