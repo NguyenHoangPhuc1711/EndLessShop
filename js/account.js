@@ -39,7 +39,7 @@
     login.href = pageLink('login.html');
     root.insertAdjacentHTML('beforeend', '<div class="account-session" hidden><button type="button" class="account-trigger" aria-expanded="false" aria-controls="accountMenu' + index + '" aria-label="Tài khoản">' + icon +
       '<span class="account-name" data-account-name></span><span class="account-chevron" aria-hidden="true">⌄</span></button>' +
-      '<div id="accountMenu' + index + '" class="account-menu" hidden><a href="checkout.html#lich-su">Đơn hàng của tôi</a><button type="button" data-auth-logout>Đăng xuất</button></div></div>');
+      '<div id="accountMenu' + index + '" class="account-menu" hidden><a href="checkout.html#lich-su">Đơn hàng của tôi</a><a href="admin.html" data-admin-link hidden>Bảng quản trị (Admin)</a><button type="button" data-auth-logout>Đăng xuất</button></div></div>');
     const session = root.querySelector('.account-session');
     const trigger = root.querySelector('.account-trigger');
     const menu = root.querySelector('.account-menu');
@@ -75,7 +75,7 @@
     });
     root.addEventListener('focusout', event => { if (!root.contains(event.relatedTarget)) close(false); });
     document.addEventListener('click', event => { if (!root.contains(event.target)) close(false); });
-    return { root, login, session, trigger, close };
+    return { root, login, session, trigger, menu, close };
   });
 
   function message(element, text, isError) {
@@ -100,6 +100,10 @@
       widget.root.querySelector('[data-account-name]').textContent = user ? user.username : '';
       widget.trigger.title = user ? user.fullName : '';
       widget.trigger.setAttribute('aria-label', user ? 'Tài khoản ' + user.username : 'Tài khoản');
+      const adminLink = widget.menu.querySelector('[data-admin-link]');
+      if (adminLink) {
+        adminLink.hidden = !(user && (user.role === 'admin' || user.vaiTro === 'admin'));
+      }
       if (!user) widget.close(false);
     });
     if (forms) forms.hidden = Boolean(user);
@@ -160,6 +164,60 @@
       finally { button.disabled = false; button.textContent = label; form.removeAttribute('aria-busy'); }
     });
   });
+
+  // Forgot Password handler (Customers only)
+  const toggleForgotBtn = document.getElementById('toggleForgotBtn');
+  const forgotBox = document.getElementById('forgotPasswordBox');
+  const cancelForgotBtn = document.getElementById('cancelForgotBtn');
+  const forgotForm = document.getElementById('forgotPasswordForm');
+  const forgotMsg = document.getElementById('forgotMessage');
+
+  if (toggleForgotBtn && forgotBox) {
+    toggleForgotBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      forgotBox.hidden = !forgotBox.hidden;
+      if (!forgotBox.hidden) {
+        const input = forgotBox.querySelector('input');
+        if (input) input.focus();
+        message(forgotMsg, '', false);
+      }
+    });
+  }
+
+  if (cancelForgotBtn && forgotBox) {
+    cancelForgotBtn.addEventListener('click', () => {
+      forgotBox.hidden = true;
+      message(forgotMsg, '', false);
+    });
+  }
+
+  if (forgotForm) {
+    forgotForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const button = forgotForm.querySelector('[type="submit"]');
+      if (button.disabled) return;
+      const label = button.textContent;
+      const identifier = (forgotForm.querySelector('[name="identifier"]')?.value || '').trim();
+      if (!identifier) {
+        message(forgotMsg, 'Vui lòng nhập tên đăng nhập hoặc email.', true);
+        return;
+      }
+      button.disabled = true;
+      button.textContent = 'Đang kiểm tra…';
+      message(forgotMsg, '', false);
+      try {
+        const data = await request('forgot-password', { identifier });
+        message(forgotMsg, data.message || 'Đã gửi yêu cầu khôi phục mật khẩu thành công.', false);
+        const idInput = forgotForm.querySelector('[name="identifier"]');
+        if (idInput) idInput.value = '';
+      } catch (err) {
+        message(forgotMsg, err.message, true);
+      } finally {
+        button.disabled = false;
+        button.textContent = label;
+      }
+    });
+  }
   document.querySelectorAll('[data-auth-logout]').forEach(button => {
     button.addEventListener('click', async () => {
       if (button.disabled) return;

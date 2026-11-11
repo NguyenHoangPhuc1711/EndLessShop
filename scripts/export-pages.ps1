@@ -6,7 +6,7 @@ $root = Split-Path -Parent $PSScriptRoot
 $source = Join-Path $root 'web-ban-quan-ao'
 $output = Join-Path $root 'pages'
 New-Item -ItemType Directory -Path $output -Force | Out-Null
-foreach ($name in @('index.html','checkout.html','account.html','login.html','register.html')) {
+foreach ($name in @('index.html','checkout.html','account.html','login.html','register.html','admin.html')) {
     $html = [IO.File]::ReadAllText((Join-Path $source $name))
     # Keep this artifact self-contained. CSS already supplies system font fallbacks.
     $html = [regex]::Replace($html, '(?m)^[ \t]*<link\b[^>]*href="https://fonts\.googleapis\.com[^"]*"[^>]*>\r?\n?', '')

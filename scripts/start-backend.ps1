@@ -84,10 +84,12 @@ try {
             [Environment]::SetEnvironmentVariable($key, $temporary[$key], 'Process')
         }
         # Docker inherits values by variable name; secrets do not appear in argv.
-        docker run --rm --network endlessshop_network --env DB_SERVER=sqlserver --env DB_PORT=1433 `
+        docker run --rm --network endlessshop_network --mount "type=bind,source=$workspace/server,target=/app/server" `
+            --workdir /app/server `
+            --env DB_SERVER=sqlserver --env DB_PORT=1433 `
             --env DB_DATABASE=web_thoi_trang --env DB_USER=sa --env DB_PASSWORD `
             --env DB_ENCRYPT=true --env DB_TRUST_SERVER_CERTIFICATE=true `
-            --env RUNTIME_DB_USER --env RUNTIME_DB_PASSWORD endlessshop-backend:local node scripts/init-db.js
+            --env RUNTIME_DB_USER --env RUNTIME_DB_PASSWORD node:22-bookworm-slim node scripts/init-db.js
         if ($LASTEXITCODE -ne 0) { throw 'Database initialization failed. Backend was not started.' }
     } finally {
         foreach ($key in $previous.Keys) { [Environment]::SetEnvironmentVariable($key, $previous[$key], 'Process') }

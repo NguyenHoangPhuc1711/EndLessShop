@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tạo tài khoản | Endless</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=2.0">
+  <link rel="stylesheet" href="css/account.css?v=2.0">
+  <link rel="stylesheet" href="css/chatbot.css?v=1.0">
+</head>
+<body>
+  <header class="header">
+    <div class="header__inner container">
+
+
+      <a href="index.html#trang-chu" class="logo-scandi" aria-label="Endless Trang Chủ">
+        <span class="logo-scandi__name">ENDLESS</span><span class="logo-scandi__dot">.</span>
+      </a>
+
+
+      <nav class="nav" aria-label="Điều hướng chính">
+        <a href="index.html#trang-chu">Trang chủ</a>
+        <div class="nav-menu">
+          <button class="nav-menu__trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="productMegaMenu">Sản Phẩm <span aria-hidden="true">⌄</span></button>
+          <div class="mega-menu" id="productMegaMenu" aria-hidden="true">
+            <div class="mega-menu__column">
+              <h2>Khám phá</h2>
+              <a class="mega-menu__feature" href="index.html#san-pham"><span class="mega-menu__eyebrow">ENDLESS COLLECTION</span><strong>Tất cả sản phẩm</strong><span>Khám phá những thiết kế dành cho nhịp sống của bạn.</span></a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Áo</h2>
+              <a href="index.html?category=ao#san-pham">Tất cả áo</a>
+              <a href="index.html?category=ao&amp;q=thun#san-pham">Áo thun</a>
+              <a href="index.html?category=ao&amp;q=sơ-mi#san-pham">Áo sơ mi</a>
+              <a href="index.html?category=ao&amp;q=khoác#san-pham">Áo khoác</a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Quần &amp; váy</h2>
+              <a href="index.html?category=quan#san-pham">Quần</a>
+              <a href="index.html?category=quan&amp;q=jean#san-pham">Quần jean</a>
+              <a href="index.html?category=vay#san-pham">Váy</a>
+              <a href="index.html?category=vay&amp;q=chân-váy#san-pham">Chân váy</a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Phụ kiện</h2>
+              <a href="index.html?category=phukien#san-pham">Tất cả phụ kiện</a>
+              <a href="index.html?category=phukien&amp;q=mũ#san-pham">Mũ lưỡi trai</a>
+              <a href="index.html?category=phukien&amp;q=túi#san-pham">Túi tote</a>
+              <a href="index.html?category=phukien&amp;q=thắt-lưng#san-pham">Thắt lưng</a>
+            </div>
+          </div>
+        </div>
+        <a href="checkout.html#thanh-toan">Thanh Toán</a>
+        <a href="checkout.html#lich-su">Lịch Sử Giao Dịch</a>
+        <a href="index.html#lien-he">Liên Hệ</a>
+      </nav>
+
+
+      <form class="search-box header-search" action="index.html" method="get" role="search">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="search" name="q" placeholder="Tìm sản phẩm…" aria-label="Tìm sản phẩm">
+      </form>
+
+
+      <div class="header__icons">
+        <a href="checkout.html#lich-su" class="icon-btn page-orders-shortcut" title="Thanh toán và lịch sử giao dịch" aria-label="Thanh toán và lịch sử giao dịch">↗</a>
+        <a href="index.html?panel=wishlist#san-pham" class="icon-btn" title="Sản phẩm yêu thích" aria-label="Sản phẩm yêu thích">♡ <span class="badge" data-wishlist-badge>0</span></a>
+        <a href="index.html?panel=cart#san-pham" class="icon-btn" title="Giỏ hàng" aria-label="Giỏ hàng">🛍 <span class="badge" data-cart-badge>0</span></a>
+        <div class="account-control" data-account-control><a class="account-signin" href="login.html" data-account-login><svg class="account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-2a8 8 0 0 1 16 0v2"></path></svg><span>Đăng nhập</span></a></div>
+      </div>
+
+    </div>
+  </header>
+  <main class="account-page account-page--register container">
+    <section class="account-card" aria-labelledby="registerTitle">
+      <p class="account-eyebrow">ENDLESS / TÀI KHOẢN</p>
+      <h1 id="registerTitle">Tạo tài khoản</h1>
+      <p class="account-intro">Tạo tài khoản để mua sắm và theo dõi đơn hàng của bạn.</p>
+      <p id="accountStatus" class="account-message" role="status" aria-live="polite">Đang kiểm tra phiên đăng nhập…</p>
+      <div id="accountForms" hidden>
+        <form id="registerForm" class="account-form">
+          <label for="registerFullName">Họ và tên</label>
+          <input id="registerFullName" name="fullName" autocomplete="name" required maxlength="100">
+          <label for="registerUsername">Tên đăng nhập</label>
+          <input id="registerUsername" name="username" autocomplete="username" required minlength="3" maxlength="50" pattern="[A-Za-z0-9_.\-]{3,50}" aria-describedby="usernameHelp">
+          <small id="usernameHelp">3–50 ký tự: chữ không dấu, số, dấu gạch dưới, chấm hoặc gạch ngang.</small>
+          <label for="registerEmail">Email</label>
+          <input id="registerEmail" type="email" name="email" autocomplete="email" required maxlength="100">
+          <label for="registerPhone">Điện thoại (không bắt buộc)</label>
+          <input id="registerPhone" type="tel" name="phone" autocomplete="tel" pattern="[0-9]{9,11}" maxlength="11">
+          <label for="registerPassword">Mật khẩu</label>
+          <input id="registerPassword" type="password" name="password" autocomplete="new-password" required minlength="10" maxlength="128" aria-describedby="passwordHelp">
+          <small id="passwordHelp">10–128 ký tự. Dấu cách đầu/cuối cũng là một phần của mật khẩu.</small>
+          <button type="submit" class="btn btn--primary">Đăng ký</button>
+          <p class="account-message" data-form-message role="status" aria-live="polite"></p>
+        </form>
+        <p class="account-switch">Đã có tài khoản? <a href="login.html" data-login-link>Đăng nhập</a></p>
+      </div>
+    </section>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/chatbot.js?v=1.0"></script>
+</body>
+</html>

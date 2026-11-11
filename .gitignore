@@ -66,3 +66,13 @@ yarn-error.log*
 Thumbs.db
 *.swp
 *.swo
+
+# .NET build outputs
+bin/
+obj/
+*.user
+*.suo
+
+# Automated browser testing artifacts & root screenshots
+.playwright-mcp/
+/*.png

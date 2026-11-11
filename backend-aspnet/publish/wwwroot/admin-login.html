@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Đăng Nhập Quản Trị | Endless Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #FAF9F5;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F2EFE9;
+      --text-main: #141413;
+      --text-muted: #6E6D68;
+      --text-light: #9C9A93;
+      --border-hairline: rgba(20, 20, 19, 0.08);
+      --border-strong: rgba(20, 20, 19, 0.16);
+      --accent-olive: #2C3527;
+      --success: #1E7E34;
+      --warning: #B45309;
+      --error: #991B1B;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* TOP STRIP */
+    .admin-top-strip {
+      background: var(--text-main);
+      color: #FFF;
+      padding: 10px 24px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .admin-top-strip a {
+      color: #FAF9F5;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    .admin-top-strip a:hover { opacity: 0.8; }
+
+    /* MAIN CONTAINER */
+    .login-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+      padding: 36px 32px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-brand {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .brand-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+    .brand-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: var(--text-main);
+      color: #FFF;
+      padding: 3px 7px;
+      border-radius: 3px;
+      letter-spacing: 0.05em;
+    }
+
+    .login-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .login-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    /* FORM STYLES */
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-family: var(--font-sans);
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      background: #FFF;
+      color: var(--text-main);
+      transition: var(--transition);
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--text-main);
+      box-shadow: 0 0 0 3px rgba(20, 20, 19, 0.08);
+    }
+
+    .password-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .password-wrap .form-input {
+      padding-right: 42px;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+    }
+    .password-toggle:hover {
+      color: var(--text-main);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px 18px;
+      background: var(--text-main);
+      color: #FFF;
+      border: 1px solid var(--text-main);
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .btn-submit:hover {
+      background: #000;
+    }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* MESSAGES */
+    .message-box {
+      padding: 12px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.4;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .message-box.error {
+      display: block;
+      background: #FEE2E2;
+      color: var(--error);
+      border: 1px solid rgba(153, 27, 27, 0.2);
+    }
+    .message-box.success {
+      display: block;
+      background: #D1FAE5;
+      color: var(--success);
+      border: 1px solid rgba(30, 126, 52, 0.2);
+    }
+    .message-box.info {
+      display: block;
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--border-hairline);
+    }
+
+    /* SECURITY FOOTNOTE */
+    .security-notice {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-hairline);
+      font-size: 11px;
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP STRIP -->
+  <div class="admin-top-strip">
+    <div>
+      🛡️ <strong>Hệ Thống Quản Trị EndLess Shop</strong> &nbsp;·&nbsp; Cổng Xác Thực Quản Trị Viên
+    </div>
+    <div>
+      <a href="index.html">← Quay lại Trang Khách Hàng (Storefront)</a>
+    </div>
+  </div>
+
+  <!-- MAIN LOGIN CARD -->
+  <main class="login-wrapper">
+    <div class="login-card">
+      <div class="login-brand">
+        <span class="brand-title">Endless.</span>
+        <span class="brand-tag">Quản Trị</span>
+      </div>
+
+      <div class="login-header">
+        <h1>Đăng Nhập Quản Trị</h1>
+        <p>Khu vực giới hạn dành riêng cho Ban quản trị &amp; Điều hành hệ thống EndLess Shop.</p>
+      </div>
+
+      <div id="loginMsg" class="message-box" role="alert"></div>
+
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="adminUsername">Tên đăng nhập (Username)</label>
+          <input type="text" id="adminUsername" class="form-input" placeholder="VD: longadmin" required autofocus autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="adminPassword">Mật khẩu (Password)</label>
+          <div class="password-wrap">
+            <input type="password" id="adminPassword" class="form-input" placeholder="Nhập mật khẩu quản trị" required autocomplete="current-password">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility()" aria-label="Hiện/ẩn mật khẩu">
+              <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" id="btnSubmit" class="btn-submit">
+          <span>Đăng Nhập Vào Hệ Thống</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </form>
+
+      <div class="security-notice">
+        <div>🔒 <strong>Bảo mật cấp độ doanh nghiệp:</strong></div>
+        <div>Mã hoá mật khẩu Argon2id · Anti-CSRF Token · Kiểm soát truy cập RBAC</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script>
+    let csrfToken = null;
+
+    function showMessage(text, type = 'error') {
+      const msgBox = document.getElementById('loginMsg');
+      msgBox.className = 'message-box ' + type;
+      msgBox.innerText = text;
+      msgBox.style.display = 'block';
+    }
+
+    function togglePasswordVisibility() {
+      const pwd = document.getElementById('adminPassword');
+      const icon = document.getElementById('eyeIcon');
+      if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+      } else {
+        pwd.type = 'password';
+        icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+      }
+    }
+
+    async function checkCurrentSession() {
+      try {
+        const res = await fetch(EndlessConfig.apiUrl('auth/me'), {
+          credentials: EndlessConfig.credentials,
+          cache: 'no-store'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user && data.user.role === 'admin') {
+            showMessage(`Bạn đã đăng nhập với tài khoản Admin "${data.user.username}". Đang chuyển hướng vào bảng điều khiển...`, 'info');
+            setTimeout(() => {
+              location.replace('admin.html');
+            }, 800);
+          }
+        }
+      } catch (err) {
+        console.error('Session check error:', err);
+      }
+    }
+
+    async function handleAdminLogin(event) {
+      event.preventDefault();
+      const btn = document.getElementById('btnSubmit');
+      const usernameInput = document.getElementById('adminUsername');
+      const passwordInput = document.getElementById('adminPassword');
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!username || !password) {
+        showMessage('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>Đang xác thực thông tin...</span>';
+
+      try {
+        // 1. Get CSRF Token
+        if (!csrfToken) {
+          const csrfRes = await fetch(EndlessConfig.apiUrl('auth/csrf'), {
+            credentials: EndlessConfig.credentials,
+            cache: 'no-store'
+          });
+          if (!csrfRes.ok) throw new Error('Không thể tải phiên bảo mật. Vui lòng thử lại.');
+          csrfToken = (await csrfRes.json()).csrfToken;
+        }
+
+        // 2. Submit Login Request
+        const res = await fetch(EndlessConfig.apiUrl('auth/login'), {
+          method: 'POST',
+          credentials: EndlessConfig.credentials,
+          cache: 'no-store',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          if (res.status === 403) csrfToken = null;
+          throw new Error(data.message || 'Tên đăng nhập hoặc mật khẩu không chính xác.');
+        }
+
+        // 3. Verify Admin Role
+        if (!data.user || data.user.role !== 'admin') {
+          // If customer account, immediately logout to prevent lingering session
+          await fetch(EndlessConfig.apiUrl('auth/logout'), {
+            method: 'POST',
+            credentials: EndlessConfig.credentials,
+            headers: { 'X-CSRF-Token': csrfToken }
+          }).catch(() => {});
+
+          throw new Error(`Tài khoản "${data.user ? data.user.username : username}" không có đặc quyền Quản trị viên (Admin). Vui lòng sử dụng tài khoản quản trị.`);
+        }
+
+        // 4. Success -> Redirect
+        showMessage(`✓ Đăng nhập thành công! Chào mừng Quản trị viên ${data.user.fullName || data.user.username}. Đang chuyển hướng...`, 'success');
+        setTimeout(() => {
+          location.replace('admin.html');
+        }, 600);
+
+      } catch (err) {
+        showMessage(err.message, 'error');
+        btn.disabled = false;
+        btn.innerHTML = `
+          <span>Đăng Nhập Vào Hệ Thống</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        `;
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', checkCurrentSession);
+  </script>
+</body>
+</html>

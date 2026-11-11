@@ -3,229 +3,379 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Endless | Thời trang tối giản</title>
-
-
+  <title>Endless | Thời trang tối giản Bắc Âu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-
-
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/account.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=2.0">
+  <link rel="stylesheet" href="css/account.css?v=2.0">
+  <link rel="stylesheet" href="css/chatbot.css?v=1.0">
 </head>
 <body>
 
+  <!-- 1. TOP ANNOUNCEMENT STRIP -->
+  <div class="top-announcement">
+    <div class="container top-announcement__inner">
+      <span class="announcement-item"><span class="badge-dot">●</span> <strong>MIỄN PHÍ VẬN CHUYỂN</strong> TOÀN QUỐC CHO ĐƠN TỪ 300K · MÃ: <span class="code-pill">FREESHIP</span></span>
+      <span class="announcement-sep">•</span>
+      <span class="announcement-item">Đồng kiểm hàng tận nhà COD</span>
+      <span class="announcement-sep">•</span>
+      <span class="announcement-item">Đổi trả 30 ngày linh hoạt</span>
+    </div>
+  </div>
 
+  <!-- 2. SCANDINAVIAN LUXURY HEADER -->
   <header class="header">
     <div class="header__inner container">
+      
+      <!-- Brand Wordmark Logo -->
+      <a href="index.html#trang-chu" class="logo-scandi" aria-label="Endless Trang Chủ">
+        <span class="logo-scandi__name">ENDLESS</span><span class="logo-scandi__dot">.</span>
+      </a>
 
-
-      <a href="index.html#trang-chu" class="logo"><img src="img/T%C3%AAn%20th%C6%B0%C6%A1ng%20hi%E1%BB%87u.png" alt="Endless"></a>
-
-
+      <!-- Primary Navigation -->
       <nav class="nav" aria-label="Điều hướng chính">
-        <a href="index.html#trang-chu">Trang chủ</a>
+        <a href="index.html#trang-chu" class="nav__link active">Trang Chủ</a>
         <div class="nav-menu">
-          <button class="nav-menu__trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="productMegaMenu">Sản Phẩm <span aria-hidden="true">⌄</span></button>
+          <button class="nav-menu__trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="productMegaMenu">
+            Bộ Sưu Tập <span aria-hidden="true">⌄</span>
+          </button>
           <div class="mega-menu" id="productMegaMenu" aria-hidden="true">
             <div class="mega-menu__column">
               <h2>Khám phá</h2>
-              <a class="mega-menu__feature" href="index.html#san-pham"><span class="mega-menu__eyebrow">ENDLESS COLLECTION</span><strong>Tất cả sản phẩm</strong><span>Khám phá những thiết kế dành cho nhịp sống của bạn.</span></a>
+              <a class="mega-menu__feature" href="index.html#san-pham">
+                <span class="mega-menu__eyebrow">FALL / WINTER 2026</span>
+                <strong>Tất cả thiết kế</strong>
+                <span>Thời trang bền vững cho phong cách tối giản hằng ngày.</span>
+              </a>
             </div>
             <div class="mega-menu__column">
-              <h2>Áo</h2>
+              <h2>Áo Nam / Nữ</h2>
               <a href="index.html?category=ao#san-pham">Tất cả áo</a>
-              <a href="index.html?category=ao&amp;q=thun#san-pham">Áo thun</a>
-              <a href="index.html?category=ao&amp;q=sơ-mi#san-pham">Áo sơ mi</a>
-              <a href="index.html?category=ao&amp;q=khoác#san-pham">Áo khoác</a>
+              <a href="index.html?category=ao&amp;q=thun#san-pham">Áo thun cotton</a>
+              <a href="index.html?category=ao&amp;q=sơ-mi#san-pham">Áo sơ mi Oxford</a>
+              <a href="index.html?category=ao&amp;q=khoác#san-pham">Áo khoác bomber</a>
             </div>
             <div class="mega-menu__column">
-              <h2>Quần &amp; váy</h2>
-              <a href="index.html?category=quan#san-pham">Quần</a>
-              <a href="index.html?category=quan&amp;q=jean#san-pham">Quần jean</a>
-              <a href="index.html?category=vay#san-pham">Váy</a>
-              <a href="index.html?category=vay&amp;q=chân-váy#san-pham">Chân váy</a>
+              <h2>Quần &amp; Váy</h2>
+              <a href="index.html?category=quan#san-pham">Quần dài &amp; Shorts</a>
+              <a href="index.html?category=quan&amp;q=jean#san-pham">Quần jean slim</a>
+              <a href="index.html?category=vay#san-pham">Váy liền thân</a>
+              <a href="index.html?category=vay&amp;q=chân-váy#san-pham">Chân váy xếp ly</a>
             </div>
             <div class="mega-menu__column">
-              <h2>Phụ kiện</h2>
+              <h2>Phụ Kiện</h2>
               <a href="index.html?category=phukien#san-pham">Tất cả phụ kiện</a>
-              <a href="index.html?category=phukien&amp;q=mũ#san-pham">Mũ lưỡi trai</a>
-              <a href="index.html?category=phukien&amp;q=túi#san-pham">Túi tote</a>
-              <a href="index.html?category=phukien&amp;q=thắt-lưng#san-pham">Thắt lưng</a>
+              <a href="index.html?category=phukien&amp;q=mũ#san-pham">Mũ lưỡi trai canvas</a>
+              <a href="index.html?category=phukien&amp;q=túi#san-pham">Túi tote sợi dệt</a>
+              <a href="index.html?category=phukien&amp;q=thắt-lưng#san-pham">Thắt lưng da tự nhiên</a>
             </div>
           </div>
         </div>
-        <a href="checkout.html#thanh-toan">Thanh Toán</a>
-        <a href="checkout.html#lich-su">Lịch Sử Giao Dịch</a>
-        <a href="index.html#lien-he">Liên Hệ</a>
+        <a href="checkout.html#thanh-toan" class="nav__link">Thanh Toán</a>
+        <a href="checkout.html#lich-su" class="nav__link">Đơn Hàng</a>
+        <a href="#editorial-story" class="nav__link">Triết Lý</a>
       </nav>
 
-
+      <!-- Pill Search Box -->
       <div class="search-box">
-        <input type="search" id="searchInput" placeholder="Tìm tên, loại, màu, size..." aria-label="Tìm sản phẩm theo tên, loại, màu hoặc size" role="combobox" aria-autocomplete="list" aria-controls="searchSuggestions" aria-expanded="false">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="search" id="searchInput" placeholder="Tìm kiếm sản phẩm..." aria-label="Tìm sản phẩm theo tên, loại, màu hoặc size" role="combobox" aria-autocomplete="list" aria-controls="searchSuggestions" aria-expanded="false">
         <div class="search-suggestions" id="searchSuggestions" role="listbox"></div>
       </div>
 
-
+      <!-- Action Icons -->
       <div class="header__icons">
-        <a href="checkout.html#lich-su" class="icon-btn page-orders-shortcut" title="Thanh toán và lịch sử giao dịch" aria-label="Thanh toán và lịch sử giao dịch">↗</a>
-        <button id="wishlistBtn" class="icon-btn" title="Sản phẩm yêu thích">
-          <span id="wishlistIcon">♡</span> <span id="wishlistCount" class="badge">0</span>
+        <button id="wishlistBtn" class="icon-btn" title="Sản phẩm yêu thích" aria-label="Sản phẩm yêu thích">
+          <span id="wishlistIcon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></span>
+          <span id="wishlistCount" class="badge">0</span>
         </button>
-        <button id="cartBtn" class="icon-btn" title="Giỏ hàng">
-          <span id="cartIcon">🛍</span> <span id="cartCount" class="badge">0</span>
+        <button id="cartBtn" class="icon-btn" title="Giỏ hàng COD" aria-label="Giỏ hàng COD">
+          <span id="cartIcon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></span>
+          <span id="cartCount" class="badge">0</span>
         </button>
-        <div class="account-control" data-account-control><a class="account-signin" href="login.html" data-account-login><svg class="account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-2a8 8 0 0 1 16 0v2"></path></svg><span>Đăng nhập</span></a></div>
+        <div class="account-control" data-account-control>
+          <a class="account-signin" href="login.html" data-account-login>
+            <svg class="account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-2a8 8 0 0 1 16 0v2"></path></svg>
+            <span>Đăng nhập</span>
+          </a>
+        </div>
       </div>
 
     </div>
   </header>
 
-
-  <section class="hero" id="trang-chu">
-
-    <div class="hero__shape hero__shape--one" aria-hidden="true"></div>
-    <div class="hero__shape hero__shape--two" aria-hidden="true"></div>
-
-    <div class="hero__backdrop" role="img" aria-label="Bộ sưu tập mới của Endless">
-      <span class="hero__float-badge">
-        <strong>12+</strong> mẫu mới
-      </span>
-    </div>
-    <div class="container hero__inner">
-      <div class="hero__text">
-        <p class="hero__eyebrow"><span></span> ENDLESS / NEW DROP 01</p>
-        <h1 class="hero__title">Mặc theo<br><span>nhịp của bạn.</span></h1>
-        <p class="hero__desc">
-          Đồ mặc hằng ngày, chất liệu dễ chịu, kiểu dáng có chất riêng.
+  <!-- 3. HERO EDITORIAL (SCANDINAVIAN WARM MINIMAL) -->
+  <section class="hero-editorial" id="trang-chu">
+    <div class="hero-card">
+      <img src="img/banner-essentials.jpg" alt="Endless Fall/Winter 2026 Collection" class="hero-img">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span>BỘ SƯU TẬP THU ĐÔNG 2026</span>
+          <span class="hero-eyebrow__dot">•</span>
+          <span>SCANDINAVIAN WARMTH</span>
+        </div>
+        <h1 class="hero-title">Thời trang bền vững cho phong cách tối giản.</h1>
+        <p class="hero-desc">
+          Thiết kế chuẩn mực Bắc Âu với chất liệu sợi tự nhiên tuyển chọn, tôn vinh phom dáng thanh lịch và sự tự tin thoải mái trong từng nhịp sống thường ngày.
         </p>
-        <div class="hero__actions">
-          <a href="#san-pham" class="btn btn--primary">Xem bộ sưu tập <span aria-hidden="true">↗</span></a>
-          <a href="#lien-he" class="hero__link">Liên hệ cửa hàng</a>
+        <div class="hero-actions">
+          <a href="#san-pham" class="btn-hero-primary">Khám Phá Sản Phẩm <span aria-hidden="true">→</span></a>
+          <a href="#editorial-story" class="btn-hero-secondary">Câu Chuyện Endless</a>
         </div>
-
-
-        <ul class="hero__pills">
-          <li><span aria-hidden="true">🚚</span> Giao hàng toàn quốc</li>
-          <li><span aria-hidden="true">↩</span> Đổi trả trong 7 ngày</li>
-          <li><span aria-hidden="true">✓</span> Chất liệu đã qua kiểm định</li>
-        </ul>
       </div>
     </div>
   </section>
 
+  <!-- 4. CORE VALUES STRIP (4 GIÁ TRỊ CỐT LÕI) -->
+  <section class="values-strip">
+    <div class="container values-strip__inner">
+      <div class="value-item">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>
+        </div>
+        <div class="value-text">
+          <strong>Chất Liệu Sợi Tự Nhiên</strong>
+          <p>100% cotton compact &amp; linen mềm mát, an toàn và bền màu.</p>
+        </div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="m9.17 14.83-4.24 4.24"></path><circle cx="12" cy="12" r="4"></circle></svg>
+        </div>
+        <div class="value-text">
+          <strong>Phom Dáng Bắc Âu</strong>
+          <p>Tối giản chi tiết thừa, tôn tỷ lệ thanh lịch của dáng người Việt.</p>
+        </div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </div>
+        <div class="value-text">
+          <strong>Giao Hàng COD Toàn Quốc</strong>
+          <p>Đồng kiểm hàng tại nhà trước khi thanh toán tiền mặt an tâm 100%.</p>
+        </div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
+        </div>
+        <div class="value-text">
+          <strong>Đổi Trả Linh Hoạt 30 Ngày</strong>
+          <p>Hỗ trợ đổi kích cỡ nhanh chóng, miễn phí nếu không vừa vặn.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- 5. PRODUCTS & SHOP SECTION -->
   <section class="shop" id="san-pham">
-    <div class="container shop__inner">
-
-
-      <aside class="filters">
-        <h3>Bộ lọc</h3>
-
-        <div class="filter-group">
-          <h4>Danh mục</h4>
-          <label><input type="checkbox" class="filter-category" value="ao"> Áo</label>
-          <label><input type="checkbox" class="filter-category" value="quan"> Quần</label>
-          <label><input type="checkbox" class="filter-category" value="vay"> Váy</label>
-          <label><input type="checkbox" class="filter-category" value="phukien"> Phụ kiện</label>
+    <div class="container">
+      
+      <!-- Section Header -->
+      <div class="shop-header">
+        <div class="shop-header__text">
+          <span class="section-badge">ESSENTIALS</span>
+          <h2 class="section-title">Sản Phẩm Mới Nhất</h2>
+          <p class="section-subtitle">Dệt may từ chất liệu sợi tự nhiên, giữ phom dáng chuẩn mực cho tủ đồ con nhộng của bạn.</p>
         </div>
 
-        <div class="filter-group">
-          <h4>Kích cỡ</h4>
-          <div class="filter-options filter-sizes" id="filterSizes"></div>
+        <!-- Quick Category Tabs (Scandinavian Style) -->
+        <div class="category-tabs" id="categoryTabs">
+          <button type="button" class="category-tab active" data-category="all">Tất cả (12)</button>
+          <button type="button" class="category-tab" data-category="ao">Áo</button>
+          <button type="button" class="category-tab" data-category="quan">Quần</button>
+          <button type="button" class="category-tab" data-category="vay">Váy</button>
+          <button type="button" class="category-tab" data-category="phukien">Phụ kiện</button>
         </div>
-
-        <div class="filter-group">
-          <h4>Màu sắc</h4>
-          <div class="filter-options filter-colors" id="filterColors"></div>
-        </div>
-
-        <div class="filter-group">
-          <h4>Khoảng giá</h4>
-          <label><input type="radio" name="priceRange" class="filter-price" value="all" checked> Tất cả</label>
-          <label><input type="radio" name="priceRange" class="filter-price" value="0-200000"> Dưới 200.000đ</label>
-          <label><input type="radio" name="priceRange" class="filter-price" value="200000-350000"> 200.000đ - 350.000đ</label>
-          <label><input type="radio" name="priceRange" class="filter-price" value="350000-999999999"> Trên 350.000đ</label>
-        </div>
-
-        <button id="resetFilterBtn" class="btn btn--ghost">Xóa lọc</button>
-      </aside>
-
-
-      <div class="shop__main">
-        <div class="shop__toolbar">
-          <p id="resultCount">Đang tải sản phẩm…</p>
-          <select id="sortSelect">
-            <option value="default">Mới nhất</option>
-            <option value="asc">Giá: Thấp đến cao</option>
-            <option value="desc">Giá: Cao đến thấp</option>
-          </select>
-        </div>
-
-
-        <p id="catalogStatus" role="status" aria-live="polite">Đang tải sản phẩm từ cửa hàng…</p>
-        <button type="button" id="retryCatalog" class="btn btn--ghost" hidden>Thử tải lại sản phẩm</button>
-        <p id="catalogNotice" class="catalog-notice" role="status"></p>
-        <div class="product-grid" id="productGrid" aria-busy="true"></div>
       </div>
 
+      <div class="shop__inner">
+        <!-- Sidebar Filters -->
+        <aside class="filters" id="shopFilters">
+          <div class="filters-header">
+            <h3>Bộ lọc</h3>
+            <button id="resetFilterBtn" class="btn-reset-filter" title="Xóa tất cả tiêu chí lọc">Xóa lọc</button>
+          </div>
+
+          <div class="filter-group">
+            <h4>Danh mục</h4>
+            <label class="custom-checkbox"><input type="checkbox" class="filter-category" value="ao"> <span>Áo (Thun, Sơ mi, Khoác)</span></label>
+            <label class="custom-checkbox"><input type="checkbox" class="filter-category" value="quan"> <span>Quần (Jeans, Kaki)</span></label>
+            <label class="custom-checkbox"><input type="checkbox" class="filter-category" value="vay"> <span>Váy (Chân váy, Đầm)</span></label>
+            <label class="custom-checkbox"><input type="checkbox" class="filter-category" value="phukien"> <span>Phụ kiện (Mũ, Túi)</span></label>
+          </div>
+
+          <div class="filter-group">
+            <h4>Kích cỡ (Size)</h4>
+            <div class="filter-options filter-sizes" id="filterSizes"></div>
+          </div>
+
+          <div class="filter-group">
+            <h4>Màu sắc</h4>
+            <div class="filter-options filter-colors" id="filterColors"></div>
+          </div>
+
+          <div class="filter-group">
+            <h4>Khoảng giá</h4>
+            <label class="custom-radio"><input type="radio" name="priceRange" class="filter-price" value="all" checked> <span>Tất cả mức giá</span></label>
+            <label class="custom-radio"><input type="radio" name="priceRange" class="filter-price" value="0-200000"> <span>Dưới 200.000₫</span></label>
+            <label class="custom-radio"><input type="radio" name="priceRange" class="filter-price" value="200000-350000"> <span>200.000₫ - 350.000₫</span></label>
+            <label class="custom-radio"><input type="radio" name="priceRange" class="filter-price" value="350000-999999999"> <span>Trên 350.000₫</span></label>
+          </div>
+        </aside>
+
+        <!-- Main Product Area -->
+        <div class="shop__main">
+          <div class="shop__toolbar">
+            <p id="resultCount">Đang tải sản phẩm…</p>
+            <div class="toolbar-actions">
+              <label for="sortSelect" class="sort-label">Sắp xếp:</label>
+              <select id="sortSelect" class="sort-select">
+                <option value="default">Mới nhất</option>
+                <option value="asc">Giá: Thấp đến cao</option>
+                <option value="desc">Giá: Cao đến thấp</option>
+              </select>
+            </div>
+          </div>
+
+          <p id="catalogStatus" role="status" aria-live="polite">Đang tải sản phẩm từ cửa hàng…</p>
+          <button type="button" id="retryCatalog" class="btn btn--ghost" hidden>Thử tải lại sản phẩm</button>
+          <p id="catalogNotice" class="catalog-notice" role="status"></p>
+          <div class="product-grid" id="productGrid" aria-busy="true"></div>
+        </div>
+      </div>
     </div>
   </section>
 
+  <!-- 6. EDITORIAL STORY (NORDIC SLOW LIVING) -->
+  <section class="editorial-story" id="editorial-story">
+    <div class="container editorial-story__inner">
+      <div class="story-left">
+        <span class="story-eyebrow">TRIẾT LÝ THIẾT KẾ</span>
+        <blockquote class="story-quote">
+          “Vẻ đẹp đích thực luôn bắt đầu từ sự giản đơn.”
+        </blockquote>
+        <p class="story-body">
+          Chúng tôi không thiết kế những sản phẩm chạy theo xu hướng ngắn hạn. Endless tạo ra những món đồ gắn bó với bạn mỗi ngày — được chăm chút từng đường may mũi chỉ, chất liệu tự nhiên êm dịu và phom dáng bền bỉ theo thời gian.
+        </p>
+        <div class="story-signature">
+          <strong>ENDLESS DESIGN STUDIO</strong>
+          <span>Copenhagen &amp; Hanoi · Est. 2026</span>
+        </div>
+      </div>
 
+      <div class="story-right">
+        <div class="story-card">
+          <span class="story-card__num">01</span>
+          <h4>Sợi Bông Thuần Khiết</h4>
+          <p>Sợi bông chải kỹ mật độ cao, xử lý chống co rút và giữ sắc màu tự nhiên.</p>
+        </div>
+        <div class="story-card">
+          <span class="story-card__num">02</span>
+          <h4>Quy Trình Sinh Thái</h4>
+          <p>Màu nhuộm đạt chứng nhận an toàn, không chứa kim loại nặng gây hại da.</p>
+        </div>
+        <div class="story-card">
+          <span class="story-card__num">03</span>
+          <h4>Bao Bì Tái Chế 100%</h4>
+          <p>Hộp giấy kraft mộc mạc, nói không với túi nilon và chất thải nhựa dư thừa.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. PRIVILEGE CLUB BANNER -->
+  <section class="club-banner">
+    <div class="container club-banner__inner">
+      <div class="club-text">
+        <span class="club-tag">ĐẶC QUYỀN THÀNH VIÊN</span>
+        <h3>Gia nhập Endless Club</h3>
+        <p>Nhận ngay voucher giảm <strong>10%</strong> cho đơn hàng đầu tiên (Mã: <code>ENDLESS10</code>) và quyền cập nhật sớm vào các đợt phát hành mới.</p>
+      </div>
+      <form class="club-form" onsubmit="event.preventDefault(); alert('Cảm ơn bạn đã đăng ký nhận tin! Hãy dùng mã ENDLESS10 khi đặt hàng COD.');">
+        <input type="email" placeholder="Nhập địa chỉ email của bạn..." required>
+        <button type="submit">Đăng Ký ↗</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- 8. SCANDINAVIAN FOOTER -->
   <footer class="footer" id="lien-he">
     <div class="container footer__inner">
-      <div>
-        <p class="logo logo--footer"><img src="img/T%C3%AAn%20th%C6%B0%C6%A1ng%20hi%E1%BB%87u.png" alt="Endless"></p>
-        <p>Thời trang tối giản cho cuộc sống thường ngày.</p>
+      <div class="footer-col footer-col--brand">
+        <div class="logo-scandi logo-scandi--footer">
+          <span class="logo-scandi__name">ENDLESS</span><span class="logo-scandi__dot">.</span>
+        </div>
+        <p class="footer-desc">Thời trang phong cách Bắc Âu tối giản, thanh lịch và bền vững cho nhịp sống hiện đại.</p>
+        <div class="footer-badges">
+          <span class="badge-pill">Thanh toán COD</span>
+          <span class="badge-pill">Đổi trả 30 ngày</span>
+          <span class="badge-pill">100% Sợi Tự Nhiên</span>
+        </div>
       </div>
-      <div>
-        <h4>Liên hệ</h4>
-        <p>Email: EndlessGroup@gmail.com</p>
-        <p>Điện thoại: 0971438198</p>
-        <p>Địa chỉ: 84, Đường ABC, Hà Nội</p>
+
+      <div class="footer-col">
+        <h4>Bộ Sưu Tập</h4>
+        <ul class="footer-links">
+          <li><a href="index.html?category=ao#san-pham">Áo thun &amp; Sơ mi</a></li>
+          <li><a href="index.html?category=quan#san-pham">Quần Jeans &amp; Kaki</a></li>
+          <li><a href="index.html?category=vay#san-pham">Váy đầm tối giản</a></li>
+          <li><a href="index.html?category=phukien#san-pham">Phụ kiện &amp; Mũ túi</a></li>
+        </ul>
       </div>
-      <div>
-        <h4>Chính sách</h4>
-        <p>Chính sách đổi trả</p>
-        <p>Chính sách vận chuyển</p>
-        <p>Hướng dẫn chọn size</p>
-        <p><a href="checkout.html#lich-su">Lịch sử giao dịch</a></p>
+
+      <div class="footer-col">
+        <h4>Hỗ Trợ Khách Hàng</h4>
+        <ul class="footer-links">
+          <li><a href="checkout.html#thanh-toan">Chính sách giao nhận COD</a></li>
+          <li><a href="checkout.html#lich-su">Tra cứu lịch sử đơn hàng</a></li>
+          <li><a href="javascript:void(0)" onclick="openSizeGuide()">Hướng dẫn chọn kích cỡ</a></li>
+          <li><a href="javascript:void(0)">Chính sách đổi trả &amp; bảo hành</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Liên Hệ Cửa Hàng</h4>
+        <p class="contact-line"><strong>Hotline:</strong> 0971 438 198</p>
+        <p class="contact-line"><strong>Email:</strong> contact@endless.vn</p>
+        <p class="contact-line"><strong>Showroom:</strong> 84 Phố Huế, Hoàn Kiếm, Hà Nội</p>
+        <p class="contact-line"><strong>Giờ mở cửa:</strong> 09:00 - 21:30 hàng ngày</p>
       </div>
     </div>
-    <p class="footer__bottom">© 2026 Endless Store. Cửa Hàng Thời Trang Online.</p>
+
+    <div class="footer__bottom container">
+      <p>© 2026 Endless Store. Thiết kế theo tiêu chuẩn Scandinavian Warm Minimal.</p>
+      <div class="footer-bottom-links">
+        <a href="#trang-chu">Về đầu trang ↑</a>
+      </div>
+    </div>
   </footer>
 
-
+  <!-- MODALS & DRAWERS -->
   <div class="overlay" id="productOverlay"></div>
   <div class="product-modal" id="productModal">
     <button class="modal-close" id="closeProductModal">✕</button>
-    <div class="product-modal__content" id="productModalContent">
-
-    </div>
+    <div class="product-modal__content" id="productModalContent"></div>
   </div>
-
 
   <div class="overlay" id="sizeOverlay"></div>
   <div class="size-modal" id="sizeModal">
     <button class="modal-close" id="closeSizeModal">✕</button>
-    <h3>Hướng dẫn chọn size</h3>
-    <table class="size-table" id="sizeTable">
-
-    </table>
+    <h3>Hướng dẫn chọn kích cỡ</h3>
+    <table class="size-table" id="sizeTable"></table>
   </div>
-
 
   <div class="overlay" id="cartOverlay"></div>
   <aside class="cart-drawer" id="cartDrawer">
     <div class="cart-drawer__header">
-      <h3>Giỏ hàng</h3>
+      <h3>Giỏ hàng của bạn</h3>
       <button class="modal-close" id="closeCartDrawer">✕</button>
     </div>
 
-    <div class="cart-items" id="cartItems">
-
-    </div>
+    <div class="cart-items" id="cartItems"></div>
 
     <div class="cart-drawer__footer">
       <div class="voucher-box">
@@ -236,13 +386,12 @@
 
       <div class="cart-total">
         <span>Tổng cộng</span>
-        <span id="cartTotal">0đ</span>
+        <span id="cartTotal">0₫</span>
       </div>
 
-      <button id="checkoutBtn" class="btn btn--primary btn--full">Tiến hành đặt hàng</button>
+      <button id="checkoutBtn" class="btn btn--primary btn--full">Tiến hành đặt hàng COD</button>
     </div>
   </aside>
-
 
   <div class="overlay" id="wishlistOverlay"></div>
   <aside class="cart-drawer" id="wishlistDrawer">
@@ -250,11 +399,31 @@
       <h3>Sản phẩm yêu thích</h3>
       <button class="modal-close" id="closeWishlistDrawer">✕</button>
     </div>
-    <div class="cart-items" id="wishlistItems">
-
-    </div>
+    <div class="cart-items" id="wishlistItems"></div>
   </aside>
 
+  <!-- Quick Category Tabs Handler -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabs = document.querySelectorAll('.category-tab');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          tabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          const cat = this.getAttribute('data-category');
+
+          const categoryBoxes = document.querySelectorAll('.filter-category');
+          categoryBoxes.forEach(box => {
+            box.checked = (cat !== 'all' && box.value === cat);
+          });
+
+          if (typeof updateProductGrid === 'function') {
+            updateProductGrid();
+          }
+        });
+      });
+    });
+  </script>
 
   <script src="js/config.js"></script>
   <script src="js/navigation.js"></script>
@@ -262,5 +431,6 @@
   <script src="js/catalog.js"></script>
   <script src="js/app.js"></script>
   <script src="js/account.js"></script>
+  <script src="js/chatbot.js?v=1.0"></script>
 </body>
 </html>

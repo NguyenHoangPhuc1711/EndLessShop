@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Endless Admin | Trung Tâm Điều Hành Quản Trị</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #FAF9F5;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F2EFE9;
+      --text-main: #141413;
+      --text-muted: #6E6D68;
+      --text-light: #9C9A93;
+      --border-hairline: rgba(20, 20, 19, 0.08);
+      --border-strong: rgba(20, 20, 19, 0.16);
+      --accent-olive: #2C3527;
+      --accent-warm: #C07B57;
+      --success: #1E7E34;
+      --warning: #B45309;
+      --info: #1E40AF;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* TOP NOTICE BAR */
+    .admin-top-strip {
+      background: var(--text-main);
+      color: #FFF;
+      padding: 8px 24px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .admin-top-strip a {
+      color: #FAF9F5;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+
+    /* MAIN ADMIN LAYOUT */
+    .admin-wrapper {
+      display: flex;
+      min-height: calc(100vh - 35px);
+    }
+
+    /* SIDEBAR */
+    .admin-sidebar {
+      width: 260px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-hairline);
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: calc(100vh - 35px);
+      overflow-y: auto;
+    }
+    .admin-brand {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 32px;
+      padding-left: 10px;
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+    .brand-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .menu-item:hover, .menu-item.active {
+      background: var(--bg-base);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+    .menu-badge {
+      margin-left: auto;
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+    .menu-badge.badge-alert {
+      background: #FEF3C7;
+      color: var(--warning);
+    }
+
+    .sidebar-footer {
+      padding-top: 20px;
+      border-top: 1px solid var(--border-hairline);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar-box {
+      width: 38px;
+      height: 38px;
+      background: var(--accent-olive);
+      color: #FFF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .user-info { font-size: 13px; line-height: 1.3; }
+    .user-info strong { display: block; color: var(--text-main); }
+    .user-info span { font-size: 11px; color: var(--text-muted); }
+
+    /* CONTENT AREA */
+    .admin-main {
+      flex: 1;
+      padding: 36px 44px;
+      overflow-y: auto;
+    }
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 32px;
+    }
+    .main-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .main-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 12px;
+    }
+    .btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-outline {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      color: var(--text-main);
+    }
+    .btn-outline:hover { background: var(--bg-subtle); }
+    .btn-dark {
+      background: var(--text-main);
+      border: 1px solid var(--text-main);
+      color: #FFFFFF;
+    }
+    .btn-dark:hover { background: #000; }
+
+    /* KPI METRICS */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 4px;
+      padding: 20px;
+      transition: var(--transition);
+    }
+    .kpi-card:hover { border-color: var(--border-strong); }
+    .kpi-label { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+    .kpi-val { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin: 6px 0; font-family: var(--font-sans); }
+    .kpi-note {
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .note-green { color: var(--success); }
+    .note-amber { color: var(--warning); }
+
+    /* SECTIONS */
+    .tab-section { display: none; }
+    .tab-section.active { display: block; animation: fadeUp 0.25s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* CARD CONTAINER */
+    .card-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 4px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+    .panel-title { font-size: 16px; font-weight: 600; }
+
+    /* FILTERS & SEARCH */
+    .panel-controls {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .search-input {
+      background: var(--bg-base);
+      border: 1px solid var(--border-hairline);
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      outline: none;
+      width: 260px;
+      font-family: inherit;
+    }
+    .search-input:focus { border-color: var(--text-main); }
+    .filter-pills { display: flex; gap: 6px; }
+    .pill {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .pill.active, .pill:hover {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+    }
+
+    /* DATA TABLE */
+    .table-container { width: 100%; overflow-x: auto; }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    .admin-table th {
+      background: var(--bg-base);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+    .admin-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-hairline);
+      color: var(--text-main);
+    }
+    .admin-table tr:hover td { background: rgba(0,0,0,0.015); }
+
+    .code-mono {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .tag-pending { background: #FEF3C7; color: #92400E; }
+    .tag-delivering { background: #DBEAFE; color: #1E40AF; }
+    .tag-completed { background: #D1FAE5; color: #065F46; }
+    .tag-cancelled { background: #FEE2E2; color: #991B1B; }
+
+    .btn-group { display: flex; gap: 8px; }
+    .btn-sm {
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-sm:hover {
+      background: var(--text-main);
+      color: #FFF;
+      border-color: var(--text-main);
+    }
+    .btn-sm-primary {
+      background: var(--accent-olive);
+      color: #FFF;
+      border-color: var(--accent-olive);
+    }
+    .btn-sm-primary:hover { background: #1C2319; }
+
+    /* TOAST ALERT */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--text-main);
+      color: #FFF;
+      padding: 12px 20px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      display: none;
+      z-index: 9999;
+    }
+
+    /* MODAL DIALOG */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 20, 19, 0.45);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.2s ease;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-dialog {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+      animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes scaleUp {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-header {
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-base);
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      line-height: 1;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+    .modal-close:hover {
+      color: var(--text-main);
+      background: var(--border-hairline);
+    }
+    .modal-body { padding: 24px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .form-label span.req { color: #DC2626; }
+    .form-input, .form-select {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: var(--font-sans);
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      background: #FFF;
+      color: var(--text-main);
+      transition: var(--transition);
+    }
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--text-main);
+      box-shadow: 0 0 0 3px rgba(20, 20, 19, 0.08);
+    }
+    .form-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+    .input-addon-wrap {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+    .input-addon-wrap .form-input { padding-right: 48px; }
+    .input-addon {
+      position: absolute;
+      right: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .modal-footer {
+      padding: 16px 24px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-top: 1px solid var(--border-hairline);
+      background: var(--bg-base);
+    }
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printableOrderBill, #printableOrderBill * {
+        visibility: visible !important;
+      }
+      #printableOrderBill {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 24px !important;
+        background: #fff !important;
+        color: #000 !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+      #orderQuickActions, .modal-header, .modal-footer, .modal-backdrop {
+        background: transparent !important;
+      }
+      #orderQuickActions {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP STRIP -->
+  <div class="admin-top-strip">
+    <div>
+      🛡️ <strong>Hệ Thống Quản Trị EndLess Shop</strong> &nbsp;·&nbsp; Phiên bản Kiến trúc: ASP.NET Core &amp; MS SQL Server
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <a href="index.html">← Quay lại Cửa Hàng (Storefront)</a>
+      <span style="opacity: 0.3;">|</span>
+      <a href="javascript:void(0)" onclick="handleAdminLogout()" style="color: #FCA5A5; text-decoration: none; font-weight: 600;">Đăng xuất ⇥</a>
+    </div>
+  </div>
+
+  <div class="admin-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <span class="brand-title">Endless.</span>
+        <span class="brand-tag">Quản Trị</span>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item active" onclick="showTab('orders')">
+          <span>📦 Đơn Hàng COD</span>
+          <span class="menu-badge badge-alert" id="pendingCountBadge">0</span>
+        </li>
+        <li class="menu-item" onclick="showTab('products')">
+          <span>👕 Sản Phẩm &amp; Tồn Kho</span>
+          <span class="menu-badge" id="productsCountBadge">0</span>
+        </li>
+        <li class="menu-item" onclick="showTab('vouchers')">
+          <span>🏷️ Mã Giảm Giá</span>
+          <span class="menu-badge" id="vouchersCountBadge">0</span>
+        </li>
+        <li class="menu-item" onclick="showTab('customers')">
+          <span>👥 Khách Hàng</span>
+          <span class="menu-badge" id="customersCountBadge">0</span>
+        </li>
+        <li class="menu-item" onclick="showTab('settings')">
+          <span>⚙️ CSDL &amp; Hệ Thống</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+          <div class="avatar-box" id="adminAvatar">AD</div>
+          <div class="user-info" style="flex: 1; min-width: 0;">
+            <strong id="adminName" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Quản Trị Viên</strong>
+            <span id="adminUsernameBadge" style="font-family: var(--font-mono); font-size: 11px;">@admin</span>
+          </div>
+          <button type="button" class="btn-sm" style="color: #991B1B; border-color: rgba(153, 27, 27, 0.2); padding: 4px 8px; font-size: 11px;" onclick="handleAdminLogout()" title="Đăng xuất khỏi trang quản trị">
+            Thoát
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+      <div class="main-header">
+        <div>
+          <h1 id="tabTitle">Quản Lý Đơn Hàng COD</h1>
+          <p id="tabSubtitle">Dữ liệu được cập nhật tự động từ cơ sở dữ liệu MS SQL Server 2022.</p>
+        </div>
+        <div class="top-actions">
+          <button class="btn btn-outline" onclick="showToast('Đang làm mới dữ liệu từ server...')">🔄 Làm Mới</button>
+          <button class="btn btn-dark" onclick="showToast('Đã xuất báo cáo đơn hàng Excel')">📥 Xuất Báo Cáo</button>
+        </div>
+      </div>
+
+      <!-- KPI METRICS ROW -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-label">Doanh Thu Hôm Nay</div>
+          <div class="kpi-val" id="kpiRevenueVal">0₫</div>
+          <div class="kpi-note note-green">✓ Ghi nhận CSDL MS SQL</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Đơn Chờ Xử Lý (COD)</div>
+          <div class="kpi-val" id="kpiPendingVal">0 Đơn</div>
+          <div class="kpi-note note-amber">⚡ Cần chuẩn bị hàng ngay</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Tổng Tồn Kho Có Thể Bán</div>
+          <div class="kpi-val" id="kpiStockVal">0 Chiếc</div>
+          <div class="kpi-note note-green">✓ Mức tồn kho hệ thống</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Voucher Đang Áp Dụng</div>
+          <div class="kpi-val" id="kpiVouchersVal">0 Mã</div>
+          <div class="kpi-note">Ưu đãi kích hoạt</div>
+        </div>
+      </div>
+
+      <!-- TAB 1: ORDERS -->
+      <section id="tab-orders" class="tab-section active">
+        <div class="card-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Danh Sách Đơn Hàng COD Cần Xử Lý</h2>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Quản lý toàn bộ tiến trình đơn hàng COD, thu hộ tiền mặt và in phiếu giao hàng.</p>
+            </div>
+            <div class="panel-controls">
+              <input type="text" class="search-input" id="orderSearch" placeholder="Tìm theo mã đơn, khách, SĐT..." onkeyup="filterOrders()">
+              <div class="filter-pills" id="orderFilterPills">
+                <button class="pill active" data-status="all" onclick="setOrderFilter('all', this)">Tất cả (<span id="countOrderAll">0</span>)</button>
+                <button class="pill" data-status="cho_xu_ly" onclick="setOrderFilter('cho_xu_ly', this)">Chờ xử lý (<span id="countOrderPending">0</span>)</button>
+                <button class="pill" data-status="dang_giao" onclick="setOrderFilter('dang_giao', this)">Đang giao (<span id="countOrderDelivering">0</span>)</button>
+                <button class="pill" data-status="hoan_thanh" onclick="setOrderFilter('hoan_thanh', this)">Đã thu COD (<span id="countOrderCompleted">0</span>)</button>
+                <button class="pill" data-status="da_huy" onclick="setOrderFilter('da_huy', this)">Đã hủy (<span id="countOrderCancelled">0</span>)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="admin-table" id="ordersTable">
+              <thead>
+                <tr>
+                  <th>Mã đơn</th>
+                  <th>Thời điểm đặt</th>
+                  <th>Người nhận hàng</th>
+                  <th>Số điện thoại &amp; Địa chỉ</th>
+                  <th>Tổng tiền COD</th>
+                  <th>Mã Voucher</th>
+                  <th>Trạng thái</th>
+                  <th style="text-align: right;">Thao tác duyệt</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTbody">
+                <tr>
+                  <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">Đang tải danh sách đơn hàng COD từ cơ sở dữ liệu...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: PRODUCTS & INVENTORY -->
+      <section id="tab-products" class="tab-section">
+        <div class="card-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Quản Lý Sản Phẩm &amp; Tồn Kho Thời Gian Thực</h2>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Dữ liệu sản phẩm cập nhật trực tiếp từ CSDL MS SQL Server.</p>
+            </div>
+            <div class="panel-controls" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <input type="text" class="search-input" id="productSearch" placeholder="Tìm tên sản phẩm, danh mục..." onkeyup="filterProducts()">
+              <div class="filter-pills" id="productFilterPills">
+                <button class="pill active" data-cat="all" onclick="setProductFilter('all', this)">Tất cả (<span id="countProdAll">0</span>)</button>
+                <button class="pill" data-cat="ao" onclick="setProductFilter('ao', this)">Áo (<span id="countProdAo">0</span>)</button>
+                <button class="pill" data-cat="quan" onclick="setProductFilter('quan', this)">Quần (<span id="countProdQuan">0</span>)</button>
+                <button class="pill" data-cat="vay" onclick="setProductFilter('vay', this)">Váy (<span id="countProdVay">0</span>)</button>
+                <button class="pill" data-cat="phukien" onclick="setProductFilter('phukien', this)">Phụ kiện (<span id="countProdPhukien">0</span>)</button>
+              </div>
+              <button class="btn btn-outline" onclick="loadProducts()">🔄 Làm Mới</button>
+              <button class="btn btn-dark" onclick="openCreateProductModal()">+ Thêm Sản Phẩm</button>
+            </div>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Hình ảnh</th>
+                  <th>Tên sản phẩm</th>
+                  <th>Danh mục</th>
+                  <th>Giá niêm yết</th>
+                  <th>Tồn kho</th>
+                  <th>Kích cỡ</th>
+                  <th>Trạng thái</th>
+                  <th style="text-align: right;">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="productsTbody">
+                <tr>
+                  <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 24px;">Đang tải danh sách sản phẩm...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: VOUCHERS -->
+      <section id="tab-vouchers" class="tab-section">
+        <div class="card-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Quản Lý Mã Khuyến Mãi (Voucher)</h2>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Cấu hình các mã khuyến mãi áp dụng khi khách hàng đặt COD.</p>
+            </div>
+            <button class="btn btn-dark" onclick="openCreateVoucherModal()">+ Tạo Mã Mới</button>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Mã code</th>
+                  <th>Loại giảm</th>
+                  <th>Giá trị giảm</th>
+                  <th>Hạn sử dụng</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="vouchersTbody">
+                <tr>
+                  <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">Đang tải danh sách mã giảm giá...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: CUSTOMERS -->
+      <section id="tab-customers" class="tab-section">
+        <div class="card-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Danh Sách Tài Khoản Khách Hàng</h2>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Dữ liệu tài khoản người dùng đăng ký trên hệ thống EndLess Shop (MS SQL Server).</p>
+            </div>
+            <button class="btn btn-outline" onclick="loadCustomers()">🔄 Làm Mới</button>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tên đăng nhập</th>
+                  <th>Họ và tên</th>
+                  <th>Email</th>
+                  <th>Số điện thoại</th>
+                  <th>Phân quyền</th>
+                  <th>Trạng thái</th>
+                  <th style="text-align: right;">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="customersTbody">
+                <tr>
+                  <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">Đang tải danh sách tài khoản...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: SYSTEM & SQL -->
+      <section id="tab-settings" class="tab-section">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Thông Số Kết Nối &amp; Bảo Mật Hệ Thống</h2>
+          </div>
+          <div style="font-size: 14px; line-height: 1.8;">
+            <p><strong>Cơ sở dữ liệu:</strong> Microsoft SQL Server 2022 (Linux Container Engine)</p>
+            <p><strong>Database Name:</strong> <code>web_thoi_trang</code> (Chuẩn 3NF - 6 bảng nghiệp vụ + 1 bảng phiên)</p>
+            <p><strong>Backend Engine:</strong> ASP.NET Core (.NET 8/9 LTS) / Node.js Express Runtime</p>
+            <p><strong>Giao dịch Đơn hàng:</strong> <code>dbo.order_checkout</code> có khóa <code>sp_getapplock</code> &amp; <code>UPDLOCK, HOLDLOCK</code> chống tranh mua sản phẩm cuối.</p>
+            <p><strong>Bảo mật Mật khẩu:</strong> Argon2id Salted Hash (MemoryCost: 64MiB, TimeCost: 3)</p>
+            <p><strong>Chống tấn công:</strong> Anti-CSRF Synchronizer Token, Rate Limiting đa tầng theo IP và Account ID.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL: TẠO VOUCHER MỚI -->
+  <div id="voucherModal" class="modal-backdrop" onclick="if(event.target===this) closeCreateVoucherModal()">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h3 id="modalTitle" class="modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+          Tạo Mã Giảm Giá Mới
+        </h3>
+        <button type="button" class="modal-close" onclick="closeCreateVoucherModal()" aria-label="Đóng">&times;</button>
+      </div>
+      <form id="createVoucherForm" onsubmit="handleCreateVoucher(event)">
+        <div class="modal-body">
+          <div id="voucherFormError" style="display:none; padding:10px 14px; background:#FEE2E2; color:#991B1B; border-radius:4px; font-size:13px; margin-bottom:16px;"></div>
+
+          <div class="form-group">
+            <label class="form-label" for="voucherCodeInput">Mã Khuyến Mãi (Code) <span class="req">*</span></label>
+            <input type="text" id="voucherCodeInput" class="form-input code-mono" placeholder="VD: SUMMER20, FREESHIP50" maxlength="30" required style="text-transform: uppercase;" autocomplete="off">
+            <div class="form-hint">Mã từ 1–30 ký tự (chữ in hoa, số, gạch dưới hoặc nối). Tự động viết hoa.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="voucherTypeSelect">Hình Thức Giảm Giá <span class="req">*</span></label>
+            <select id="voucherTypeSelect" class="form-select" onchange="updateVoucherValueAddon()">
+              <option value="percent">Giảm theo tỷ lệ phần trăm (%)</option>
+              <option value="fixed">Giảm trừ số tiền cố định (₫)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="voucherValueInput">Giá Trị Giảm <span class="req">*</span></label>
+            <div class="input-addon-wrap">
+              <input type="number" id="voucherValueInput" class="form-input" placeholder="VD: 15" min="1" max="100" required>
+              <span id="voucherValueAddon" class="input-addon">%</span>
+            </div>
+            <div id="voucherValueHint" class="form-hint">Nhập số phần trăm giảm từ 1% đến 100%.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="voucherExpiryInput">Hạn Sử Dụng</label>
+            <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
+              <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+                <input type="checkbox" id="voucherNoExpiryCheck" checked onchange="toggleVoucherExpiryInput()">
+                <span>Vô thời hạn (Không bao giờ hết hạn)</span>
+              </label>
+            </div>
+            <input type="date" id="voucherExpiryInput" class="form-input" style="display: none;">
+            <div class="form-hint" id="voucherExpiryHint">Mã sẽ áp dụng vô thời hạn cho tới khi bạn gỡ bỏ.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeCreateVoucherModal()">Hủy Bỏ</button>
+          <button type="submit" id="btnSubmitVoucher" class="btn btn-dark">Lưu Mã Giảm Giá</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: KHÔI PHỤC MẬT KHẨU KHÁCH HÀNG -->
+  <div id="resetPasswordModal" class="modal-backdrop" onclick="if(event.target===this) closeResetPasswordModal()">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="resetModalTitle">
+      <div class="modal-header">
+        <h3 id="resetModalTitle" class="modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Khôi Phục Mật Khẩu Khách Hàng
+        </h3>
+        <button type="button" class="modal-close" onclick="closeResetPasswordModal()" aria-label="Đóng">&times;</button>
+      </div>
+      <form id="resetPasswordForm" onsubmit="handleResetCustomerPassword(event)">
+        <div class="modal-body">
+          <div style="background: var(--bg-base); padding: 14px; border-radius: 6px; border: 1px solid var(--border-hairline); margin-bottom: 18px;">
+            <div style="font-size: 13.5px; margin-bottom: 4px;">Khách hàng: <strong id="resetCustomerName">—</strong> (<code id="resetCustomerUsername" style="font-size: 13px;">@—</code>)</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Email: <span id="resetCustomerEmail">—</span> | ID: <span id="resetCustomerId">#—</span></div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label for="newCustomerPasswordInput" class="form-label" style="margin-bottom: 0;">Mật khẩu mới</label>
+              <button type="button" class="btn btn-outline" style="padding: 3px 8px; font-size: 11px;" onclick="generateRandomCustomerPassword()">🎲 Tạo Ngẫu Nhiên</button>
+            </div>
+            <input type="text" id="newCustomerPasswordInput" class="form-input" placeholder="Tối thiểu 10 ký tự (hoặc bấm Tạo ngẫu nhiên)" required minlength="10" maxlength="128" style="font-family: var(--font-mono); font-size: 13.5px;">
+            <div class="form-hint">
+              Mật khẩu mới sẽ được mã hóa chuẩn <strong>Argon2id Salted Hash</strong> trước khi lưu vào CSDL MS SQL Server.
+            </div>
+          </div>
+
+          <div style="margin-top: 10px; margin-bottom: 8px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer; color: var(--text-main);">
+              <input type="checkbox" id="copyPasswordAfterReset" checked>
+              <span>Tự động sao chép mật khẩu mới vào bộ nhớ đệm (Clipboard)</span>
+            </label>
+          </div>
+
+          <div id="resetSuccessBox" style="display: none; margin-top: 14px; padding: 12px 14px; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 6px; font-size: 13px; color: #065F46;">
+            <div style="font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+              <span>✓ Đã đổi mật khẩu thành công!</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+              <span>Mật khẩu mới:</span>
+              <strong id="resetResultPassword" style="font-family: var(--font-mono); background: #FFF; padding: 3px 8px; border-radius: 4px; border: 1px solid #A7F3D0; font-size: 13.5px; color: #047857;">—</strong>
+            </div>
+            <div style="margin-top: 6px; font-size: 11.5px; color: #047857;">Bạn có thể sao chép và gửi mật khẩu này cho khách hàng để họ đăng nhập lại.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeResetPasswordModal()">Đóng</button>
+          <button type="submit" id="btnSubmitResetPass" class="btn btn-dark">Xác Nhận Đổi Mật Khẩu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: THÊM SẢN PHẨM MỚI -->
+  <div id="createProductModal" class="modal-backdrop" onclick="if(event.target===this) closeCreateProductModal()">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="createProductTitle" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 id="createProductTitle" class="modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          Thêm Sản Phẩm Mới
+        </h3>
+        <button type="button" class="modal-close" onclick="closeCreateProductModal()" aria-label="Đóng">&times;</button>
+      </div>
+      <form id="createProductForm" onsubmit="handleCreateProduct(event)">
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label" for="prodNameInput">Tên Sản Phẩm *</label>
+            <input type="text" id="prodNameInput" class="form-input" placeholder="VD: Áo Khoác Dù Phong Cách Bắc Âu" required minlength="2" maxlength="150">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div class="form-group">
+              <label class="form-label" for="prodCategorySelect">Danh Mục *</label>
+              <select id="prodCategorySelect" class="form-input" required>
+                <option value="ao">Áo (ao)</option>
+                <option value="quan">Quần (quan)</option>
+                <option value="vay">Váy (vay)</option>
+                <option value="phukien">Phụ kiện (phukien)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prodPriceInput">Giá Niêm Yết (VNĐ) *</label>
+              <input type="number" id="prodPriceInput" class="form-input" placeholder="VD: 389000" required min="1000" max="50000000" step="1000">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div class="form-group">
+              <label class="form-label" for="prodStockInput">Số Lượng Tồn Kho Ban Đầu *</label>
+              <input type="number" id="prodStockInput" class="form-input" value="50" required min="0" max="100000">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prodSizesInput">Kích Cỡ (phân cách bằng dấu phẩy)</label>
+              <input type="text" id="prodSizesInput" class="form-input" value="S, M, L, XL">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label" for="prodColorsInput">Màu Sắc (phân cách bằng dấu phẩy)</label>
+            <input type="text" id="prodColorsInput" class="form-input" value="Đen, Trắng, Be, Xanh">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label" for="prodImageSelect">Hình Ảnh Đại Diện</label>
+            <select id="prodImageSelect" class="form-input">
+              <option value="../img/id 3.jpg">Áo khoác dù bomber (id 3.jpg)</option>
+              <option value="../img/id1.jpg">Áo thun basic (id1.jpg)</option>
+              <option value="../img/id 2.jpg">Áo sơ mi linen (id 2.jpg)</option>
+              <option value="../img/id 4.jpg">Áo polo dệt (id 4.jpg)</option>
+              <option value="../img/id 5.jpg">Quần jeans slim fit (id 5.jpg)</option>
+              <option value="../img/id 6.jpg">Quần âu vải wool (id 6.jpg)</option>
+              <option value="../img/id 7.jpg">Quần shorts kaki (id 7.jpg)</option>
+              <option value="../img/id 8.jpg">Váy sơ mi dài (id 8.jpg)</option>
+              <option value="../img/id 9.jpg">Chân váy xếp ly (id 9.jpg)</option>
+              <option value="../img/id 10.jpg">Mũ lưỡi trai canvas (id 10.jpg)</option>
+              <option value="../img/id 11.jpg">Túi tote sợi dệt (id 11.jpg)</option>
+              <option value="../img/id 12.jpg">Thắt lưng da tự nhiên (id 12.jpg)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="prodDescInput">Mô Tả Sản Phẩm</label>
+            <textarea id="prodDescInput" class="form-input" rows="3" placeholder="Nhập tóm tắt chất liệu, kiểu dáng phong cách Bắc Âu..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeCreateProductModal()">Hủy Bỏ</button>
+          <button type="submit" id="btnSubmitProduct" class="btn btn-dark">Lưu Sản Phẩm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CHI TIẾT & QUẢN LÝ ĐƠN HÀNG COD -->
+  <div id="orderDetailModal" class="modal-backdrop" onclick="if(event.target===this) closeOrderDetailModal()">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="orderDetailTitle" style="max-width: 640px;">
+      <div class="modal-header">
+        <h3 id="orderDetailTitle" class="modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+          Chi Tiết Đơn Hàng COD (<span id="detailOrderCode">—</span>)
+        </h3>
+        <button type="button" class="modal-close" onclick="closeOrderDetailModal()" aria-label="Đóng">&times;</button>
+      </div>
+      <div class="modal-body" style="max-height: 75vh; overflow-y: auto;" id="printableOrderBill">
+        <!-- Thông tin vận chuyển COD -->
+        <div style="background: var(--bg-base); padding: 14px; border-radius: 6px; border: 1px solid var(--border-hairline); margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+            <div>
+              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Người Nhận Hàng</div>
+              <strong id="detailFullName" style="font-size: 15px; color: var(--text-main);">—</strong>
+            </div>
+            <div id="detailStatusBadge">—</div>
+          </div>
+          <div style="font-size: 13px; line-height: 1.6;">
+            <div>📞 <strong>SĐT:</strong> <span id="detailPhone">—</span></div>
+            <div>📍 <strong>Địa chỉ giao:</strong> <span id="detailAddress">—</span></div>
+            <div style="color: var(--text-muted);">📝 <strong>Ghi chú:</strong> <span id="detailNote">Không có ghi chú</span></div>
+            <div style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">🕒 <strong>Ngày đặt:</strong> <span id="detailDate">—</span></div>
+          </div>
+        </div>
+
+        <!-- Danh sách mặt hàng -->
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 12.5px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">
+            Sản Phẩm Đặt Mua
+          </div>
+          <table class="admin-table" style="font-size: 13px;">
+            <thead>
+              <tr>
+                <th>Sản phẩm</th>
+                <th>Phân loại</th>
+                <th>SL</th>
+                <th>Đơn giá</th>
+                <th style="text-align: right;">Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody id="detailItemsTbody">
+              <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 16px;">Đang tải chi tiết...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tóm tắt thanh toán COD -->
+        <div style="background: var(--bg-base); padding: 14px; border-radius: 6px; border: 1px solid var(--border-hairline); margin-bottom: 18px;">
+          <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+            <span>Tạm tính:</span>
+            <span id="detailSubtotal">0₫</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; color: #16A34A;">
+            <span>Giảm giá (<span id="detailVoucherCode">Không</span>):</span>
+            <span id="detailDiscount">-0₫</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; padding-top: 8px; border-top: 1px dashed var(--border-strong); margin-top: 6px;">
+            <span>TỔNG TIỀN COD THU HỘ:</span>
+            <span id="detailTotal" style="color: #B45309; font-size: 17px;">0₫</span>
+          </div>
+        </div>
+
+        <!-- Thanh cập nhật trạng thái COD -->
+        <div style="padding: 12px 14px; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px;">
+          <label style="font-size: 12px; font-weight: 700; color: #92400E; display: block; margin-bottom: 8px;">
+            ⚡ CẬP NHẬT TRẠNG THÁI GIAO HÀNG &amp; THU COD:
+          </label>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="orderQuickActions">
+            <!-- Dynamic quick action buttons -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="printOrderInvoice()">🖨️ In Phiếu Giao Hàng</button>
+        <button type="button" class="btn btn-dark" onclick="closeOrderDetailModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="adminToast" class="toast"></div>
+
+  <script src="js/config.js"></script>
+  <script>
+    let adminCsrfToken = null;
+
+    async function getAdminCsrfToken() {
+      if (adminCsrfToken) return adminCsrfToken;
+      try {
+        const res = await fetch(EndlessConfig.apiUrl('auth/csrf'), {
+          credentials: EndlessConfig.credentials,
+          cache: 'no-store'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          adminCsrfToken = data.csrfToken;
+          return adminCsrfToken;
+        }
+      } catch (err) {
+        console.error('Lỗi nạp CSRF token:', err);
+      }
+      return null;
+    }
+
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+
+      const target = document.getElementById('tab-' + tabId);
+      if (target) target.classList.add('active');
+
+      const titles = {
+        orders: ['Quản Lý Đơn Hàng COD', 'Hàng đợi các đơn đặt hàng COD cần đóng gói và chuyển phát.'],
+        products: ['Quản Lý Sản Phẩm & Tồn Kho', 'Kiểm soát số lượng tồn kho và thông số biến thể sản phẩm.'],
+        vouchers: ['Quản Lý Voucher Giảm Giá', 'Cấu hình các chương trình ưu đãi và mã code khuyến mãi.'],
+        customers: ['Quản Lý Tài Khoản Khách Hàng', 'Danh sách khách hàng đã đăng ký và phân quyền hệ thống.'],
+        settings: ['Thông Số Kỹ Thuật & CSDL', 'Kiến trúc bảo mật, Docker container và kết nối MS SQL Server.']
+      };
+
+      if (titles[tabId]) {
+        document.getElementById('tabTitle').innerText = titles[tabId][0];
+        document.getElementById('tabSubtitle').innerText = titles[tabId][1];
+      }
+
+      document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
+        if (item.getAttribute('onclick') && item.getAttribute('onclick').includes("'" + tabId + "'")) {
+          item.classList.add('active');
+        }
+      });
+
+      if (tabId === 'orders') {
+        loadOrders();
+      }
+      if (tabId === 'products') {
+        loadProducts();
+      }
+      if (tabId === 'vouchers') {
+        loadVouchers();
+      }
+      if (tabId === 'customers') {
+        loadCustomers();
+      }
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('adminToast');
+      if (!toast) return;
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 3500);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    /* VOUCHER MANAGEMENT */
+    async function loadVouchers() {
+      const tbody = document.getElementById('vouchersTbody');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">Đang tải danh sách mã giảm giá...</td></tr>';
+      
+      try {
+        const res = await fetch(EndlessConfig.apiUrl('admin/vouchers'), {
+          credentials: EndlessConfig.credentials,
+          cache: 'no-store'
+        });
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--warning); padding: 24px;">Vui lòng đăng nhập với tài khoản Quản trị viên (Admin) để tải dữ liệu.</td></tr>';
+            return;
+          }
+          throw new Error('Không thể tải danh sách voucher.');
+        }
+        const data = await res.json();
+        const vouchers = data.vouchers || [];
+        renderVouchersTable(vouchers);
+        
+        const badge = document.getElementById('vouchersCountBadge');
+        if (badge) badge.innerText = vouchers.length;
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #DC2626; padding: 24px;">Lỗi kết nối máy chủ: ${escapeHtml(err.message)}</td></tr>`;
+      }
+    }
+
+    function renderVouchersTable(vouchers) {
+      const tbody = document.getElementById('vouchersTbody');
+      if (!tbody) return;
+      if (vouchers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">Chưa có mã khuyến mãi nào. Hãy nhấn "+ Tạo Mã Mới" để thêm!</td></tr>';
+        return;
+      }
+
+      const now = new Date();
+      tbody.innerHTML = vouchers.map(v => {
+        const isExpired = v.han_su_dung && new Date(v.han_su_dung) < now;
+        const expiryText = v.han_su_dung 
+          ? new Date(v.han_su_dung).toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' })
+          : 'Vô thời hạn';
+        const typeText = v.loai_giam === 'percent' ? 'Phần trăm (%)' : 'Số tiền cố định (₫)';
+        const valueText = v.loai_giam === 'percent' 
+          ? `<strong>${v.gia_tri}%</strong> đơn hàng`
+          : `<strong>${Number(v.gia_tri).toLocaleString('vi-VN')}₫</strong>`;
+
+        const statusBadge = isExpired
+          ? '<span class="status-tag tag-cancelled">Đã hết hạn</span>'
+          : '<span class="status-tag tag-completed">Đang kích hoạt</span>';
+
+        return `
+          <tr>
+            <td class="code-mono" style="font-size: 14px;">${escapeHtml(v.ma_code)}</td>
+            <td>${typeText}</td>
+            <td>${valueText}</td>
+            <td>${expiryText}</td>
+            <td>${statusBadge}</td>
+            <td>
+              <div class="btn-group">
+                <button class="btn-sm" onclick="copyVoucherCode('${escapeHtml(v.ma_code)}')">Sao chép</button>
+                <button class="btn-sm" style="color: #991B1B; border-color: rgba(153, 27, 27, 0.2);" onclick="deleteVoucher(${v.voucher_id}, '${escapeHtml(v.ma_code)}')">Xóa</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function copyVoucherCode(code) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(() => {
+          showToast(`✓ Đã sao chép mã "${code}" vào bộ nhớ tạm!`);
+        }).catch(() => {
+          showToast(`✓ Mã khuyến mãi: ${code}`);
+        });
+      } else {
+        showToast(`✓ Mã khuyến mãi: ${code}`);
+      }
+    }
+
+    async function deleteVoucher(id, code) {
+      if (!confirm(`Bạn có chắc chắn muốn xóa mã voucher "${code}" không?`)) return;
+      try {
+        const token = await getAdminCsrfToken();
+        const res = await fetch(EndlessConfig.apiUrl(`admin/vouchers/${id}`), {
+          method: 'DELETE',
+          credentials: EndlessConfig.credentials,
+          headers: {
+            'X-CSRF-Token': token
+          }
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 403) adminCsrfToken = null;
+          throw new Error(data.message || 'Không thể xóa mã voucher.');
+        }
+        showToast(`✓ Đã xóa mã voucher "${code}" thành công.`);
+        loadVouchers();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    function openCreateVoucherModal() {
+      document.getElementById('voucherFormError').style.display = 'none';
+      document.getElementById('createVoucherForm').reset();
+      document.getElementById('voucherNoExpiryCheck').checked = true;
+      document.getElementById('voucherExpiryInput').style.display = 'none';
+      updateVoucherValueAddon();
+      document.getElementById('voucherModal').classList.add('show');
+      setTimeout(() => document.getElementById('voucherCodeInput').focus(), 100);
+    }
+
+    function closeCreateVoucherModal() {
+      document.getElementById('voucherModal').classList.remove('show');
+    }
+
+    function updateVoucherValueAddon() {
+      const type = document.getElementById('voucherTypeSelect').value;
+      const addon = document.getElementById('voucherValueAddon');
+      const input = document.getElementById('voucherValueInput');
+      const hint = document.getElementById('voucherValueHint');
+      if (type === 'percent') {
+        addon.innerText = '%';
+        input.placeholder = 'VD: 15';
+        input.min = '1';
+        input.max = '100';
+        hint.innerText = 'Nhập số phần trăm giảm từ 1% đến 100%.';
+      } else {
+        addon.innerText = '₫';
+        input.placeholder = 'VD: 50000';
+        input.min = '1000';
+        input.removeAttribute('max');
+        hint.innerText = 'Nhập số tiền giảm bằng Việt Nam Đồng (tối thiểu 1.000₫).';
+      }
+    }
+
+    function toggleVoucherExpiryInput() {
+      const noExpiry = document.getElementById('voucherNoExpiryCheck').checked;
+      const expiryInput = document.getElementById('voucherExpiryInput');
+      const hint = document.getElementById('voucherExpiryHint');
+      if (noExpiry) {
+        expiryInput.style.display = 'none';
+        expiryInput.value = '';
+        expiryInput.removeAttribute('required');
+        hint.innerText = 'Mã sẽ áp dụng vô thời hạn cho tới khi bạn gỡ bỏ.';
+      } else {
+        expiryInput.style.display = 'block';
+        expiryInput.required = true;
+        const today = new Date().toISOString().split('T')[0];
+        expiryInput.min = today;
+        expiryInput.value = today;
+        hint.innerText = 'Chọn ngày hết hạn hiệu lực của mã giảm giá.';
+      }
+    }
+
+    async function handleCreateVoucher(event) {
+      event.preventDefault();
+      const errBox = document.getElementById('voucherFormError');
+      const btnSubmit = document.getElementById('btnSubmitVoucher');
+      errBox.style.display = 'none';
+
+      const code = document.getElementById('voucherCodeInput').value.trim().toUpperCase();
+      const type = document.getElementById('voucherTypeSelect').value;
+      const value = parseInt(document.getElementById('voucherValueInput').value, 10);
+      const noExpiry = document.getElementById('voucherNoExpiryCheck').checked;
+      const expiryDate = document.getElementById('voucherExpiryInput').value;
+
+      if (!code || !/^[A-Z0-9_-]{1,30}$/.test(code)) {
+        errBox.innerText = 'Mã voucher không hợp lệ. Chỉ chấp nhận chữ in hoa, số và dấu gạch nối (1-30 ký tự).';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      if (isNaN(value) || value <= 0) {
+        errBox.innerText = 'Giá trị giảm giá không hợp lệ.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      if (type === 'percent' && (value < 1 || value > 100)) {
+        errBox.innerText = 'Phần trăm giảm giá phải nằm trong khoảng từ 1% đến 100%.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      let expiresAt = null;
+      if (!noExpiry) {
+        if (!expiryDate) {
+          errBox.innerText = 'Vui lòng chọn ngày hết hạn.';
+          errBox.style.display = 'block';
+          return;
+        }
+        expiresAt = new Date(expiryDate + 'T23:59:59').toISOString();
+      }
+
+      btnSubmit.disabled = true;
+      btnSubmit.innerText = 'Đang lưu...';
+
+      try {
+        const token = await getAdminCsrfToken();
+        const res = await fetch(EndlessConfig.apiUrl('admin/vouchers'), {
+          method: 'POST',
+          credentials: EndlessConfig.credentials,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': token
+          },
+          body: JSON.stringify({ code, type, value, expiresAt })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 403) adminCsrfToken = null;
+          throw new Error(data.message || 'Lỗi khi tạo mã giảm giá.');
+        }
+
+        closeCreateVoucherModal();
+        showToast(`✓ Đã tạo mã khuyến mãi "${code}" thành công!`);
+        loadVouchers();
+      } catch (err) {
+        errBox.innerText = err.message;
+        errBox.style.display = 'block';
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = 'Lưu Mã Giảm Giá';
+      }
+    }
+
+    /* KPI METRICS */
+    async function loadMetrics() {
+      try {
+        const res = await fetch(EndlessConfig.apiUrl('admin/metrics'), {
+          credentials: EndlessConfig.credentials,
+          cache: 'no-store'
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        if (document.getElementById('kpiRevenueVal')) {
+          document.getElementById('kpiRevenueVal').innerText = Number(data.revenueToday || 0).toLocaleString('vi-VN') + '₫';
+        }
+        if (document.getElementById('kpiPendingVal')) {
+          document.getElementById('kpiPendingVal').innerText = `${data.pendingOrders || 0} Đơn`;
+        }
+        if (document.getElementById('kpiStockVal')) {
+          document.getElementById('kpiStockVal').innerText = `${data.totalStock || 0} Chiếc`;
+        }
+        if (document.getElementById('kpiVouchersVal')) {
+          document.getElementById('kpiVouchersVal').innerText = `${data.activeVouchers || 0} Mã`;
+        }
+        if (document.getElementById('pendingCountBadge')) {
+          document.getElementById('pendingCountBadge').innerText = data.pendingOrders || 0;
+        }
+      } catch (err) {
+        console.error('Lỗi nạp metrics:', err);
+      }
+    }
+
+    /* COD ORDERS MANAGEMENT */
+    let allOrders = [];
+    let currentOrderStatusFilter = 'all';
+
+    async function loadOrders() {
+      const tbody = document.getElementById('ordersTbody');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">Đang tải danh sách đơn hàng COD...</td></tr>';
+      
+      try {
+        const res = await fetch(EndlessConfig.apiUrl('admin/orders'), {
+          credentials: EndlessConfig.credentials,
+          cache: 'no-store'
+        });
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--warning); padding: 24px;">Vui lòng đăng nhập với tài khoản Quản trị viên để xem đơn hàng.</td></tr>';
+            return;
+          }
+          throw new Error('Không thể tải danh sách đơn hàng COD.');
+        }
+        const data = await res.json();
+        allOrders = data.orders || [];
+        updateOrderFilterCounts();
+        filterOrders();
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #DC2626; padding: 24px;">Lỗi kết nối máy chủ: ${escapeHtml(err.message)}</td></tr>`;
+      }
+    }
+
+    function updateOrderFilterCounts() {
+      const counts = { all: allOrders.length, cho_xu_ly: 0, dang_giao: 0, hoan_thanh: 0, da_huy: 0 };
+      allOrders.forEach(o => {
+        const s = o.status || 'cho_xu_ly';
+        if (counts[s] !== undefined) counts[s]++;
+      });
+
+      if (document.getElementById('countOrderAll')) document.getElementById('countOrderAll').innerText = counts.all;
+      if (document.getElementById('countOrderPending')) document.getElementById('countOrderPending').innerText = counts.cho_xu_ly;
+      if (document.getElementById('countOrderDelivering')) document.getElementById('countOrderDelivering').innerText = counts.dang_giao;
+      if (document.getElementById('countOrderCompleted')) document.getElementById('countOrderCompleted').innerText = counts.hoan_thanh;
+      if (document.getElementById('countOrderCancelled')) document.getElementById('countOrderCancelled').innerText = counts.da_huy;
+      if (document.getElementById('pendingCountBadge')) document.getElementById('pendingCountBadge').innerText = counts.cho_xu_ly;
+    }
+
+    function setOrderFilter(status, btn) {
+      currentOrderStatusFilter = status;
+      document.querySelectorAll('#orderFilterPills .pill').forEach(p => p.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      filterOrders();
+    }
+
+    function filterOrders() {
+      const searchInput = document.getElementById('orderSearch');
+      const keyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+      const filtered = allOrders.filter(o => {
+        const matchStatus = currentOrderStatusFilter === 'all' || (o.status || '') === currentOrderStatusFilter;
+        const text = `${o.id} ${o.code || ''} ${o.fullName || ''} ${o.phone || ''} ${o.address || ''} ${o.voucherCode || ''}`.toLowerCase();
+        const matchKeyword = !keyword || text.includes(keyword);
+        return matchStatus && matchKeyword;
+      });
+
+      renderOrders(filtered);
+    }
+
+    function getOrderStatusBadge(status) {
+      switch (status) {
+        case 'cho_xu_ly':
+          return '<span class="status-tag tag-pending">● Chờ xử lý</span>';
+        case 'dang_giao':
+          return '<span class="status-tag tag-delivering">● Đang giao</span>';
+        case 'hoan_thanh':
+          return '<span class="status-tag tag-completed">✓ Đã thu COD</span>';
+        case 'da_huy':
+          return '<span class="status-tag tag-cancelled">✕ Đã hủy</span>';
+        default:
+          return `<span class="status-tag">${escapeHtml(status || '—')}</span>`;
+      }
+    }
+
+    function renderOrders(orders) {
+      const tbody = document.getElementById('ordersTbody');
+      if (!tbody) return;
+      if (orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">Không tìm thấy đơn hàng COD nào.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = orders.map(o => {
+        const codeDisplay = o.code ? escapeHtml(o.code) : `#${o.id}`;
+        const dateDisplay = o.date 
+          ? new Date(o.date).toLocaleString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+          : '—';
+        const statusBadge = getOrderStatusBadge(o.status);
+        const voucherTag = o.voucherCode 
+          ? `<span class="code-mono" style="font-size: 12px; color: #15803D;">${escapeHtml(o.voucherCode)}</span>` 
+          : '<span style="color: var(--text-muted);">—</span>';
+
+        let quickBtn = '';
+        if (o.status === 'cho_xu_ly') {
+          quickBtn = `<button class="btn-sm btn-sm-primary" onclick="changeOrderStatus(${o.id}, 'dang_giao')">Duyệt Giao</button>`;
+        } else if (o.status === 'dang_giao') {
+          quickBtn = `<button class="btn-sm" style="background: #15803D; color: #FFF; border-color: #15803D;" onclick="changeOrderStatus(${o.id}, 'hoan_thanh')">Đã Thu COD</button>`;
+        }
+
+        return `
+          <tr data-status="${escapeHtml(o.status || 'cho_xu_ly')}">
+            <td class="code-mono" style="font-size: 13.5px; font-weight: 700;">${codeDisplay}</td>
+            <td style="font-size: 12.5px; color: var(--text-muted);">${dateDisplay}</td>
+            <td>
+              <div style="font-weight: 600; color: var(--text-main);">${escapeHtml(o.fullName || 'Khách vãng lai')}</div>
+              <small style="color: var(--text-muted); font-size: 11.5px;">${o.itemCount || 1} món hàng</small>
+            </td>
+            <td>
+              <div style="font-family: var(--font-mono); font-size: 12.5px; color: var(--text-main);">📞 ${escapeHtml(o.phone || '—')}</div>
+              <div style="font-size: 12px; color: var(--text-muted); max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(o.address || '')}">
+                📍 ${escapeHtml(o.address || '—')}
+              </div>
+            </td>
+            <td><strong style="color: #B45309; font-size: 14px;">${Number(o.total || 0).toLocaleString('vi-VN')}₫</strong></td>
+            <td>${voucherTag}</td>
+            <td>${statusBadge}</td>
+            <td style="text-align: right;">
+              <div class="btn-group" style="justify-content: flex-end;">
+                <button class="btn-sm" onclick="viewOrderDetail(${o.id})">👁️ Chi Tiết</button>
+                ${quickBtn}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function changeOrderStatus(id, newStatus, fromModal = false) {
+      const statusLabels = {
+        dang_giao: 'Duyệt giao hàng cho shipper',
+        hoan_thanh: 'Xác nhận Đã thu tiền COD',
+        da_huy: 'HỦY đơn hàng này',
+        cho_xu_ly: 'Chuyển lại Chờ xử lý'
+      };
+      const label = statusLabels[newStatus] || newStatus;
+      if (!confirm(`Bạn có chắc chắn muốn [${label}] cho đơn hàng #${id}?`)) return;
+
+      try {
+        const token = await getAdminCsrfToken();
+        const res = await fetch(EndlessConfig.apiUrl(`admin/orders/${id}/status`), {
+          method: 'PUT',
+          credentials: EndlessConfig.credentials,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': token
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 403) adminCsrfToken = null;
+          throw new Error(data.message || 'Lỗi cập nhật trạng thái đơn hàng.');
+        }
+
+        showToast(`✓ Đã cập nhật đơn #${id}: ${label}!`);
+        await loadOrders();
+        await loadMetrics();
+        if (fromModal) {
+          await viewOrderDetail(id);
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function viewOrderDetail(id) {
+      try {
+        const res = await fetch(EndlessConfig.apiUrl(`admin/orders/${id}`), {
+          credentials: EndlessConfig.credentials,
+          cache: 'no-store'
+        });
+        if (!res.ok) throw new Error('Không thể tải chi tiết đơn hàng.');
+        const data = await res.json();
+        const order = data.order;
+        const items = data.items || [];
+
+        document.getElementById('detailOrderCode').innerText = order.code || `#${order.id}`;
+        document.getElementById('detailFullName').innerText = order.fullName || 'Khách vãng lai';
+        document.getElementById('detailStatusBadge').innerHTML = getOrderStatusBadge(order.status);
+        document.getElementById('detailPhone').innerText = order.phone || '—';
+        document.getElementById('detailAddress').innerText = order.address || '—';
+        document.getElementById('detailNote').innerText = order.note || 'Không có ghi chú';
+        document.getElementById('detailDate').innerText = order.date 
+          ? new Date(order.date).toLocaleString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+          : '—';
+
+        // Line items
+        const tbody = document.getElementById('detailItemsTbody');
+        if (items.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 16px;">Không có thông tin sản phẩm trong đơn.</td></tr>';
+        } else {
+          tbody.innerHTML = items.map(item => {
+            let img = item.image;
+            if (img && img.startsWith('[')) {
+              try { img = JSON.parse(img)[0]; } catch (e) {}
+            }
+            img = img || '../img/id1.jpg';
+            const lineTotal = (item.price || 0) * (item.qty || 1);
+            return `
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <img src="${escapeHtml(img)}" alt="${escapeHtml(item.name || '')}" style="width: 34px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-hairline);" onerror="this.src='../img/id1.jpg'">
+                    <span style="font-weight: 500;">${escapeHtml(item.name || 'Sản phẩm')}</span>
+                  </div>
+                </td>
+                <td><small style="color: var(--text-muted);">${escapeHtml(item.size || 'Free')} / ${escapeHtml(item.color || 'Mặc định')}</small></td>
+                <td><strong>x${item.qty}</strong></td>
+                <td>${Number(item.price).toLocaleString('vi-VN')}₫</td>
+                <td style="text-align: right; font-weight: 600;">${Number(lineTotal).toLocaleString('vi-VN')}₫</td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        // Totals
+        document.getElementById('detailSubtotal').innerText = Number(order.subtotal || 0).toLocaleString('vi-VN') + '₫';
+        document.getElementById('detailVoucherCode').innerText = order.voucherCode ? order.voucherCode : 'Không';
+        document.getElementById('detailDiscount').innerText = (order.discount && order.discount > 0) ? `-${Number(order.discount).toLocaleString('vi-VN')}₫` : '-0₫';
+        document.getElementById('detailTotal').innerText = Number(order.total || 0).toLocaleString('vi-VN') + '₫';
+
+        // Action buttons
+        const actionsBox = document.getElementById('orderQuickActions');
+        if (order.status === 'cho_xu_ly') {
+          actionsBox.innerHTML = `
+            <button type="button" class="btn btn-primary" onclick="changeOrderStatus(${order.id}, 'dang_giao', true)">🚀 Duyệt Giao Hàng Cho Shipper</button>
+            <button type="button" class="btn btn-outline" style="color: #DC2626; border-color: #FCA5A5;" onclick="changeOrderStatus(${order.id}, 'da_huy', true)">✕ Hủy Đơn Hàng Này</button>
+          `;
+        } else if (order.status === 'dang_giao') {
+          actionsBox.innerHTML = `
+            <button type="button" class="btn btn-primary" style="background: #15803D; border-color: #15803D;" onclick="changeOrderStatus(${order.id}, 'hoan_thanh', true)">💰 Xác Nhận Đã Thu Tiền COD Thành Công</button>
+            <button type="button" class="btn btn-outline" style="color: #DC2626; border-color: #FCA5A5;" onclick="changeOrderStatus(${order.id}, 'da_huy', true)">✕ Hủy Đơn Hàng Này</button>
+          `;
+        } else if (order.status === 'hoan_thanh') {
+          actionsBox.innerHTML = `
+            <span style="color: #15803D; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+              ✓ Đơn hàng đã hoàn tất giao hàng và thu hộ tiền COD thành công.
+            </span>
+          `;
+        } else if (order.status === 'da_huy') {
+          actionsBox.innerHTML = `
+            <span style="color: #DC2626; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+              ✕ Đơn hàng này đã bị hủy.
+            </span>
+            <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 4px 8px;" onclick="changeOrderStatus(${order.id}, 'cho_xu_ly', true)">Khôi phục lại</button>
+          `;
+        }
+
+        document.getElementById('orderDetailModal').classList.add('show');
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    function closeOrderDetailModal() {
+      document.getElementById('orderDetailModal').classList.remove('show');
+    }
+
+    function printOrderInvoice() {
+      window.print();
+    }
+
+    /* PRODUCT MANAGEMENT */
+    let allProducts = [];
+    let currentProductCatFilter = 'all';
+
+    async function loadProducts() {
+      const tbody = document.getElementById('productsTbody');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 24px;">Đang tải danh sách sản phẩm từ CSDL...</td></tr>';
+      
+      try {
+        const res = await fetch(EndlessConfig.apiUrl('products'), {
+          credentials: EndlessConfig.credentials,
+          cache: 'no-store'
+        });
+        if (!res.ok) throw new Error('Không thể tải danh sách sản phẩm.');
+        const data = await res.json();
+        allProducts = Array.isArray(data) ? data : (data.products || []);
+        
+        const badge = document.getElementById('productsCountBadge');
+        if (badge) badge.innerText = allProducts.length;
+
+        updateProductFilterCounts();
+        filterProducts();
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #DC2626; padding: 24px;">Lỗi tải sản phẩm: ${escapeHtml(err.message)}</td></tr>`;
+      }
+    }
+
+    function updateProductFilterCounts() {
+      const counts = { all: allProducts.length, ao: 0, quan: 0, vay: 0, phukien: 0 };
+      allProducts.forEach(p => {
+        const cat = (p.category || '').toLowerCase();
+        if (counts[cat] !== undefined) counts[cat]++;
+      });
+      if (document.getElementById('countProdAll')) document.getElementById('countProdAll').innerText = counts.all;
+      if (document.getElementById('countProdAo')) document.getElementById('countProdAo').innerText = counts.ao;
+      if (document.getElementById('countProdQuan')) document.getElementById('countProdQuan').innerText = counts.quan;
+      if (document.getElementById('countProdVay')) document.getElementById('countProdVay').innerText = counts.vay;
+      if (document.getElementById('countProdPhukien')) document.getElementById('countProdPhukien').innerText = counts.phukien;
+    }
+
+    function setProductFilter(cat, btn) {
+      currentProductCatFilter = cat;
+      document.querySelectorAll('#productFilterPills .pill').forEach(p => p.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      filterProducts();
+    }
+
+    function filterProducts() {
+      const searchInput = document.getElementById('productSearch');
+      const keyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      
+      const filtered = allProducts.filter(p => {
+        const matchCat = currentProductCatFilter === 'all' || (p.category || '').toLowerCase() === currentProductCatFilter;
+        const text = `${p.id} ${p.name || ''} ${p.category || ''} ${p.price || ''}`.toLowerCase();
+        const matchKey = !keyword || text.includes(keyword);
+        return matchCat && matchKey;
+      });
+
+      renderProducts(filtered);
+    }
+
+    function renderProducts(products) {
+      const tbody = document.getElementById('productsTbody');
+      if (!tbody) return;
+      if (products.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 24px;">Không tìm thấy sản phẩm nào phù hợp.</td></tr>';
+        return;
+      }
+
+      const categoryNames = {
+        ao: 'Áo',
+        quan: 'Quần',
+        vay: 'Váy',
+        phukien: 'Phụ kiện'
+      };
+
+      tbody.innerHTML = products.map(p => {
+        let img = (p.images && p.images.length > 0) ? p.images[0] : '../img/id1.jpg';
+        const catLabel = categoryNames[p.category] || p.category;
+        
+        let stockDisplay;
+        if (p.stock > 10) {
+          stockDisplay = `<strong style="color: #15803D;">${p.stock}</strong>`;
+        } else if (p.stock > 0) {
+          stockDisplay = `<strong style="color: #D97706;">${p.stock} (Sắp hết)</strong>`;
+        } else {
+          stockDisplay = `<strong style="color: #DC2626;">0 (Hết hàng)</strong>`;
+        }
+
+        const statusBadge = p.stock > 0 
+          ? '<span class="status-tag tag-completed">Đang bán</span>'
+          : '<span class="status-tag tag-cancelled">Hết hàng</span>';
+
+        const sizesStr = (p.sizes && Array.isArray(p.sizes)) ? p.sizes.join(', ') : '—';
+
+        return `
+          <tr>
+            <td class="code-mono" style="font-size: 13px;">#${p.id}</td>
+            <td>
+              <img src="${escapeHtml(img)}" alt="${escapeHtml(p.name)}" style="width: 42px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-hairline);" onerror="this.src='../img/id1.jpg'">
+            </td>
+            <td>
+              <div style="font-weight: 600; color: var(--text-main); font-size: 14px;">${escapeHtml(p.name)}</div>
+              <div style="font-size: 11.5px; color: var(--text-muted);">${(p.colors || []).join(', ')}</div>
+            </td>
+            <td><span class="status-tag">${escapeHtml(catLabel)}</span></td>
+            <td><strong style="color: var(--text-main);">${Number(p.price).toLocaleString('vi-VN')}₫</strong></td>
+            <td>${stockDisplay}</td>
+            <td><small style="color: var(--text-muted);">${escapeHtml(sizesStr)}</small></td>
+            <td>${statusBadge}</td>
+            <td style="text-align: right;">
+              <div class="btn-group" style="justify-content: flex-end;">
+                <button class="btn-sm" onclick="adjustStock(${p.id}, '${escapeHtml(p.name)}', ${p.stock})" title="Điều chỉnh số lượng tồn kho">✏️ Tồn Kho</button>
+                <button class="btn-sm" style="color: #991B1B; border-color: rgba(153, 27, 27, 0.2);" onclick="deleteProduct(${p.id}, '${escapeHtml(p.name)}')" title="Xóa sản phẩm">🗑️ Xóa</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function adjustStock(id, name, currentStock) {
+      const input = prompt(`Nhập số lượng tồn kho mới cho sản phẩm "${name}":`, currentStock);
+      if (input === null) return;
+      const newStock = parseInt(input.trim(), 10);
+      if (isNaN(newStock) || newStock < 0) {
+        alert('Số lượng tồn kho không hợp lệ. Vui lòng nhập số nguyên không âm.');
+        return;
+      }
+
+      try {
+        const token = await getAdminCsrfToken();
+        const res = await fetch(EndlessConfig.apiUrl(`admin/products/${id}/stock`), {
+          method: 'PUT',
+          credentials: EndlessConfig.credentials,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': token
+          },
+          body: JSON.stringify({ stock: newStock })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 403) adminCsrfToken = null;
+          throw new Error(data.message || 'Lỗi cập nhật tồn kho.');
+        }
+        showToast(`✓ Đã cập nhật tồn kho sản phẩm #${id} thành ${newStock} chiếc.`);
+        loadProducts();
+        loadMetrics();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function deleteProduct(id, name) {
+      if (!confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${name}" (ID #${id}) khỏi hệ thống?`)) return;
+
+      try {
+        const token = await getAdminCsrfToken();
+        const res = await fetch(EndlessConfig.apiUrl(`admin/products/${id}`), {
+          method: 'DELETE',
+          credentials: EndlessConfig.credentials,
+          headers: {
+            'X-CSRF-Token': token
+          }
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 403) adminCsrfToken = null;
+          throw new Error(data.message || 'Không thể xóa sản phẩm.');
+        }
+        showToast(`✓ Đã xóa sản phẩm "${name}" thành công.`);
+        loadProducts();
+        loadMetrics();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    function openCreateProductModal() {
+      document.getElementById('createProductForm').reset();
+      document.getElementById('prodStockInput').value = '50';
+      document.getElementById('prodSizesInput').value = 'S, M, L, XL';
+      document.getElementById('prodColorsInput').value = 'Đen, Trắng, Be, Xanh';
+      document.getElementById('createProductModal').classList.add('show');
+      setTimeout(() => document.getElementById('prodNameInput').focus(), 100);
+    }
+
+    function closeCreateProductModal() {
+      document.getElementById('createProductModal').classList.remove('show');
+    }
+
+    async function handleCreateProduct(event) {
+      event.preventDefault();
+      const btn = document.getElementById('btnSubmitProduct');
+      const name = document.getElementById('prodNameInput').value.trim();
+      const category = document.getElementById('prodCategorySelect').value;
+      const price = parseInt(document.getElementById('prodPriceInput').value, 10);
+      const stock = parseInt(document.getElementById('prodStockInput').value, 10);
+      const sizesRaw = document.getElementById('prodSizesInput').value.trim();
+      const colorsRaw = document.getElementById('prodColorsInput').value.trim();
+      const image = document.getElementById('prodImageSelect').value;
+      const desc = document.getElementById('prodDescInput').value.trim();
+
+      if (!name || name.length < 2) {
+        alert('Vui lòng nhập tên sản phẩm hợp lệ (tối thiểu 2 ký tự).');
+        return;
+      }
+      if (isNaN(price) || price <= 0) {
+        alert('Vui lòng nhập giá niêm yết hợp lệ.');
+        return;
+      }
+      if (isNaN(stock) || stock < 0) {
+        alert('Số lượng tồn kho không được âm.');
+        return;
+      }
+
+      const sizes = sizesRaw.split(',').map(s => s.trim()).filter(Boolean);
+      const colors = colorsRaw.split(',').map(c => c.trim()).filter(Boolean);
+      const images = [image];
+
+      btn.disabled = true;
+      btn.innerText = 'Đang lưu...';
+
+      try {
+        const token = await getAdminCsrfToken();
+        const res = await fetch(EndlessConfig.apiUrl('admin/products'), {
+          method: 'POST',
+          credentials: EndlessConfig.credentials,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': token
+          },
+          body: JSON.stringify({
+            name,
+            category,
+            price,
+            stock,
+            sizes,
+            colors,
+            images,
+            description: desc
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (res.status === 403) adminCsrfToken = null;
+          throw new Error(data.message || 'Lỗi khi thêm sản phẩm mới.');
+        }
+
+        closeCreateProductModal();
+        showToast(`✓ Đã thêm sản phẩm "${name}" thành công!`);
+        loadProducts();
+        loadMetrics();
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Lưu Sản Phẩm';
+      }
+    }
+
+    /* CUSTOMER MANAGEMENT */
+    async function loadCustomers() {
+      const tbody = document.getElementById('customersTbody');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">Đang tải danh sách tài khoản...</td></tr>';
+
+      try {
+        const res = await fetch(EndlessConfig.apiUrl('admin/customers'), {
+          credentials: EndlessConfig.credentials,
+          cache: 'no-store'
+        });
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--warning); padding: 24px;">Vui lòng đăng nhập với tài khoản Quản trị viên để xem dữ liệu.</td></tr>';
+            return;
+          }
+          throw new Error('Không thể tải danh sách tài khoản.');
+        }
+        const data = await res.json();
+        const customers = data.customers || [];
+        renderCustomersTable(customers);
+
+        const badge = document.getElementById('customersCountBadge');
+        if (badge) badge.innerText = customers.length;
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #DC2626; padding: 24px;">Lỗi kết nối máy chủ: ${escapeHtml(err.message)}</td></tr>`;
+      }
+    }
+
+    function renderCustomersTable(customers) {
+      const tbody = document.getElementById('customersTbody');
+      if (!tbody) return;
+      if (customers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">Chưa có tài khoản nào trong hệ thống.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = customers.map(c => {
+        const roleBadge = c.vai_tro === 'admin'
+          ? '<span class="status-tag" style="background:#141413; color:#FFF; font-weight:700;">Quản trị viên (Admin)</span>'
+          : '<span class="status-tag tag-completed">Khách hàng</span>';
+
+        const actionBtn = c.vai_tro === 'admin'
+          ? '<span style="color: var(--text-muted); font-size: 11.5px; font-style: italic;">Quản trị viên</span>'
+          : `<button class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;" onclick="openResetPasswordModal(${c.tai_khoan_id}, '${escapeHtml(c.ten_dang_nhap)}', '${escapeHtml(c.ho_ten || '')}', '${escapeHtml(c.email || '')}')">🔑 Khôi Phục MK</button>`;
+
+        return `
+          <tr>
+            <td class="code-mono" style="font-size: 13px;">#${c.tai_khoan_id}</td>
+            <td><strong class="code-mono" style="font-size: 14px;">${escapeHtml(c.ten_dang_nhap)}</strong></td>
+            <td>${escapeHtml(c.ho_ten || '—')}</td>
+            <td><code style="font-size: 13px;">${escapeHtml(c.email || '—')}</code></td>
+            <td>${escapeHtml(c.sdt || '—')}</td>
+            <td>${roleBadge}</td>
+            <td><span class="status-tag tag-completed">Đang hoạt động</span></td>
+            <td style="text-align: right;">${actionBtn}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    let currentResetCustomerId = null;
+
+    function openResetPasswordModal(id, username, fullName, email) {
+      currentResetCustomerId = id;
+      document.getElementById('resetCustomerId').innerText = '#' + id;
+      document.getElementById('resetCustomerName').innerText = fullName || username;
+      document.getElementById('resetCustomerUsername').innerText = '@' + username;
+      document.getElementById('resetCustomerEmail').innerText = email || '—';
+      document.getElementById('resetSuccessBox').style.display = 'none';
+      document.getElementById('resetPasswordModal').classList.add('show');
+      generateRandomCustomerPassword();
+      setTimeout(() => {
+        const input = document.getElementById('newCustomerPasswordInput');
+        if (input) input.select();
+      }, 100);
+    }
+
+    function closeResetPasswordModal() {
+      document.getElementById('resetPasswordModal').classList.remove('show');
+      currentResetCustomerId = null;
+    }
+
+    function generateRandomCustomerPassword() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
+      let pass = 'Endless@';
+      for (let i = 0; i < 6; i++) {
+        pass += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      document.getElementById('newCustomerPasswordInput').value = pass;
+    }
+
+    async function handleResetCustomerPassword(event) {
+      event.preventDefault();
+      if (!currentResetCustomerId) return;
+
+      const newPassword = document.getElementById('newCustomerPasswordInput').value.trim();
+      if (!newPassword || newPassword.length < 10) {
+        showToast('Mật khẩu mới phải có tối thiểu 10 ký tự.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitResetPass');
+      btn.disabled = true;
+      btn.innerText = 'Đang xử lý...';
+
+      try {
+        const csrfToken = await getAdminCsrfToken();
+        const res = await fetch(EndlessConfig.apiUrl(`admin/customers/${currentResetCustomerId}/reset-password`), {
+          method: 'POST',
+          credentials: EndlessConfig.credentials,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken
+          },
+          body: JSON.stringify({ newPassword })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.message || 'Không thể khôi phục mật khẩu.');
+        }
+
+        const shouldCopy = document.getElementById('copyPasswordAfterReset').checked;
+        if (shouldCopy && navigator.clipboard) {
+          await navigator.clipboard.writeText(newPassword).catch(() => {});
+        }
+
+        const successBox = document.getElementById('resetSuccessBox');
+        document.getElementById('resetResultPassword').innerText = newPassword;
+        successBox.style.display = 'block';
+
+        showToast(shouldCopy ? '✓ Đã đổi & sao chép mật khẩu vào clipboard!' : '✓ Đã đổi mật khẩu thành công!', 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Xác Nhận Đổi Mật Khẩu';
+      }
+    }
+
+    async function checkAdminAuth() {
+      try {
+        const res = await fetch(EndlessConfig.apiUrl('auth/me'), {
+          credentials: EndlessConfig.credentials,
+          cache: 'no-store'
+        });
+        if (!res.ok) {
+          location.replace('admin-login.html');
+          return;
+        }
+        const data = await res.json();
+        if (!data.user || data.user.role !== 'admin') {
+          location.replace('admin-login.html');
+          return;
+        }
+
+        // Cập nhật thông tin profile lên sidebar
+        const nameEl = document.getElementById('adminName');
+        const userBadgeEl = document.getElementById('adminUsernameBadge');
+        const avatarEl = document.getElementById('adminAvatar');
+
+        if (nameEl) nameEl.innerText = data.user.fullName || data.user.username;
+        if (userBadgeEl) userBadgeEl.innerText = '@' + data.user.username;
+        if (avatarEl) {
+          const initials = (data.user.fullName || data.user.username)
+            .split(' ')
+            .filter(Boolean)
+            .map(w => w[0].toUpperCase())
+            .slice(0, 2)
+            .join('') || 'AD';
+          avatarEl.innerText = initials;
+        }
+      } catch (err) {
+        console.error('Lỗi kiểm tra phiên admin:', err);
+        location.replace('admin-login.html');
+      }
+    }
+
+    async function handleAdminLogout() {
+      if (!confirm('Bạn có chắc chắn muốn đăng xuất khỏi phiên làm việc Quản trị viên?')) return;
+      try {
+        const token = await getAdminCsrfToken();
+        await fetch(EndlessConfig.apiUrl('auth/logout'), {
+          method: 'POST',
+          credentials: EndlessConfig.credentials,
+          headers: token ? { 'X-CSRF-Token': token } : {}
+        });
+      } catch (err) {
+        console.error('Logout error:', err);
+      }
+      location.replace('admin-login.html');
+    }
+
+    // Tự động kiểm tra quyền admin và tải dữ liệu khi mở trang
+    window.addEventListener('DOMContentLoaded', () => {
+      checkAdminAuth();
+      loadMetrics();
+      loadOrders();
+      loadProducts();
+      loadVouchers();
+      loadCustomers();
+    });
+  </script>
+</body>
+</html>

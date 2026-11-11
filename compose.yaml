@@ -15,17 +15,23 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?Run scripts/start-backend.ps1 first}
       DB_ENCRYPT: ${DB_ENCRYPT:-true}
       DB_TRUST_SERVER_CERTIFICATE: ${DB_TRUST_SERVER_CERTIFICATE:-true}
+      ConnectionStrings__DefaultConnection: "Server=${DB_SERVER:-sqlserver},${DB_PORT:-1433};Database=${DB_DATABASE:-web_thoi_trang};User Id=${DB_USER:-endless_runtime};Password=${DB_PASSWORD};TrustServerCertificate=True;Encrypt=True;"
       SESSION_SECRET: ${SESSION_SECRET:?Run scripts/start-backend.ps1 to generate session secret}
       SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
       SESSION_COOKIE_SAMESITE: ${SESSION_COOKIE_SAMESITE:-lax}
       APP_ORIGINS: ${APP_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      Cors__AllowedOrigins__0: "http://localhost:3000"
+      Cors__AllowedOrigins__1: "http://127.0.0.1:3000"
+      Cors__AllowedOrigins__2: "http://localhost:8080"
+      Cors__AllowedOrigins__3: "http://127.0.0.1:8080"
+      Cors__AllowedOrigins__4: "https://nguyenhoangphuc1711.github.io"
       TRUST_PROXY: ${TRUST_PROXY:-0}
     networks:
       database: {}
       tunnel:
         ipv4_address: 172.30.251.3
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      test: ["CMD", "dotnet", "EndLessShop.Api.dll", "--healthcheck"]
       interval: 10s
       timeout: 5s
       retries: 6

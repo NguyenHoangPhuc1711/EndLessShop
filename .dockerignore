@@ -1,5 +1,7 @@
 **
 !Dockerfile
+!backend-aspnet/
+!backend-aspnet/**
 !server/
 !server/package.json
 !server/package-lock.json
@@ -15,6 +17,7 @@
 !web-ban-quan-ao/account.html
 !web-ban-quan-ao/login.html
 !web-ban-quan-ao/register.html
+!web-ban-quan-ao/admin.html
 !web-ban-quan-ao/css/
 !web-ban-quan-ao/css/**
 !web-ban-quan-ao/js/
@@ -24,3 +27,5 @@
 **/.env
 **/.env.*
 **/node_modules
+**/bin/
+**/obj/

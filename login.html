@@ -3,16 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Đăng nhập | Endless</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/account.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=2.0">
+  <link rel="stylesheet" href="css/account.css?v=2.1">
+  <link rel="stylesheet" href="css/chatbot.css?v=1.0">
 </head>
 <body>
   <header class="header">
     <div class="header__inner container">
 
 
-      <a href="index.html#trang-chu" class="logo"><img src="img/T%C3%AAn%20th%C6%B0%C6%A1ng%20hi%E1%BB%87u.png" alt="Endless"></a>
+      <a href="index.html#trang-chu" class="logo-scandi" aria-label="Endless Trang Chủ">
+        <span class="logo-scandi__name">ENDLESS</span><span class="logo-scandi__dot">.</span>
+      </a>
 
 
       <nav class="nav" aria-label="Điều hướng chính">
@@ -53,7 +60,10 @@
       </nav>
 
 
-      <form class="search-box header-search" action="index.html" method="get" role="search"><input type="search" name="q" placeholder="Tìm sản phẩm…" aria-label="Tìm sản phẩm"></form>
+      <form class="search-box header-search" action="index.html" method="get" role="search">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="search" name="q" placeholder="Tìm sản phẩm…" aria-label="Tìm sản phẩm">
+      </form>
 
 
       <div class="header__icons">
@@ -75,11 +85,29 @@
         <form id="loginForm" class="account-form">
           <label for="loginUsername">Tên đăng nhập</label>
           <input id="loginUsername" name="username" autocomplete="username" required maxlength="50">
-          <label for="loginPassword">Mật khẩu</label>
+          <div class="account-form__row-label">
+            <label for="loginPassword">Mật khẩu</label>
+            <a href="#quen-mat-khau" class="account-forgot-link" id="toggleForgotBtn">Quên mật khẩu?</a>
+          </div>
           <input id="loginPassword" type="password" name="password" autocomplete="current-password" required maxlength="128">
           <button type="submit" class="btn btn--primary">Đăng nhập</button>
           <p class="account-message" data-form-message role="status" aria-live="polite"></p>
         </form>
+
+        <!-- Khung lấy lại mật khẩu cho khách hàng -->
+        <div id="forgotPasswordBox" class="account-forgot-box" hidden>
+          <h3>Khôi phục mật khẩu khách hàng</h3>
+          <p>Nhập tên đăng nhập hoặc email đã đăng ký tại Endless Shop. Chúng tôi sẽ hỗ trợ quý khách cấp lại quyền truy cập.</p>
+          <form id="forgotPasswordForm" class="account-form">
+            <label for="forgotIdentifier">Tên đăng nhập hoặc Email</label>
+            <input id="forgotIdentifier" name="identifier" autocomplete="username" required maxlength="100" placeholder="VD: komi hoặc email@example.com">
+            <div class="forgot-actions">
+              <button type="submit" class="btn btn--primary">Gửi yêu cầu</button>
+              <button type="button" class="btn--cancel" id="cancelForgotBtn">Hủy</button>
+            </div>
+            <p class="account-message" id="forgotMessage" role="status" aria-live="polite"></p>
+          </form>
+        </div>
         <p class="account-switch">Chưa có tài khoản? <a href="register.html" data-register-link>Đăng ký</a></p>
       </div>
     </section>
@@ -87,6 +115,7 @@
   <script src="js/config.js"></script>
   <script src="js/navigation.js"></script>
   <script src="js/catalog.js"></script>
-  <script src="js/account.js"></script>
+  <script src="js/account.js?v=2.1"></script>
+  <script src="js/chatbot.js?v=1.0"></script>
 </body>
 </html>

@@ -37,12 +37,12 @@
 }
 
 .checkout-panel {
-  padding: 28px;
+  padding: 32px;
   border: 1px solid var(--color-border);
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 12px 34px rgba(25, 38, 30, 0.06);
-  animation: checkout-rise 0.55s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: none;
+  animation: checkout-rise 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .checkout-layout > .order-summary {

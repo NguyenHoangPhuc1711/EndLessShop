@@ -83,7 +83,7 @@ async function verify() {
     assetsChecked: checked.size, privatePaths: '404', runtime: 'Product/category SELECT; auth/COD procedures + session CRUD; no direct account/order/stock writes' }, null, 2));
 }
 
-verify().catch(() => {
-  console.error('Verification failed. Check API, database mapping, assets and runtime permissions.');
+verify().catch((e) => {
+  console.error('Verification failed. Check API, database mapping, assets and runtime permissions.', e);
   process.exitCode = 1;
 }).finally(() => closePool().catch(() => {}));

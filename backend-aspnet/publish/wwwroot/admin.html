@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Endless Admin | Trung Tâm Điều Hành Quản Trị</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #FAF9F5;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F2EFE9;
+      --text-main: #141413;
+      --text-muted: #6E6D68;
+      --text-light: #9C9A93;
+      --border-hairline: rgba(20, 20, 19, 0.08);
+      --border-strong: rgba(20, 20, 19, 0.16);
+      --accent-olive: #2C3527;
+      --accent-warm: #C07B57;
+      --success: #1E7E34;
+      --warning: #B45309;
+      --info: #1E40AF;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* TOP NOTICE BAR */
+    .admin-top-strip {
+      background: var(--text-main);
+      color: #FFF;
+      padding: 8px 24px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .admin-top-strip a {
+      color: #FAF9F5;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+
+    /* MAIN ADMIN LAYOUT */
+    .admin-wrapper {
+      display: flex;
+      min-height: calc(100vh - 35px);
+    }
+
+    /* SIDEBAR */
+    .admin-sidebar {
+      width: 260px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-hairline);
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .admin-brand {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 32px;
+      padding-left: 10px;
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+    .brand-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .menu-item:hover, .menu-item.active {
+      background: var(--bg-base);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+    .menu-badge {
+      margin-left: auto;
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+    .menu-badge.badge-alert {
+      background: #FEF3C7;
+      color: var(--warning);
+    }
+
+    .sidebar-footer {
+      padding-top: 20px;
+      border-top: 1px solid var(--border-hairline);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar-box {
+      width: 38px;
+      height: 38px;
+      background: var(--accent-olive);
+      color: #FFF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .user-info { font-size: 13px; line-height: 1.3; }
+    .user-info strong { display: block; color: var(--text-main); }
+    .user-info span { font-size: 11px; color: var(--text-muted); }
+
+    /* CONTENT AREA */
+    .admin-main {
+      flex: 1;
+      padding: 36px 44px;
+      overflow-y: auto;
+    }
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 32px;
+    }
+    .main-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .main-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 12px;
+    }
+    .btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-outline {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      color: var(--text-main);
+    }
+    .btn-outline:hover { background: var(--bg-subtle); }
+    .btn-dark {
+      background: var(--text-main);
+      border: 1px solid var(--text-main);
+      color: #FFFFFF;
+    }
+    .btn-dark:hover { background: #000; }
+
+    /* KPI METRICS */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 4px;
+      padding: 20px;
+      transition: var(--transition);
+    }
+    .kpi-card:hover { border-color: var(--border-strong); }
+    .kpi-label { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+    .kpi-val { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin: 6px 0; font-family: var(--font-sans); }
+    .kpi-note {
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .note-green { color: var(--success); }
+    .note-amber { color: var(--warning); }
+
+    /* SECTIONS */
+    .tab-section { display: none; }
+    .tab-section.active { display: block; animation: fadeUp 0.25s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* CARD CONTAINER */
+    .card-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 4px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+    .panel-title { font-size: 16px; font-weight: 600; }
+
+    /* FILTERS & SEARCH */
+    .panel-controls {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .search-input {
+      background: var(--bg-base);
+      border: 1px solid var(--border-hairline);
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      outline: none;
+      width: 260px;
+      font-family: inherit;
+    }
+    .search-input:focus { border-color: var(--text-main); }
+    .filter-pills { display: flex; gap: 6px; }
+    .pill {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .pill.active, .pill:hover {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+    }
+
+    /* DATA TABLE */
+    .table-container { width: 100%; overflow-x: auto; }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    .admin-table th {
+      background: var(--bg-base);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+    .admin-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-hairline);
+      color: var(--text-main);
+    }
+    .admin-table tr:hover td { background: rgba(0,0,0,0.015); }
+
+    .code-mono {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .tag-pending { background: #FEF3C7; color: #92400E; }
+    .tag-delivering { background: #DBEAFE; color: #1E40AF; }
+    .tag-completed { background: #D1FAE5; color: #065F46; }
+    .tag-cancelled { background: #FEE2E2; color: #991B1B; }
+
+    .btn-group { display: flex; gap: 8px; }
+    .btn-sm {
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-sm:hover {
+      background: var(--text-main);
+      color: #FFF;
+      border-color: var(--text-main);
+    }
+    .btn-sm-primary {
+      background: var(--accent-olive);
+      color: #FFF;
+      border-color: var(--accent-olive);
+    }
+    .btn-sm-primary:hover { background: #1C2319; }
+
+    /* TOAST ALERT */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--text-main);
+      color: #FFF;
+      padding: 12px 20px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      display: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP STRIP -->
+  <div class="admin-top-strip">
+    <div>
+      🛡️ <strong>Hệ Thống Quản Trị EndLess Shop</strong> &nbsp;·&nbsp; Phiên bản Kiến trúc: ASP.NET Core &amp; MS SQL Server
+    </div>
+    <div>
+      <a href="index.html">← Quay lại Trang Khách Hàng (Storefront)</a>
+    </div>
+  </div>
+
+  <div class="admin-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <span class="brand-title">Endless.</span>
+        <span class="brand-tag">Quản Trị</span>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item active" onclick="showTab('orders')">
+          <span>📦 Đơn Hàng COD</span>
+          <span class="menu-badge badge-alert" id="pendingCountBadge">18</span>
+        </li>
+        <li class="menu-item" onclick="showTab('products')">
+          <span>👕 Sản Phẩm &amp; Tồn Kho</span>
+          <span class="menu-badge">12</span>
+        </li>
+        <li class="menu-item" onclick="showTab('vouchers')">
+          <span>🏷️ Mã Giảm Giá</span>
+          <span class="menu-badge">2</span>
+        </li>
+        <li class="menu-item" onclick="showTab('customers')">
+          <span>👥 Khách Hàng</span>
+        </li>
+        <li class="menu-item" onclick="showTab('settings')">
+          <span>⚙️ CSDL &amp; Hệ Thống</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="avatar-box">AD</div>
+        <div class="user-info">
+          <strong>Admin Nhóm 5</strong>
+          <span>Toàn quyền Quản trị</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+      <div class="main-header">
+        <div>
+          <h1 id="tabTitle">Quản Lý Đơn Hàng COD</h1>
+          <p id="tabSubtitle">Dữ liệu được cập nhật tự động từ cơ sở dữ liệu MS SQL Server 2022.</p>
+        </div>
+        <div class="top-actions">
+          <button class="btn btn-outline" onclick="showToast('Đang làm mới dữ liệu từ server...')">🔄 Làm Mới</button>
+          <button class="btn btn-dark" onclick="showToast('Đã xuất báo cáo đơn hàng Excel')">📥 Xuất Báo Cáo</button>
+        </div>
+      </div>
+
+      <!-- KPI METRICS ROW -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-label">Doanh Thu Hôm Nay</div>
+          <div class="kpi-val">8.420.000₫</div>
+          <div class="kpi-note note-green">↑ +14.2% so với hôm qua</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Đơn Chờ Xử Lý (COD)</div>
+          <div class="kpi-val" id="kpiPendingVal">18 Đơn</div>
+          <div class="kpi-note note-amber">⚡ Cần chuẩn bị hàng ngay</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Tổng Tồn Kho Có Thể Bán</div>
+          <div class="kpi-val">582 Chiếc</div>
+          <div class="kpi-note note-green">✓ Mức tồn kho an toàn</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Voucher Đang Áp Dụng</div>
+          <div class="kpi-val">2 Mã</div>
+          <div class="kpi-note">ENDLESS10, FREESHIP</div>
+        </div>
+      </div>
+
+      <!-- TAB 1: ORDERS -->
+      <section id="tab-orders" class="tab-section active">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Danh Sách Đơn Hàng COD Cần Xử Lý</h2>
+            <div class="panel-controls">
+              <input type="text" class="search-input" id="orderSearch" placeholder="Tìm theo mã đơn, khách, SĐT..." onkeyup="filterOrders()">
+              <div class="filter-pills">
+                <button class="pill active" onclick="setOrderFilter('all', this)">Tất cả (18)</button>
+                <button class="pill" onclick="setOrderFilter('cho_xu_ly', this)">Chờ xử lý</button>
+                <button class="pill" onclick="setOrderFilter('dang_giao', this)">Đang giao</button>
+                <button class="pill" onclick="setOrderFilter('hoan_thanh', this)">Hoàn thành</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="admin-table" id="ordersTable">
+              <thead>
+                <tr>
+                  <th>Mã đơn</th>
+                  <th>Thời điểm đặt</th>
+                  <th>Người nhận hàng</th>
+                  <th>Số điện thoại &amp; Địa chỉ</th>
+                  <th>Tổng tiền COD</th>
+                  <th>Mã Voucher</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác duyệt</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTbody">
+                <tr data-status="cho_xu_ly">
+                  <td class="code-mono">ENDLESS-1042</td>
+                  <td>11/11 16:45</td>
+                  <td><strong>Nguyễn Hoàng Phúc</strong></td>
+                  <td>0912 345 678<br><span style="font-size: 11px; color: var(--text-muted);">Quận 1, TP. Hồ Chí Minh</span></td>
+                  <td><strong style="font-size: 14px;">189.000₫</strong></td>
+                  <td><span class="code-mono" style="font-size: 11px;">FREESHIP</span></td>
+                  <td><span class="status-tag tag-pending">● Chờ xử lý</span></td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn-sm btn-sm-primary" onclick="updateOrderStatus(this, 'dang_giao')">Duyệt Giao</button>
+                      <button class="btn-sm" onclick="showToast('Xem chi tiết đơn ENDLESS-1042')">Chi Tiết</button>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr data-status="cho_xu_ly">
+                  <td class="code-mono">ENDLESS-1041</td>
+                  <td>11/11 15:20</td>
+                  <td><strong>Trần Thị Mai</strong></td>
+                  <td>0988 765 432<br><span style="font-size: 11px; color: var(--text-muted);">Đống Đa, Hà Nội</span></td>
+                  <td><strong style="font-size: 14px;">583.200₫</strong></td>
+                  <td><span class="code-mono" style="font-size: 11px;">ENDLESS10</span></td>
+                  <td><span class="status-tag tag-pending">● Chờ xử lý</span></td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn-sm btn-sm-primary" onclick="updateOrderStatus(this, 'dang_giao')">Duyệt Giao</button>
+                      <button class="btn-sm" onclick="showToast('In phiếu giao hàng COD')">In Phiếu</button>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr data-status="dang_giao">
+                  <td class="code-mono">ENDLESS-1040</td>
+                  <td>11/11 11:30</td>
+                  <td><strong>Lê Văn Tuấn</strong></td>
+                  <td>0903 112 233<br><span style="font-size: 11px; color: var(--text-muted);">Hải Châu, Đà Nẵng</span></td>
+                  <td><strong style="font-size: 14px;">498.000₫</strong></td>
+                  <td>—</td>
+                  <td><span class="status-tag tag-delivering">● Đang giao</span></td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn-sm btn-sm-primary" onclick="updateOrderStatus(this, 'hoan_thanh')">Đã Giao Xong</button>
+                      <button class="btn-sm" onclick="showToast('Đang theo dõi bưu cục GHN')">Vận Đơn</button>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr data-status="hoan_thanh">
+                  <td class="code-mono">ENDLESS-1039</td>
+                  <td>10/11 18:10</td>
+                  <td><strong>Phạm Minh Đức</strong></td>
+                  <td>0977 123 456<br><span style="font-size: 11px; color: var(--text-muted);">Ninh Kiều, Cần Thơ</span></td>
+                  <td><strong style="font-size: 14px;">349.000₫</strong></td>
+                  <td>—</td>
+                  <td><span class="status-tag tag-completed">✓ Hoàn thành</span></td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn-sm" onclick="showToast('Đơn đã thanh toán COD thành công')">Xem Lại</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: PRODUCTS & INVENTORY -->
+      <section id="tab-products" class="tab-section">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Quản Lý Sản Phẩm &amp; Tồn Kho Thời Gian Thực</h2>
+            <button class="btn btn-dark" onclick="showToast('Chức năng thêm sản phẩm mới')">+ Thêm Sản Phẩm</button>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tên sản phẩm</th>
+                  <th>Danh mục</th>
+                  <th>Giá niêm yết</th>
+                  <th>Tồn kho hiện tại</th>
+                  <th>Kích cỡ hỗ trợ</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="code-mono">1</td>
+                  <td><strong>Áo Thun Basic Cotton Compact</strong></td>
+                  <td>Áo (ao)</td>
+                  <td>189.000₫</td>
+                  <td><strong>49 chiếc</strong></td>
+                  <td>S, M, L, XL</td>
+                  <td><span class="status-tag tag-completed">Còn hàng</span></td>
+                  <td><button class="btn-sm" onclick="adjustStock(1, 'Áo Thun Basic', 49)">Sửa Tồn Kho</button></td>
+                </tr>
+                <tr>
+                  <td class="code-mono">2</td>
+                  <td><strong>Áo Sơ Mi Oxford Dài Tay</strong></td>
+                  <td>Áo (ao)</td>
+                  <td>299.000₫</td>
+                  <td><strong>48 chiếc</strong></td>
+                  <td>M, L, XL</td>
+                  <td><span class="status-tag tag-completed">Còn hàng</span></td>
+                  <td><button class="btn-sm" onclick="adjustStock(2, 'Áo Sơ Mi Oxford', 48)">Sửa Tồn Kho</button></td>
+                </tr>
+                <tr>
+                  <td class="code-mono">3</td>
+                  <td><strong>Áo Polo Pique Mắt Chim</strong></td>
+                  <td>Áo (ao)</td>
+                  <td>249.000₫</td>
+                  <td><strong>50 chiếc</strong></td>
+                  <td>S, M, L, XL</td>
+                  <td><span class="status-tag tag-completed">Còn hàng</span></td>
+                  <td><button class="btn-sm" onclick="adjustStock(3, 'Áo Polo Pique', 50)">Sửa Tồn Kho</button></td>
+                </tr>
+                <tr>
+                  <td class="code-mono">4</td>
+                  <td><strong>Quần Jeans Nam Slim Fit Co Giãn</strong></td>
+                  <td>Quần (quan)</td>
+                  <td>349.000₫</td>
+                  <td><strong>47 chiếc</strong></td>
+                  <td>29, 30, 31, 32</td>
+                  <td><span class="status-tag tag-completed">Còn hàng</span></td>
+                  <td><button class="btn-sm" onclick="adjustStock(4, 'Quần Jeans Slim Fit', 47)">Sửa Tồn Kho</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: VOUCHERS -->
+      <section id="tab-vouchers" class="tab-section">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Quản Lý Mã Khuyến Mãi (Voucher)</h2>
+            <button class="btn btn-dark" onclick="showToast('Tạo voucher mới')">+ Tạo Mã Mới</button>
+          </div>
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Mã code</th>
+                  <th>Loại giảm</th>
+                  <th>Giá trị giảm</th>
+                  <th>Hạn sử dụng</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="code-mono" style="font-size: 14px;">ENDLESS10</td>
+                  <td>Giảm theo phần trăm (percent)</td>
+                  <td><strong>10%</strong> giá trị đơn hàng</td>
+                  <td>Vô thời hạn</td>
+                  <td><span class="status-tag tag-completed">Đang kích hoạt</span></td>
+                  <td><button class="btn-sm" onclick="showToast('Chỉnh sửa mã ENDLESS10')">Cấu Hình</button></td>
+                </tr>
+                <tr>
+                  <td class="code-mono" style="font-size: 14px;">FREESHIP</td>
+                  <td>Giảm số tiền cố định (fixed)</td>
+                  <td><strong>30.000₫</strong> trừ trực tiếp</td>
+                  <td>Vô thời hạn</td>
+                  <td><span class="status-tag tag-completed">Đang kích hoạt</span></td>
+                  <td><button class="btn-sm" onclick="showToast('Chỉnh sửa mã FREESHIP')">Cấu Hình</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: SYSTEM & SQL -->
+      <section id="tab-settings" class="tab-section">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Thông Số Kết Nối &amp; Bảo Mật Hệ Thống</h2>
+          </div>
+          <div style="font-size: 14px; line-height: 1.8;">
+            <p><strong>Cơ sở dữ liệu:</strong> Microsoft SQL Server 2022 (Linux Container Engine)</p>
+            <p><strong>Database Name:</strong> <code>web_thoi_trang</code> (Chuẩn 3NF - 6 bảng nghiệp vụ + 1 bảng phiên)</p>
+            <p><strong>Backend Engine:</strong> ASP.NET Core (.NET 8/9 LTS) / Node.js Express Runtime</p>
+            <p><strong>Giao dịch Đơn hàng:</strong> <code>dbo.order_checkout</code> có khóa <code>sp_getapplock</code> &amp; <code>UPDLOCK, HOLDLOCK</code> chống tranh mua sản phẩm cuối.</p>
+            <p><strong>Bảo mật Mật khẩu:</strong> Argon2id Salted Hash (MemoryCost: 64MiB, TimeCost: 3)</p>
+            <p><strong>Chống tấn công:</strong> Anti-CSRF Synchronizer Token, Rate Limiting đa tầng theo IP và Account ID.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="adminToast" class="toast"></div>
+
+  <script src="js/config.js"></script>
+  <script>
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+
+      const target = document.getElementById('tab-' + tabId);
+      if (target) target.classList.add('active');
+
+      const titles = {
+        orders: ['Quản Lý Đơn Hàng COD', 'Hàng đợi các đơn đặt hàng COD cần đóng gói và chuyển phát.'],
+        products: ['Quản Lý Sản Phẩm & Tồn Kho', 'Kiểm soát số lượng tồn kho và thông số biến thể sản phẩm.'],
+        vouchers: ['Quản Lý Voucher Giảm Giá', 'Cấu hình các chương trình ưu đãi và mã code khuyến mãi.'],
+        customers: ['Quản Lý Tài Khoản Khách Hàng', 'Danh sách khách hàng đã đăng ký và phân quyền hệ thống.'],
+        settings: ['Thông Số Kỹ Thuật & CSDL', 'Kiến trúc bảo mật, Docker container và kết nối MS SQL Server.']
+      };
+
+      if (titles[tabId]) {
+        document.getElementById('tabTitle').innerText = titles[tabId][0];
+        document.getElementById('tabSubtitle').innerText = titles[tabId][1];
+      }
+
+      event.currentTarget.classList.add('active');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('adminToast');
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    function updateOrderStatus(btn, newStatus) {
+      const row = btn.closest('tr');
+      row.dataset.status = newStatus;
+      const statusCell = row.cells[6];
+      const actionCell = row.cells[7];
+
+      if (newStatus === 'dang_giao') {
+        statusCell.innerHTML = '<span class="status-tag tag-delivering">● Đang giao</span>';
+        actionCell.innerHTML = `
+          <div class="btn-group">
+            <button class="btn-sm btn-sm-primary" onclick="updateOrderStatus(this, 'hoan_thanh')">Đã Giao Xong</button>
+            <button class="btn-sm" onclick="showToast('In phiếu vận chuyển')">In Phiếu</button>
+          </div>
+        `;
+        showToast('✓ Đã duyệt đơn thành công! Trạng thái chuyển sang Đang giao.');
+      } else if (newStatus === 'hoan_thanh') {
+        statusCell.innerHTML = '<span class="status-tag tag-completed">✓ Hoàn thành</span>';
+        actionCell.innerHTML = '<div class="btn-group"><button class="btn-sm" onclick="showToast(\'Đơn đã hoàn tất COD\')">Xem Lại</button></div>';
+        showToast('✓ Đơn hàng đã hoàn tất thu tiền COD!');
+      }
+    }
+
+    function filterOrders() {
+      const keyword = document.getElementById('orderSearch').value.toLowerCase();
+      const rows = document.querySelectorAll('#ordersTbody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(keyword) ? '' : 'none';
+      });
+    }
+
+    function setOrderFilter(status, btn) {
+      document.querySelectorAll('.filter-pills .pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+
+      const rows = document.querySelectorAll('#ordersTbody tr');
+      rows.forEach(row => {
+        if (status === 'all' || row.dataset.status === status) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function adjustStock(id, name, currentStock) {
+      const newStock = prompt(`Cập nhật số lượng tồn kho cho "${name}":`, currentStock);
+      if (newStock !== null && !isNaN(newStock) && Number(newStock) >= 0) {
+        showToast(`Đã cập nhật tồn kho sản phẩm ID ${id} thành ${newStock} chiếc.`);
+      }
+    }
+  </script>
+</body>
+</html>

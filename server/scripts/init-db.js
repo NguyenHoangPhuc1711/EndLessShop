@@ -114,12 +114,16 @@ async function initialize() {
       IF DATABASE_PRINCIPAL_ID(N'endless_runtime') IS NULL
         CREATE USER [endless_runtime] FOR LOGIN [endless_runtime];
       GRANT CONNECT TO [endless_runtime];
-      GRANT SELECT ON OBJECT::dbo.SAN_PHAM TO [endless_runtime];
+      GRANT SELECT, INSERT, UPDATE, DELETE ON OBJECT::dbo.SAN_PHAM TO [endless_runtime];
       GRANT SELECT ON OBJECT::dbo.DANH_MUC TO [endless_runtime];
       GRANT EXECUTE ON OBJECT::dbo.auth_create_customer TO [endless_runtime];
       GRANT EXECUTE ON OBJECT::dbo.auth_find_account TO [endless_runtime];
       GRANT EXECUTE ON OBJECT::dbo.auth_profile TO [endless_runtime];
       GRANT SELECT, INSERT, UPDATE, DELETE ON OBJECT::dbo.AUTH_SESSION TO [endless_runtime];
+      GRANT SELECT, INSERT, DELETE ON OBJECT::dbo.VOUCHER TO [endless_runtime];
+      GRANT SELECT, UPDATE ON OBJECT::dbo.TAI_KHOAN TO [endless_runtime];
+      GRANT SELECT, UPDATE ON OBJECT::dbo.HOA_DON TO [endless_runtime];
+      GRANT SELECT ON OBJECT::dbo.CHI_TIET_HOA_DON TO [endless_runtime];
       GRANT EXECUTE ON OBJECT::dbo.order_checkout TO [endless_runtime];
       GRANT EXECUTE ON OBJECT::dbo.order_get TO [endless_runtime];
       GRANT EXECUTE ON OBJECT::dbo.order_list TO [endless_runtime];`);

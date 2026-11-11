@@ -65,10 +65,11 @@
       const images = p.images.map(imagePath);
       if (images.some(value => !value)) throw new Error('Invalid product image');
       const indices = Object.create(null);
-      for (const color of p.colors) {
-        const index = p.colorImageIndices[color];
-        if (!Object.hasOwn(p.colorImageIndices, color) || !Number.isInteger(index) || index < 0 || index >= images.length) throw new Error('Invalid color image mapping');
-        indices[color] = index;
+      for (let i = 0; i < p.colors.length; i++) {
+        const color = p.colors[i];
+        const rawIndex = (p.colorImageIndices && Object.hasOwn(p.colorImageIndices, color)) ? p.colorImageIndices[color] : null;
+        const validIndex = Number.isInteger(rawIndex) && rawIndex >= 0 && rawIndex < images.length;
+        indices[color] = validIndex ? rawIndex : (images.length > 0 ? (i % images.length) : 0);
       }
       return { id: p.id, name: p.name, category: p.category, price: p.price, stock: p.stock,
         sizes: [...new Set(p.sizes)], colors: [...new Set(p.colors)], images,

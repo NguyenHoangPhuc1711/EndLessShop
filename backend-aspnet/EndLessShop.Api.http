@@ -1,0 +1,6 @@
+@EndLessShop.Api_HostAddress = http://localhost:5197
+
+GET {{EndLessShop.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -16,10 +16,11 @@ try {
   $browserFlag=if($WithBrowser){'true'}else{'false'}
   Write-Output ('TEST_CONTROL='+$controlPath)
   docker run --rm --network endlessshop_network --mount "type=bind,source=$controlPath,target=/test-control" `
+    --mount "type=bind,source=$workspace/server,target=/app/server" --workdir /app/server `
     --env DB_SERVER=sqlserver --env DB_PORT=1433 --env DB_DATABASE=web_thoi_trang --env DB_USER=sa --env DB_PASSWORD `
     --env DB_ENCRYPT=true --env DB_TRUST_SERVER_CERTIFICATE=true --env TEST_API_BASE_URL=http://backend:3000 `
     --env "TEST_RUN_ID=$runId" --env "TEST_WAIT_FOR_BROWSER=$browserFlag" `
-    endlessshop-backend:local node scripts/verify-orders.js
+    node:22-bookworm-slim node scripts/verify-orders.js
   if($LASTEXITCODE -ne 0){throw 'COD tests failed; inspect the test report. No credentials are printed.'}
 } finally {
   [Environment]::SetEnvironmentVariable('DB_PASSWORD',$previous,'Process')

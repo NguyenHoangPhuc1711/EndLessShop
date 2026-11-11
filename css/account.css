@@ -1,9 +1,70 @@
 /* Compact account screens and the same right-hand account control across the site. */
 .account-page { padding-top: 108px; padding-bottom: 56px; }
-.account-card { width: 100%; margin: 0 auto; padding: 28px; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; box-shadow: 0 10px 32px rgba(25,38,30,.05); }
+.account-card { width: 100%; margin: 0 auto; padding: 32px; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); box-shadow: none; }
 .account-page--login .account-card { max-width: 440px; }
 .account-page--register .account-card { max-width: 520px; }
 .account-eyebrow { margin-bottom: 10px; color: var(--color-accent); font-size: 11px; letter-spacing: .12em; }
+.account-form__row-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+.account-forgot-link {
+  font-size: 12.5px;
+  color: var(--color-ink-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  font-weight: 500;
+}
+.account-forgot-link:hover {
+  color: var(--color-accent);
+}
+.account-forgot-box {
+  margin-top: 14px;
+  padding: 16px;
+  background: #fbf9f5;
+  border: 1px dashed #d5c8b5;
+  border-radius: 8px;
+  animation: fadeInForgot 0.25s ease-in-out;
+}
+@keyframes fadeInForgot {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.account-forgot-box h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--color-ink);
+}
+.account-forgot-box p {
+  font-size: 12.5px;
+  color: var(--color-ink-light);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.account-forgot-box .forgot-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.account-forgot-box button.btn--cancel {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-ink);
+  padding: 9px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.account-forgot-box button.btn--cancel:hover {
+  background: #eeebe3;
+}
 .account-card h1 { margin-bottom: 10px; font-size: 30px; }
 .account-intro { margin-bottom: 20px; color: var(--color-ink-light); font-size: 14px; }
 .account-form { display: grid; gap: 8px; }
@@ -32,23 +93,22 @@
 .account-control [hidden], #accountForms[hidden] { display: none; }
 .header .page-orders-shortcut { display: none; }
 .header__inner { gap: 20px; }
-.nav { min-width: 0; align-items: center; gap: 16px; }
-.nav > a, .nav-menu__trigger { font-size: 13px; white-space: nowrap; }
-.header__icons { margin-left: auto; flex-shrink: 0; gap: 6px; }
-.header .search-box { flex: 0 1 190px; min-width: 100px; }
-.header .search-box input { width: 100%; min-width: 0; }
+.nav { align-items: center; gap: 18px; }
+.nav > a, .nav-menu__trigger { font-size: 13.5px; white-space: nowrap; }
+.header .search-box { margin-left: auto; flex: 0 0 auto; }
+.header__icons { margin-left: 0; flex-shrink: 0; gap: 8px; }
 .checkout-intro .checkout-back-link { margin-top: 16px; }
-@media (max-width: 1179px) {
+@media (max-width: 1024px) {
   .header { margin-bottom: 0; }
-  .header__inner { height: auto; min-height: 72px; flex-wrap: wrap; padding-top: 10px; padding-bottom: 10px; gap: 12px 18px; }
+  .header__inner { height: auto; min-height: 68px; flex-wrap: wrap; padding-top: 10px; padding-bottom: 10px; gap: 10px 16px; }
   .header .nav { order: 5; flex: 0 0 100%; flex-wrap: wrap; justify-content: center; gap: 4px 18px; }
-  .header .search-box { flex: 1 1 140px; }
+  .header .search-box { flex: 1 1 140px; margin-left: 0; }
   .header .mega-menu { position: fixed; top: var(--mega-menu-top, 118px); left: 12px; right: 12px; width: auto; max-width: none; grid-template-columns: repeat(2,minmax(0,1fr)); max-height: 60vh; overflow-y: auto; }
   .account-page { padding-top: 32px; }
 }
 @media (max-width: 640px) {
   .header__inner { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 10px 8px; padding-left: 16px; padding-right: 16px; }
-  .header .logo { grid-row: 1; grid-column: 1; min-width: 0; }
+  .header .logo, .header .logo-scandi { grid-row: 1; grid-column: 1; min-width: 0; }
   .header .logo img { width: 80px; height: 40px; }
   .header__icons { grid-row: 1; grid-column: 2; gap: 4px; padding: 4px; margin-left: 0; }
   .header .icon-btn { width: 30px; height: 30px; font-size: 16px; }
@@ -56,7 +116,7 @@
   .account-icon { width: 18px; height: 18px; flex-basis: 18px; }
   .account-name { max-width: 64px; }
   .header .search-box { grid-row: 2; grid-column: 1 / -1; width: 100%; min-width: 0; }
-  .header .search-box input { padding: 9px 12px; font-size: 14px; }
+  .header .search-box input { padding: 0 12px 0 34px; height: 38px; font-size: 13.5px; }
   .header .nav { grid-row: 3; grid-column: 1 / -1; justify-content: center; gap: 3px 14px; }
   .header .nav > a, .header .nav-menu__trigger { font-size: 12px; }
   .header .search-suggestions { position: absolute; top: calc(100% + 8px); right: 0; left: 0; width: 100%; }
