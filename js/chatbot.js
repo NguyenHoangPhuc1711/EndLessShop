@@ -417,7 +417,8 @@
     setTyping(true);
 
     try {
-      const res = await fetch('/api/chat', {
+      const chatUrl = window.EndlessConfig ? EndlessConfig.apiUrl('chat') : '/api/chat';
+      const res = await fetch(chatUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

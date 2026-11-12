@@ -78,9 +78,37 @@
   }
 
   async function fetchProducts() {
-    const response = await fetch(EndlessConfig.apiUrl('products'), { credentials: EndlessConfig.credentials, cache: 'no-store', signal: AbortSignal.timeout(10000) });
-    if (!response.ok) throw new Error('Catalog API unavailable');
-    return validateProducts(await response.json());
+    const apiUrl = EndlessConfig.apiUrl('products');
+    if (apiUrl) {
+      try {
+        const response = await fetch(apiUrl, {
+          credentials: EndlessConfig.credentials,
+          cache: 'no-store',
+          signal: AbortSignal.timeout(3500)
+        });
+        if (response.ok) {
+          return validateProducts(await response.json());
+        }
+      } catch (err) {
+        console.warn('API /api/products không khả dụng, kích hoạt danh mục tĩnh dự phòng:', err.message);
+      }
+    }
+
+    // Dự phòng thông minh cho GitHub Pages hoặc môi trường tĩnh khi backend / tunnel chưa bật
+    if (Array.isArray(window.FALLBACK_PRODUCTS) && window.FALLBACK_PRODUCTS.length > 0) {
+      return validateProducts(window.FALLBACK_PRODUCTS);
+    }
+
+    try {
+      const pageBase = window.EndlessConfig?.pageBase || new URL('.', window.location.href).href;
+      const staticUrl = new URL('data/products.json', pageBase).href;
+      const staticRes = await fetch(staticUrl, { cache: 'no-store' });
+      if (staticRes.ok) {
+        return validateProducts(await staticRes.json());
+      }
+    } catch {}
+
+    throw new Error('Catalog API unavailable');
   }
 
   function reconcileCart(raw, products) {
