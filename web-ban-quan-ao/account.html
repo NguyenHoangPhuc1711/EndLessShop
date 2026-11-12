@@ -1,5 +1,195 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Chuyển đến tài khoản | Endless</title></head>
-<body><p>Đang chuyển đến <a href="login.html">trang đăng nhập</a>…</p><noscript><p>Hãy chọn liên kết đăng nhập để tiếp tục.</p></noscript><script src="js/config.js"></script><script src="js/account.js"></script></body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Hồ sơ &amp; Thông tin giao hàng | Endless</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=2.0">
+  <link rel="stylesheet" href="css/checkout.css?v=2.0">
+  <link rel="stylesheet" href="css/account.css?v=2.2">
+  <link rel="stylesheet" href="css/chatbot.css?v=1.0">
+</head>
+<body>
+  <div class="top-announcement">
+    <div class="container top-announcement__inner">
+      <span class="announcement-item"><span class="badge-dot">●</span> <strong>MIỄN PHÍ VẬN CHUYỂN</strong> TOÀN QUỐC CHO ĐƠN TỪ 300K · MÃ: <span class="code-pill">FREESHIP</span></span>
+      <span class="announcement-sep">•</span>
+      <span class="announcement-item">Đồng kiểm hàng tận nhà COD</span>
+      <span class="announcement-sep">•</span>
+      <span class="announcement-item"><a href="policy.html" style="text-decoration:underline;">Đổi trả 30 ngày linh hoạt</a></span>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header__inner container">
+      <a href="index.html#trang-chu" class="logo-scandi" aria-label="Endless Trang Chủ">
+        <span class="logo-scandi__name">ENDLESS</span><span class="logo-scandi__dot">.</span>
+      </a>
+
+      <nav class="nav" aria-label="Điều hướng chính">
+        <a href="index.html#trang-chu" class="nav__link">Trang Chủ</a>
+        <div class="nav-menu">
+          <button class="nav-menu__trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="productMegaMenu">
+            Bộ Sưu Tập <span aria-hidden="true">⌄</span>
+          </button>
+          <div class="mega-menu" id="productMegaMenu" aria-hidden="true">
+            <div class="mega-menu__column">
+              <h2>Khám phá</h2>
+              <a class="mega-menu__feature" href="index.html#san-pham">
+                <span class="mega-menu__eyebrow">FALL / WINTER 2026</span>
+                <strong>Tất cả thiết kế</strong>
+                <span>Thời trang bền vững cho phong cách tối giản hằng ngày.</span>
+              </a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Áo Nam / Nữ</h2>
+              <a href="index.html?category=ao#san-pham">Tất cả áo</a>
+              <a href="index.html?category=ao&amp;q=thun#san-pham">Áo thun cotton</a>
+              <a href="index.html?category=ao&amp;q=sơ-mi#san-pham">Áo sơ mi Oxford</a>
+              <a href="index.html?category=ao&amp;q=khoác#san-pham">Áo khoác bomber</a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Quần &amp; Váy</h2>
+              <a href="index.html?category=quan#san-pham">Quần dài &amp; Shorts</a>
+              <a href="index.html?category=quan&amp;q=jean#san-pham">Quần jean slim</a>
+              <a href="index.html?category=vay#san-pham">Váy liền thân</a>
+              <a href="index.html?category=vay&amp;q=chân-váy#san-pham">Chân váy xếp ly</a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Phụ Kiện</h2>
+              <a href="index.html?category=phukien#san-pham">Tất cả phụ kiện</a>
+              <a href="index.html?category=phukien&amp;q=mũ#san-pham">Mũ lưỡi trai canvas</a>
+              <a href="index.html?category=phukien&amp;q=túi#san-pham">Túi tote sợi dệt</a>
+              <a href="index.html?category=phukien&amp;q=thắt-lưng#san-pham">Thắt lưng da tự nhiên</a>
+            </div>
+          </div>
+        </div>
+        <a href="checkout.html#thanh-toan" class="nav__link">Thanh Toán</a>
+        <a href="checkout.html#lich-su" class="nav__link">Đơn Hàng</a>
+        <a href="size-guide.html" class="nav__link">Chọn Size</a>
+        <a href="policy.html" class="nav__link">Chính Sách</a>
+        <a href="index.html#lien-he" class="nav__link">Liên Hệ</a>
+      </nav>
+
+      <form class="search-box header-search" action="index.html" method="get" role="search">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="search" name="q" placeholder="Tìm sản phẩm…" aria-label="Tìm sản phẩm">
+      </form>
+
+      <div class="header__icons">
+        <a href="checkout.html#lich-su" class="icon-btn page-orders-shortcut" title="Thanh toán và lịch sử giao dịch" aria-label="Thanh toán và lịch sử giao dịch">↗</a>
+        <a href="index.html?panel=wishlist#san-pham" class="icon-btn" title="Sản phẩm yêu thích" aria-label="Sản phẩm yêu thích">♡ <span class="badge" data-wishlist-badge>0</span></a>
+        <a href="index.html?panel=cart#san-pham" class="icon-btn" title="Giỏ hàng" aria-label="Giỏ hàng">🛍 <span class="badge" data-cart-badge>0</span></a>
+        <div class="account-control" data-account-control>
+          <a class="account-signin" href="login.html" data-account-login>
+            <svg class="account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-2a8 8 0 0 1 16 0v2"></path></svg>
+            <span>Đăng nhập</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="account-page container">
+    <div id="accountLoading" class="account-card" style="max-width: 480px; text-align: center; padding: 48px 24px;">
+      <p class="account-message" style="display:block;">Đang kiểm tra phiên đăng nhập…</p>
+    </div>
+
+    <div id="guestSection" class="account-card" style="max-width: 480px;" hidden>
+      <p class="account-eyebrow">ENDLESS / TÀI KHOẢN</p>
+      <h1>Tài khoản của bạn</h1>
+      <p class="account-intro">Vui lòng đăng nhập để xem thông tin hồ sơ và quản lý thông tin giao hàng đã lưu.</p>
+      <a class="btn btn--primary btn--full" href="login.html?next=account.html">Đăng nhập ngay</a>
+      <p class="account-switch">Chưa có tài khoản? <a href="register.html?next=account.html">Đăng ký mới</a></p>
+    </div>
+
+    <div id="profileSection" hidden>
+      <section class="account-profile-header">
+        <p class="account-eyebrow">ENDLESS / HỒ SƠ KHÁCH HÀNG</p>
+        <h1>Thông tin tài khoản <span>&amp; Giao hàng</span></h1>
+        <p class="account-intro">Quản lý thông tin liên hệ và lưu sẵn địa chỉ nhận hàng COD cho những lần mua sắm tiếp theo.</p>
+      </section>
+
+      <div class="account-profile-layout">
+        <aside class="account-profile-sidebar">
+          <div class="account-profile-card">
+            <h2>Tài khoản cá nhân</h2>
+            <p class="card-subtext">Thông tin đăng nhập và định danh tài khoản.</p>
+            <ul class="account-info-list">
+              <li class="account-info-item">
+                <span class="info-label">Tên đăng nhập</span>
+                <strong class="info-value" id="viewUsername">—</strong>
+              </li>
+              <li class="account-info-item">
+                <span class="info-label">Email liên kết</span>
+                <strong class="info-value" id="viewEmail">—</strong>
+              </li>
+              <li class="account-info-item">
+                <span class="info-label">Vai trò hệ thống</span>
+                <div><span class="account-role-badge" id="viewRole">Khách hàng</span></div>
+              </li>
+            </ul>
+
+            <div class="account-quick-nav">
+              <a href="checkout.html#lich-su">📦 Đơn hàng của tôi (Lịch sử)</a>
+              <a href="checkout.html#thanh-toan">🛒 Đến trang thanh toán COD</a>
+              <a href="index.html#san-pham">← Tiếp tục mua sắm</a>
+              <button type="button" class="btn-logout" data-auth-logout>Đăng xuất</button>
+            </div>
+          </div>
+        </aside>
+
+        <section class="account-profile-card">
+          <h2>Thông tin giao hàng mặc định</h2>
+          <p class="card-subtext">Thông tin này sẽ được tự động điền tại bước Thanh toán COD để bạn không cần nhập lại mỗi khi đặt đơn mới.</p>
+
+          <form id="profileShippingForm" class="account-form">
+            <label for="profileFullName">Họ và tên người nhận</label>
+            <input type="text" id="profileFullName" name="fullName" placeholder="Ví dụ: Nguyễn Văn A" autocomplete="name" required maxlength="100">
+
+            <label for="profilePhone">Số điện thoại nhận hàng</label>
+            <input type="tel" id="profilePhone" name="phone" placeholder="Ví dụ: 0987654321" autocomplete="tel" pattern="[0-9]{9,11}" title="Nhập số điện thoại gồm 9 đến 11 chữ số" required>
+
+            <label for="profileAddress">Địa chỉ nhận hàng chi tiết</label>
+            <input type="text" id="profileAddress" name="address" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành..." autocomplete="street-address" required maxlength="500">
+
+            <button type="submit" class="btn btn--primary" id="btnSaveProfileShipping">Lưu thông tin giao hàng</button>
+            <p class="account-message" id="profileShippingMsg" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer" id="lien-he">
+    <div class="container footer__inner">
+      <div>
+        <a href="index.html#trang-chu" class="logo logo--footer"><img src="img/T%C3%AAn%20th%C6%B0%C6%A1ng%20hi%E1%BB%87u.png" alt="Endless"></a>
+        <p>Thời trang tối giản cho cuộc sống thường ngày.</p>
+      </div>
+      <div>
+        <h4>Liên hệ</h4>
+        <p>Email: EndlessGroup@gmail.com</p>
+        <p>Hotline: 1900 8888</p>
+        <p>Địa chỉ: 123 Phố Thời Trang, Hà Nội</p>
+      </div>
+      <div>
+        <h4>Dịch vụ khách hàng</h4>
+        <p><a href="size-guide.html">Bảng quy chuẩn size</a></p>
+        <p><a href="policy.html">Chính sách vận chuyển &amp; đổi trả</a></p>
+        <p><a href="checkout.html#lich-su">Theo dõi đơn hàng</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/account.js?v=2.2"></script>
+  <script src="js/chatbot.js"></script>
+</body>
 </html>

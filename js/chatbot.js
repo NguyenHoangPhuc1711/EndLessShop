@@ -475,9 +475,11 @@
         { code: 'KM50K', type: 'fixed', value: 50000, description: 'Giảm 50.000₫ đơn mùa đông' }
       ];
     } else if (q.includes('ship') || q.includes('giao')) {
-      reply = '🚚 **Chính sách giao hàng Endless:**\n\n• Giao nhanh 1–2 ngày nội thành, 2–4 ngày toàn quốc.\n• Miễn phí vận chuyển cho đơn từ 300.000₫.\n• Phí ship cố định 30.000₫ cho mọi đơn hàng.';
+      reply = '🚚 **Chính sách giao hàng Endless:**\n\n• Giao nhanh 1–2 ngày nội thành, 2–4 ngày toàn quốc.\n• Miễn phí vận chuyển cho đơn từ 300.000₫.\n• Phí ship cố định 30.000₫ cho mọi đơn hàng.\n\n👉 [Xem chi tiết chính sách vận chuyển](policy.html#van-chuyen)';
     } else if (q.includes('đổi') || q.includes('trả')) {
-      reply = '🔄 **Đổi trả trong 30 ngày:**\n\n• Hỗ trợ đổi size tận nhà miễn phí.\n• Sản phẩm còn nguyên tem mác chưa qua giặt tẩy.';
+      reply = '🔄 **Đổi trả trong 30 ngày:**\n\n• Hỗ trợ đổi size tận nhà miễn phí 0đ.\n• Sản phẩm còn nguyên tem mác chưa qua giặt tẩy.\n• Bảo hành 90 ngày cho đường may và phụ kiện.\n\n👉 [Xem chi tiết & gửi yêu cầu đổi trả online](policy.html)';
+    } else if (q.includes('size') || q.includes('kích cỡ')) {
+      reply = '📏 **Tư vấn chọn size chuẩn phong cách Bắc Âu:**\n\nBạn có thể thử ngay [Bộ tính kích cỡ cá nhân thông minh](size-guide.html) hoặc nhắn trực tiếp chiều cao & cân nặng (Ví dụ: `1m70 65kg`) để em tư vấn size tức thì nhé!';
     }
 
     return {

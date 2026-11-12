@@ -50,21 +50,26 @@ BEGIN
     FROM dbo.HOA_DON h WHERE h.khach_hang_id=@user_id ORDER BY h.hoa_don_id DESC;
 END;
 GO
+SET ANSI_NULLS ON;
+SET QUOTED_IDENTIFIER ON;
+GO
 -- Quote and create deliberately share the SAME SQL pricing/validation code.
 CREATE OR ALTER PROCEDURE dbo.order_checkout
     @user_id INT, @items NVARCHAR(MAX), @voucher_code VARCHAR(30) = NULL,
     @create BIT = 0, @payment VARCHAR(20) = 'cod',
     @full_name NVARCHAR(100) = NULL, @phone VARCHAR(15) = NULL,
     @address NVARCHAR(500) = NULL, @note NVARCHAR(1000) = NULL,
-    @request_key VARCHAR(36) = NULL, @request_hash CHAR(64) = NULL
+    @request_key VARCHAR(36) = NULL, @request_hash CHAR(64) = NULL,
+    @save_shipping BIT = 0
 AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
     IF NOT EXISTS (SELECT 1 FROM dbo.TAI_KHOAN WHERE tai_khoan_id=@user_id)
       THROW 51037, 'Authentication required.', 1;
-    IF @payment COLLATE Latin1_General_100_BIN2 <> 'cod' OR @payment IS NULL
-      THROW 51036, 'Only COD is supported.', 1;
+    SET @payment = LOWER(LTRIM(RTRIM(ISNULL(@payment, 'cod'))));
+    IF @payment NOT IN ('cod', 'qr', 'vietqr')
+      THROW 51036, 'Only COD and QR payment are supported.', 1;
     IF ISJSON(@items)<>1 OR LEFT(LTRIM(@items),1)<>'['
       THROW 51030, 'Invalid cart.', 1;
     IF @create=1 AND (@request_key IS NULL OR @request_hash IS NULL)
@@ -147,9 +152,16 @@ BEGIN
         SELECT id,name,image,size,color,qty,price FROM @priced ORDER BY id,size,color;
         RETURN;
       END;
+      IF @save_shipping=1 BEGIN
+        UPDATE dbo.TAI_KHOAN
+        SET dia_chi = @address,
+            sdt = COALESCE(NULLIF(LTRIM(RTRIM(@phone)), ''), sdt),
+            ho_ten = COALESCE(NULLIF(LTRIM(RTRIM(@full_name)), N''), ho_ten)
+        WHERE tai_khoan_id = @user_id;
+      END;
       INSERT dbo.HOA_DON(khach_hang_id,voucher_id,trang_thai,tong_tien,tam_tinh,tien_giam,
         ten_nguoi_nhan,sdt_nguoi_nhan,dia_chi,ghi_chu,phuong_thuc_thanh_toan,ma_voucher,idempotency_key,request_hash)
-        VALUES(@user_id,@voucher_id,'cho_xu_ly',@total,@subtotal,@discount,@full_name,@phone,@address,@note,'cod',@voucher_code,@request_key,@request_hash);
+        VALUES(@user_id,@voucher_id,'cho_xu_ly',@total,@subtotal,@discount,@full_name,@phone,@address,@note,@payment,@voucher_code,@request_key,@request_hash);
       SET @order_id=SCOPE_IDENTITY();
       -- Do the stock update before details so the rollback test covers both parent + stock writes.
       UPDATE p SET ton_kho=p.ton_kho-n.qty FROM dbo.SAN_PHAM p JOIN @needed n ON n.id=p.san_pham_id;

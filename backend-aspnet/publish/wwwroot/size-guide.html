@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hướng Dẫn Chọn Kích Cỡ Chuẩn Dáng | Endless Shop</title>
+  <meta name="description" content="Khám phá công cụ tính kích thước thông minh và bảng số đo chi tiết cho từng dòng sản phẩm áo, quần, váy tại Endless Shop theo phong cách Scandinavian tối giản.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=2.0">
+  <link rel="stylesheet" href="css/info-pages.css?v=1.0">
+  <link rel="stylesheet" href="css/account.css?v=2.0">
+  <link rel="stylesheet" href="css/chatbot.css?v=1.0">
+</head>
+<body>
+
+  <!-- 1. TOP ANNOUNCEMENT STRIP -->
+  <div class="top-announcement">
+    <div class="container top-announcement__inner">
+      <span class="announcement-item"><span class="badge-dot">●</span> <strong>MIỄN PHÍ VẬN CHUYỂN</strong> TOÀN QUỐC CHO ĐƠN TỪ 300K · MÃ: <span class="code-pill">FREESHIP</span></span>
+      <span class="announcement-sep">•</span>
+      <span class="announcement-item">Đồng kiểm hàng tận nhà COD</span>
+      <span class="announcement-sep">•</span>
+      <span class="announcement-item"><a href="policy.html" style="text-decoration:underline;">Đổi trả 30 ngày linh hoạt</a></span>
+    </div>
+  </div>
+
+  <!-- 2. SCANDINAVIAN LUXURY HEADER -->
+  <header class="header">
+    <div class="header__inner container">
+      <!-- Brand Wordmark Logo -->
+      <a href="index.html#trang-chu" class="logo-scandi" aria-label="Endless Trang Chủ">
+        <span class="logo-scandi__name">ENDLESS</span><span class="logo-scandi__dot">.</span>
+      </a>
+
+      <!-- Primary Navigation -->
+      <nav class="nav" aria-label="Điều hướng chính">
+        <a href="index.html#trang-chu" class="nav__link">Trang Chủ</a>
+        <div class="nav-menu">
+          <button class="nav-menu__trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="productMegaMenu">
+            Bộ Sưu Tập <span aria-hidden="true">⌄</span>
+          </button>
+          <div class="mega-menu" id="productMegaMenu" aria-hidden="true">
+            <div class="mega-menu__column">
+              <h2>Khám phá</h2>
+              <a class="mega-menu__feature" href="index.html#san-pham">
+                <span class="mega-menu__eyebrow">FALL / WINTER 2026</span>
+                <strong>Tất cả thiết kế</strong>
+                <span>Thời trang bền vững cho phong cách tối giản hằng ngày.</span>
+              </a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Áo Nam / Nữ</h2>
+              <a href="index.html?category=ao#san-pham">Tất cả áo</a>
+              <a href="index.html?category=ao&amp;q=thun#san-pham">Áo thun cotton</a>
+              <a href="index.html?category=ao&amp;q=sơ-mi#san-pham">Áo sơ mi Oxford</a>
+              <a href="index.html?category=ao&amp;q=khoác#san-pham">Áo khoác bomber</a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Quần &amp; Váy</h2>
+              <a href="index.html?category=quan#san-pham">Quần dài &amp; Shorts</a>
+              <a href="index.html?category=quan&amp;q=jean#san-pham">Quần jean slim</a>
+              <a href="index.html?category=vay#san-pham">Váy liền thân</a>
+              <a href="index.html?category=vay&amp;q=chân-váy#san-pham">Chân váy xếp ly</a>
+            </div>
+            <div class="mega-menu__column">
+              <h2>Phụ Kiện</h2>
+              <a href="index.html?category=phukien#san-pham">Tất cả phụ kiện</a>
+              <a href="index.html?category=phukien&amp;q=mũ#san-pham">Mũ lưỡi trai canvas</a>
+              <a href="index.html?category=phukien&amp;q=túi#san-pham">Túi tote sợi dệt</a>
+              <a href="index.html?category=phukien&amp;q=thắt-lưng#san-pham">Thắt lưng da tự nhiên</a>
+            </div>
+          </div>
+        </div>
+        <a href="checkout.html#thanh-toan" class="nav__link">Thanh Toán</a>
+        <a href="checkout.html#lich-su" class="nav__link">Đơn Hàng</a>
+        <a href="size-guide.html" class="nav__link active" style="color:var(--color-accent);border-bottom-color:var(--color-accent);">Chọn Size</a>
+        <a href="policy.html" class="nav__link">Chính Sách</a>
+      </nav>
+
+      <!-- Pill Search Box -->
+      <form class="search-box header-search" action="index.html" method="get" role="search">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="search" name="q" placeholder="Tìm sản phẩm..." aria-label="Tìm sản phẩm">
+      </form>
+
+      <!-- Action Icons -->
+      <div class="header__icons">
+        <a href="index.html?panel=wishlist#san-pham" class="icon-btn" title="Sản phẩm yêu thích" aria-label="Sản phẩm yêu thích">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        </a>
+        <a href="index.html?panel=cart#san-pham" class="icon-btn" title="Giỏ hàng COD" aria-label="Giỏ hàng COD">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        </a>
+        <div class="account-control" data-account-control>
+          <a class="account-signin" href="login.html" data-account-login>
+            <svg class="account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-2a8 8 0 0 1 16 0v2"></path></svg>
+            <span>Đăng nhập</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. PAGE HERO -->
+  <section class="info-page-hero">
+    <div class="container">
+      <div class="info-breadcrumb">
+        <a href="index.html">Trang chủ</a>
+        <span class="info-breadcrumb__sep">/</span>
+        <span>Hướng dẫn chọn kích cỡ</span>
+      </div>
+
+      <div class="info-hero-eyebrow">
+        <span>ENDLESS FIT GUIDE · SCANDINAVIAN TAILORING</span>
+      </div>
+
+      <h1 class="info-hero-title">Hướng dẫn chọn kích cỡ <span>chuẩn dáng</span></h1>
+      <p class="info-hero-desc">
+        Endless theo đuổi triết lý may đo tối giản Bắc Âu, tối ưu hóa đường cắt cho vóc dáng người Việt. Hãy sử dụng bộ tính size thông minh bên dưới hoặc tra cứu bảng số đo chi tiết để chọn được thiết kế hoàn hảo nhất.
+      </p>
+
+      <div class="info-hero-badges">
+        <span class="info-badge info-badge--accent">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          Phom dáng chuẩn người Việt &amp; Bắc Âu
+        </span>
+        <span class="info-badge info-badge--terracotta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          Đổi size tận nhà miễn phí 0đ trong 30 ngày
+        </span>
+        <span class="info-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          100% Sợi tự nhiên giữ dáng lâu bền
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. UNIFIED HUB STICKY NAV TABS -->
+  <nav class="info-hub-nav" aria-label="Trung tâm hỗ trợ khách hàng">
+    <div class="container info-hub-nav__inner">
+      <div class="info-hub-tabs">
+        <a href="size-guide.html" class="info-hub-tab is-active">📏 Hướng dẫn chọn kích cỡ</a>
+        <a href="policy.html" class="info-hub-tab">🔄 Chính sách đổi trả &amp; bảo hành</a>
+        <a href="policy.html#van-chuyen" class="info-hub-tab">🚚 Vận chuyển &amp; COD</a>
+      </div>
+      <button type="button" class="info-hub-cta" onclick="window.openEndlessChat('📏 Tư vấn chọn size')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <span>Trợ lý ảo tư vấn 24/7</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 5. MAIN CONTENT -->
+  <main class="container">
+
+    <!-- SECTION 1: SMART FIT FINDER (BỘ TÍNH SIZE THÔNG MINH) -->
+    <section class="info-section" id="tinh-size-nhanh">
+      <div class="info-section-header">
+        <span class="info-section-tag">CÔNG CỤ THÔNG MINH</span>
+        <h2 class="info-section-title">Bộ tính kích cỡ cá nhân (Fit Finder)</h2>
+        <p class="info-section-subtitle">
+          Chỉ cần chọn chiều cao, cân nặng và phong cách mặc mong muốn, hệ thống sẽ đề xuất ngay kích cỡ vừa vặn nhất cho vóc dáng của bạn.
+        </p>
+      </div>
+
+      <div class="fit-finder">
+        <div class="fit-finder-grid">
+          
+          <!-- Input Form Controls -->
+          <div class="fit-finder-form">
+            
+            <!-- Gender Selector -->
+            <div class="fit-form-group">
+              <label class="fit-form-label">Dành cho vóc dáng:</label>
+              <div class="fit-pills">
+                <button type="button" class="fit-pill-btn is-active" data-fit-gender="nam">Nam</button>
+                <button type="button" class="fit-pill-btn" data-fit-gender="nu">Nữ</button>
+                <button type="button" class="fit-pill-btn" data-fit-gender="unisex">Unisex</button>
+              </div>
+            </div>
+
+            <!-- Height Slider -->
+            <div class="fit-form-group">
+              <div class="fit-form-label">
+                <span>Chiều cao của bạn:</span>
+                <span class="fit-form-val" id="fitHeightVal">170 cm</span>
+              </div>
+              <div class="fit-slider-wrap">
+                <input type="range" class="fit-range-slider" id="fitHeightSlider" min="145" max="195" value="170">
+                <input type="number" class="fit-num-input" id="fitHeightNum" min="145" max="195" value="170" aria-label="Chiều cao bằng cm">
+              </div>
+            </div>
+
+            <!-- Weight Slider -->
+            <div class="fit-form-group">
+              <div class="fit-form-label">
+                <span>Cân nặng hiện tại:</span>
+                <span class="fit-form-val" id="fitWeightVal">65 kg</span>
+              </div>
+              <div class="fit-slider-wrap">
+                <input type="range" class="fit-range-slider" id="fitWeightSlider" min="40" max="100" value="65">
+                <input type="number" class="fit-num-input" id="fitWeightNum" min="40" max="100" value="65" aria-label="Cân nặng bằng kg">
+              </div>
+            </div>
+
+            <!-- Fit Preference -->
+            <div class="fit-form-group">
+              <label class="fit-form-label">Sở thích dáng áo (Fit):</label>
+              <div class="fit-pills">
+                <button type="button" class="fit-pill-btn" data-fit-pref="slim">Ôm vừa (Slim)</button>
+                <button type="button" class="fit-pill-btn is-active" data-fit-pref="regular">Tiêu chuẩn</button>
+                <button type="button" class="fit-pill-btn" data-fit-pref="relaxed">Rộng rãi (Oversize)</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Dynamic Result Display Card -->
+          <div class="fit-result-card">
+            <span class="fit-result-badge">GỢI Ý KÍCH CỠ ENDLESS</span>
+            <div class="fit-result-size" id="fitResultSize">L</div>
+            <div class="fit-result-fitname" id="fitResultName">Form: Tiêu chuẩn (Regular Fit)</div>
+            
+            <div class="fit-meter-bar">
+              <div class="fit-meter-fill" id="fitMeterFill" style="width: 95%;"></div>
+            </div>
+            <div class="fit-meter-text" id="fitMeterText">Độ phù hợp khuyến nghị: 95%</div>
+
+            <p class="fit-result-desc" id="fitResultDesc">
+              Với chiều cao <strong>170 cm</strong> và cân nặng <strong>65 kg</strong>, Size <strong>L</strong> sẽ mang lại cảm giác thoải mái nhất ở cầu vai và chiều dài áo vừa qua thắt lưng tự nhiên.
+            </p>
+
+            <div class="fit-result-actions">
+              <a href="index.html#san-pham" class="btn btn--primary">Mua sắm thiết kế theo size này ↗</a>
+              <button type="button" class="btn btn--ghost" onclick="window.openEndlessChat('Mình cao ' + document.getElementById('fitHeightSlider').value + 'cm nặng ' + document.getElementById('fitWeightSlider').value + 'kg tư vấn size chi tiết giúp mình')">
+                Nhờ chuyên viên tư vấn thêm
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: INTERACTIVE CATEGORY SIZE CHARTS -->
+    <section class="info-section" id="bang-kich-co-chi-tiet">
+      <div class="info-section-header">
+        <span class="info-section-tag">THÔNG SỐ MAY ĐO CHI TIẾT</span>
+        <h2 class="info-section-title" id="sizeChartTitle">Bảng kích cỡ Áo thun &amp; Polo Endless</h2>
+        <p class="info-section-subtitle">
+          Số đo được đo thực tế trên sản phẩm trải phẳng (dung sai ±1cm do đặc tính sợi dệt tự nhiên).
+        </p>
+      </div>
+
+      <div class="size-chart-box">
+        <div class="size-chart-toolbar">
+          <!-- Category Pills -->
+          <div class="size-category-pills">
+            <button type="button" class="size-cat-btn is-active" data-size-cat="ao-thun">Áo thun &amp; Polo</button>
+            <button type="button" class="size-cat-btn" data-size-cat="ao-somi">Áo sơ mi Oxford</button>
+            <button type="button" class="size-cat-btn" data-size-cat="ao-khoac">Áo khoác &amp; Cardigan</button>
+            <button type="button" class="size-cat-btn" data-size-cat="quan-dai">Quần dài &amp; Jeans</button>
+            <button type="button" class="size-cat-btn" data-size-cat="quan-short">Quần Shorts</button>
+            <button type="button" class="size-cat-btn" data-size-cat="vay">Váy &amp; Chân váy Nữ</button>
+          </div>
+
+          <!-- Unit Switcher -->
+          <div class="unit-toggle" aria-label="Đổi đơn vị đo">
+            <button type="button" class="unit-btn is-active" data-unit="cm">Centimet (cm)</button>
+            <button type="button" class="unit-btn" data-unit="inch">Inches (in)</button>
+          </div>
+        </div>
+
+        <!-- Dynamic Table Rendered by JS -->
+        <div class="size-table-container" id="scandiSizeTable"></div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: VISUAL BODY MEASUREMENT GUIDE -->
+    <section class="info-section" id="huong-dan-lay-so-do">
+      <div class="info-section-header">
+        <span class="info-section-tag">KỸ THUẬT LẤY SỐ ĐO</span>
+        <h2 class="info-section-title">Cách lấy số đo cơ thể chuẩn xác 6 điểm</h2>
+        <p class="info-section-subtitle">
+          Chỉ với một chiếc thước dây mềm, bạn có thể tự đo các vòng cơ thể chính xác tại nhà trong 2 phút.
+        </p>
+      </div>
+
+      <div class="measure-grid">
+        
+        <div class="measure-card">
+          <div class="measure-card__header">
+            <span class="measure-number">01</span>
+            <h3 class="measure-title">Vòng Ngực (Chest / Bust)</h3>
+          </div>
+          <p class="measure-desc">
+            Vòng thước dây quanh điểm nở nhất của ngực. Giữ thước nằm ngang song song với sàn, thả lỏng vai và thở đều tự nhiên.
+          </p>
+          <div class="measure-tips">💡 Mẹo: Không siết chặt thước dây, chừa độ hở 1 ngón tay.</div>
+        </div>
+
+        <div class="measure-card">
+          <div class="measure-card__header">
+            <span class="measure-number">02</span>
+            <h3 class="measure-title">Vòng Eo (Waist)</h3>
+          </div>
+          <p class="measure-desc">
+            Đo vòng quanh điểm nhỏ nhất của thắt lưng (thường cách rốn khoảng 2 – 3 cm về phía trên). Không hóp bụng khi đo.
+          </p>
+          <div class="measure-tips">💡 Mẹo: Đo vào buổi sáng trước bữa ăn để có số đo chuẩn nhất.</div>
+        </div>
+
+        <div class="measure-card">
+          <div class="measure-card__header">
+            <span class="measure-number">03</span>
+            <h3 class="measure-title">Vòng Mông (Hips)</h3>
+          </div>
+          <p class="measure-desc">
+            Khép hai chân đứng thẳng thon gọn, vòng thước dây qua điểm nhô cao nhất của mông. Thước dây giữ thăng bằng phẳng đều.
+          </p>
+          <div class="measure-tips">💡 Mẹo: Rất quan trọng khi chọn quần jean slim và váy ôm.</div>
+        </div>
+
+        <div class="measure-card">
+          <div class="measure-card__header">
+            <span class="measure-number">04</span>
+            <h3 class="measure-title">Rộng Vai (Shoulders)</h3>
+          </div>
+          <p class="measure-desc">
+            Nhờ người hỗ trợ đo từ mỏm khớp vai bên trái vắt ngang qua gáy cổ sang đến mỏm khớp vai bên phải phía sau lưng.
+          </p>
+          <div class="measure-tips">💡 Mẹo: Đứng thẳng, tay buông xuôi thoải mái hai bên hông.</div>
+        </div>
+
+        <div class="measure-card">
+          <div class="measure-card__header">
+            <span class="measure-number">05</span>
+            <h3 class="measure-title">Dài Áo (Body Length)</h3>
+          </div>
+          <p class="measure-desc">
+            Đo từ điểm cao nhất của đường may cổ vai (ngay chân cổ áo) kéo thẳng xuống đến gấu áo hoặc độ dài mong muốn.
+          </p>
+          <div class="measure-tips">💡 Mẹo: Áo form Bắc Âu thường dài trùm nửa cúc quần dài.</div>
+        </div>
+
+        <div class="measure-card">
+          <div class="measure-card__header">
+            <span class="measure-number">06</span>
+            <h3 class="measure-title">Dài Đũng / Quần (Inseam)</h3>
+          </div>
+          <p class="measure-desc">
+            Đo từ điểm đáy đũng quần dọc theo mặt trong đùi xuống đến mắt cá chân (dành cho quần dài) hoặc trên đầu gối (quần shorts).
+          </p>
+          <div class="measure-tips">💡 Mẹo: Có thể đo trực tiếp trên chiếc quần vừa vặn nhất bạn có.</div>
+        </div>
+
+      </div>
+
+      <!-- Pro Tips Callout Box -->
+      <div class="protips-box">
+        <h4 class="protips-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          3 Nguyên tắc vàng khi lựa chọn trang phục phong cách Scandinavian
+        </h4>
+        <ul class="protips-list">
+          <li><strong>Nếu số đo của bạn nằm giữa 2 size:</strong> Hãy chọn size lớn hơn nếu bạn thích sự phóng khoáng, thoáng khí đặc trưng của Bắc Âu; hoặc chọn size nhỏ hơn nếu bạn có vóc dáng săn chắc và thích mặc ôm gọn (Slim fit).</li>
+          <li><strong>Đối với áo sơ mi &amp; áo khoác:</strong> Hãy ưu tiên thông số Rộng vai và Vòng ngực đầu tiên. Vai vừa thì tổng thể trang phục sẽ luôn đứng dáng và thanh lịch.</li>
+          <li><strong>Chính sách bảo chứng sự vừa vặn:</strong> Nếu lỡ chọn size chưa ưng ý, Endless sẽ <strong>đổi size tận nhà miễn phí 0đ</strong> trong 30 ngày. Bạn hoàn toàn không phải băn khoăn khi đặt hàng!</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 4: INTERNATIONAL SIZE CONVERSION TABLE -->
+    <section class="info-section" id="quy-doi-quoc-te">
+      <div class="info-section-header">
+        <span class="info-section-tag">QUY CHUẨN TOÀN CẦU</span>
+        <h2 class="info-section-title">Bảng quy đổi kích cỡ chuẩn quốc tế</h2>
+        <p class="info-section-subtitle">
+          Bảng đối chiếu kích cỡ Endless so với các chuẩn thời trang thông dụng tại Mỹ (US), Châu Âu (EU) và Nhật Bản / Hàn Quốc (JP/KR).
+        </p>
+      </div>
+
+      <div class="size-table-container">
+        <table class="scandi-table">
+          <thead>
+            <tr>
+              <th>Size Endless</th>
+              <th>Chuẩn Quốc Tế</th>
+              <th>Mỹ / Anh (US / UK)</th>
+              <th>Châu Âu (EU)</th>
+              <th>Nhật / Hàn (JP / KR)</th>
+              <th>Ý (IT)</th>
+              <th>Khuyến nghị cân nặng</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="size-code">S</td>
+              <td>Small</td>
+              <td>36</td>
+              <td>46</td>
+              <td>1 (S)</td>
+              <td>44</td>
+              <td>48 – 55 kg</td>
+            </tr>
+            <tr>
+              <td class="size-code">M <span class="badge-recommend">Phổ biến</span></td>
+              <td>Medium</td>
+              <td>38</td>
+              <td>48</td>
+              <td>2 (M)</td>
+              <td>46</td>
+              <td>56 – 64 kg</td>
+            </tr>
+            <tr>
+              <td class="size-code">L</td>
+              <td>Large</td>
+              <td>40</td>
+              <td>50</td>
+              <td>3 (L)</td>
+              <td>48</td>
+              <td>65 – 73 kg</td>
+            </tr>
+            <tr>
+              <td class="size-code">XL</td>
+              <td>X-Large</td>
+              <td>42</td>
+              <td>52</td>
+              <td>4 (XL)</td>
+              <td>50</td>
+              <td>74 – 82 kg</td>
+            </tr>
+            <tr>
+              <td class="size-code">XXL</td>
+              <td>2X-Large</td>
+              <td>44</td>
+              <td>54</td>
+              <td>5 (XXL)</td>
+              <td>52</td>
+              <td>Trên 82 kg</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 5: FABRIC & FIT PHILOSOPHY -->
+    <section class="info-section" id="chat-lieu-va-do-co-gian">
+      <div class="info-section-header">
+        <span class="info-section-tag">TRIẾT LÝ SỢI TỰ NHIÊN</span>
+        <h2 class="info-section-title">Đặc tính chất liệu &amp; Form dáng trang phục</h2>
+        <p class="info-section-subtitle">
+          Chất liệu là linh hồn của thời trang Bắc Âu. Mỗi dòng sợi mang lại độ co giãn và cảm giác chuyển động riêng biệt.
+        </p>
+      </div>
+
+      <div class="fabric-grid">
+        <div class="fabric-card">
+          <div class="fabric-card__icon">🌿</div>
+          <h3 class="fabric-card__name">100% Organic Cotton</h3>
+          <div class="fabric-card__prop">Co giãn tự nhiên · Mềm êm</div>
+          <p class="fabric-card__desc">
+            Sợi bông hữu cơ chải kỹ mang lại độ thoáng khí tối đa. Vải có độ đàn hồi tự nhiên, định hình phom suông vừa vặn sau nhiều lần giặt.
+          </p>
+        </div>
+
+        <div class="fabric-card">
+          <div class="fabric-card__icon">🌾</div>
+          <h3 class="fabric-card__name">Pure Linen Flax</h3>
+          <div class="fabric-card__prop">Độ rủ tự nhiên · Không co giãn</div>
+          <p class="fabric-card__desc">
+            Vải đay lanh dệt mộc cao cấp từ Bắc Âu. Vì chất vải không co giãn, Endless khuyến khích bạn chọn size theo đúng số đo ngực hoặc nhích 1 size nếu thích phom rộng thoải mái.
+          </p>
+        </div>
+
+        <div class="fabric-card">
+          <div class="fabric-card__icon">🧶</div>
+          <h3 class="fabric-card__name">Cotton Spandex Blend</h3>
+          <div class="fabric-card__prop">Co giãn 4 chiều · Ôm nhẹ</div>
+          <p class="fabric-card__desc">
+            Tỉ lệ 95% Cotton kết hợp 5% sợi Spandex đàn hồi cao cấp. Trang phục ôm nhẹ tôn dáng và linh hoạt tuyệt đối cho người hay vận động ngoài trời.
+          </p>
+        </div>
+
+        <div class="fabric-card">
+          <div class="fabric-card__icon">🧥</div>
+          <h3 class="fabric-card__name">Wool &amp; Twill Outerwear</h3>
+          <div class="fabric-card__prop">Đứng form · Giữ ấm tốt</div>
+          <p class="fabric-card__desc">
+            Chất len dệt chéo tạo phom áo khoác và quần đứng nếp dày dặn. Form áo đã được trừ hao khoảng hở 3–5cm để bạn mặc áo lót mỏng bên trong vào mùa lạnh.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: FAQ ACCORDION -->
+    <section class="info-section" id="faq-size">
+      <div class="info-section-header info-section-header--center">
+        <span class="info-section-tag">HỎI ĐÁP THƯỜNG GẶP</span>
+        <h2 class="info-section-title">Câu hỏi phổ biến về kích cỡ &amp; mặc vừa</h2>
+        <p class="info-section-subtitle">
+          Giải đáp nhanh những thắc mắc thường gặp giúp bạn yên tâm lựa chọn sản phẩm.
+        </p>
+      </div>
+
+      <div class="faq-wrap">
+        <div class="faq-item is-open">
+          <button type="button" class="faq-trigger" aria-expanded="true">
+            <span>Nếu chiều cao ở size này nhưng cân nặng lại ở size khác thì nên chọn thế nào?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <p>
+              Đối với <strong>áo thun và áo sơ mi</strong>, Endless khuyến khích bạn ưu tiên chọn theo <strong>cân nặng (vòng ngực)</strong> để đảm bảo sự thoải mái ở phần nách và thân trên. Đối với <strong>quần dài</strong>, hãy ưu tiên chọn theo <strong>vòng eo và chiều dài chân</strong>. Nếu bạn vẫn phân vân, hãy nhắn cho chuyên viên tư vấn qua chatbot hoặc hotline, chúng tôi sẽ gợi ý chuẩn xác theo dáng người của bạn.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-trigger" aria-expanded="false">
+            <span>Nếu tôi đặt về mặc thử không vừa thì có được đổi không?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <p>
+              <strong>Chắc chắn có!</strong> Endless cam kết chính sách <strong>đổi size tận nhà miễn phí 0đ trong 30 ngày</strong>. Bưu tá sẽ mang size mới đến tận cửa nhà bạn và thu hồi size cũ đồng thời, bạn không cần phải mang ra bưu cục hay chi trả thêm bất kỳ khoản phí vận chuyển nào.
+              <br><a href="policy.html" style="color:var(--color-terracotta);text-decoration:underline;font-weight:600;margin-top:6px;display:inline-block;">Xem chi tiết chính sách đổi trả 30 ngày →</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-trigger" aria-expanded="false">
+            <span>Trang phục vải cotton của Endless sau khi giặt có bị co rút không?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <p>
+              Tất cả chất liệu vải của Endless đều trải qua quy trình xử lý <strong>Pre-shrunk (giặt nhiệt chống co rút trước khi may)</strong>. Độ co rút thực tế sau nhiều lần giặt chỉ ở mức dưới 1.5% (hoàn toàn không ảnh hưởng đến size áo). Bạn nên giặt nước lạnh dưới 30°C và phơi tự nhiên để giữ độ bền sợi dệt tốt nhất.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button type="button" class="faq-trigger" aria-expanded="false">
+            <span>Form áo Endless là phom ôm sát hay phom rộng rãi?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <p>
+              Phần lớn các thiết kế của Endless được định hình theo phom <strong>Regular Fit (suông vừa vặn)</strong> theo phong cách Bắc Âu — rộng hơn phom Slimfit châu Á khoảng 2cm ở vòng ngực và vai nhằm tạo sự thoải mái tối đa trong mọi cử động thường ngày, đồng thời không quá rộng thùng thình như Streetwear.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: DIRECT SUPPORT BANNER -->
+    <div class="support-banner">
+      <div class="support-banner__text">
+        <h3>Bạn vẫn chưa chắc chắn về kích cỡ?</h3>
+        <p>Trợ lý ảo AI Endless và đội ngũ tư vấn viên luôn sẵn sàng hỗ trợ bạn chọn size chuẩn xác 24/7 theo số đo riêng của bạn.</p>
+      </div>
+      <div class="support-banner__actions">
+        <button type="button" class="btn-white" onclick="window.openEndlessChat('📏 Tư vấn chọn size')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          Chat tư vấn size ngay
+        </button>
+        <a href="tel:0971438198" class="btn-outline-white">Hotline: 0971 438 198</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 6. SCANDINAVIAN FOOTER -->
+  <footer class="footer" id="lien-he" style="margin-top:60px;">
+    <div class="container footer__inner">
+      <div class="footer-col footer-col--brand">
+        <div class="logo-scandi logo-scandi--footer">
+          <span class="logo-scandi__name">ENDLESS</span><span class="logo-scandi__dot">.</span>
+        </div>
+        <p class="footer-desc">Thời trang phong cách Bắc Âu tối giản, thanh lịch và bền vững cho nhịp sống hiện đại.</p>
+        <div class="footer-badges">
+          <span class="badge-pill">Thanh toán COD</span>
+          <span class="badge-pill">Đổi trả 30 ngày</span>
+          <span class="badge-pill">100% Sợi Tự Nhiên</span>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Bộ Sưu Tập</h4>
+        <ul class="footer-links">
+          <li><a href="index.html?category=ao#san-pham">Áo thun &amp; Sơ mi</a></li>
+          <li><a href="index.html?category=quan#san-pham">Quần Jeans &amp; Kaki</a></li>
+          <li><a href="index.html?category=vay#san-pham">Váy đầm tối giản</a></li>
+          <li><a href="index.html?category=phukien#san-pham">Phụ kiện &amp; Mũ túi</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Hỗ Trợ Khách Hàng</h4>
+        <ul class="footer-links">
+          <li><a href="size-guide.html" style="color:var(--color-terracotta);font-weight:600;">Hướng dẫn chọn kích cỡ</a></li>
+          <li><a href="policy.html">Chính sách đổi trả &amp; bảo hành</a></li>
+          <li><a href="policy.html#van-chuyen">Chính sách giao nhận COD</a></li>
+          <li><a href="checkout.html#lich-su">Tra cứu lịch sử đơn hàng</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Liên Hệ Cửa Hàng</h4>
+        <p class="contact-line"><strong>Hotline:</strong> 0971 438 198</p>
+        <p class="contact-line"><strong>Email:</strong> contact@endless.vn</p>
+        <p class="contact-line"><strong>Showroom:</strong> 84 Phố Huế, Hoàn Kiếm, Hà Nội</p>
+        <p class="contact-line"><strong>Giờ mở cửa:</strong> 09:00 - 21:30 hàng ngày</p>
+      </div>
+    </div>
+
+    <div class="footer__bottom container">
+      <p>© 2026 Endless Store. Thiết kế theo tiêu chuẩn Scandinavian Warm Minimal.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Về đầu trang ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT LIBRARIES -->
+  <script src="js/config.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/info-pages.js?v=1.0"></script>
+  <script src="js/chatbot.js?v=1.0"></script>
+</body>
+</html>

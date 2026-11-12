@@ -119,6 +119,7 @@ async function initialize() {
       GRANT EXECUTE ON OBJECT::dbo.auth_create_customer TO [endless_runtime];
       GRANT EXECUTE ON OBJECT::dbo.auth_find_account TO [endless_runtime];
       GRANT EXECUTE ON OBJECT::dbo.auth_profile TO [endless_runtime];
+      GRANT EXECUTE ON OBJECT::dbo.auth_update_shipping_info TO [endless_runtime];
       GRANT SELECT, INSERT, UPDATE, DELETE ON OBJECT::dbo.AUTH_SESSION TO [endless_runtime];
       GRANT SELECT, INSERT, DELETE ON OBJECT::dbo.VOUCHER TO [endless_runtime];
       GRANT SELECT, UPDATE ON OBJECT::dbo.TAI_KHOAN TO [endless_runtime];

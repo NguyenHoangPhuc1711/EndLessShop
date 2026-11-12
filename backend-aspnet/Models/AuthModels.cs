@@ -19,8 +19,23 @@ public class UserDto
     [JsonPropertyName("phone")]
     public string? Phone { get; set; }
 
+    [JsonPropertyName("address")]
+    public string? Address { get; set; }
+
     [JsonPropertyName("role")]
     public string Role { get; set; } = "khach_hang";
+}
+
+public class UpdateShippingInfoRequest
+{
+    [JsonPropertyName("fullName")]
+    public string? FullName { get; set; }
+
+    [JsonPropertyName("phone")]
+    public string? Phone { get; set; }
+
+    [JsonPropertyName("address")]
+    public string? Address { get; set; }
 }
 
 public class RegisterRequest
@@ -73,5 +88,6 @@ public class AccountEntity
     public string fullName { get; set; } = string.Empty;
     public string email { get; set; } = string.Empty;
     public string? phone { get; set; }
+    public string? address { get; set; }
     public string role { get; set; } = string.Empty;
 }

@@ -64,7 +64,8 @@ public class ChatController : ControllerBase
                         "• **Size L**: Cao 1m68 – 1m75 | Nặng 63kg – 72kg\n" +
                         "• **Size XL**: Cao 1m76 – 1m83 | Nặng 73kg – 82kg\n" +
                         "• **Size XXL**: Cao trên 1m83 | Nặng trên 82kg\n\n" +
-                        "💡 *Mẹo:* Bạn có thể nhắn trực tiếp chiều cao & cân nặng (Ví dụ: **1m70 65kg**) để em tư vấn size chính xác nhất nhé!",
+                        "💡 *Mẹo:* Bạn có thể nhắn trực tiếp chiều cao & cân nặng (Ví dụ: **1m70 65kg**) để em tư vấn size chính xác nhất nhé!\n\n" +
+                        "👉 [Mở bộ tính size thông minh & Bảng số đo chi tiết](size-guide.html)",
                 Intent = "sizing",
                 Suggestions = new List<string> { "1m65 58kg", "1m72 68kg", "1m78 75kg", "🏷️ Mã giảm giá hot" }
             });
@@ -79,7 +80,8 @@ public class ChatController : ControllerBase
                         "• **Thời gian giao:** 1–2 ngày đối với khu vực nội thành (Hà Nội, TP.HCM); 2–4 ngày đối với các tỉnh thành toàn quốc.\n" +
                         "• **Phí vận chuyển:** Đồng giá 30.000₫ toàn quốc.\n" +
                         "• **Miễn phí vận chuyển:** Áp dụng tự động cho đơn hàng từ **300.000₫** hoặc khi sử dụng mã voucher `FREESHIP`.\n" +
-                        "• **Đồng kiểm COD:** Khách hàng được mở hộp kiểm tra đúng mẫu, đúng màu trước khi thanh toán tiền mặt.",
+                        "• **Đồng kiểm COD:** Khách hàng được mở hộp kiểm tra đúng mẫu, đúng màu trước khi thanh toán tiền mặt.\n\n" +
+                        "👉 [Xem chi tiết chính sách giao nhận COD](policy.html#van-chuyen)",
                 Intent = "shipping",
                 Suggestions = new List<string> { "🏷️ Mã FREESHIP", "🔄 Chính sách đổi trả", "📦 Tra cứu đơn hàng" }
             });
@@ -94,13 +96,28 @@ public class ChatController : ControllerBase
                         "• Thời hạn đổi trả trong vòng **30 ngày** kể từ lúc nhận hàng.\n" +
                         "• Hỗ trợ đổi size tận nhà: Nhân viên giao vận sẽ mang size mới đến và thu hồi size cũ trực tiếp.\n" +
                         "• Miễn phí 100% chi phí đổi trả đối với sản phẩm có lỗi từ nhà sản xuất hoặc giao sai mẫu.\n" +
-                        "• Điều kiện: Sản phẩm còn nguyên tem mác thương hiệu và chưa qua giặt tẩy.",
+                        "• Điều kiện: Sản phẩm còn nguyên tem mác thương hiệu và chưa qua giặt tẩy.\n\n" +
+                        "👉 [Xem chi tiết & gửi yêu cầu đổi trả online](policy.html)",
                 Intent = "returns",
                 Suggestions = new List<string> { "📞 Gặp tư vấn viên", "🚚 Chính sách giao hàng", "🏷️ Mã giảm giá hot" }
             });
         }
 
-        // 6. Check for Order Tracking / Status
+        // 6. Check for Payment methods (COD, QR / VietQR, chuyển khoản)
+        if (Regex.IsMatch(normalized, @"(thanh\s*toán|chuyển\s*khoản|mã\s*qr|vietqr|qr\s*code|quẹt\s*thẻ|ngân\s*hàng)"))
+        {
+            return Ok(new ChatResponse
+            {
+                Reply = "💳 **Endless Shop hỗ trợ 2 hình thức thanh toán thuận tiện:**\n\n" +
+                        "1. 💵 **Thanh toán khi nhận hàng (COD):** Bạn được kiểm tra hàng trước khi nhận, thanh toán tiền mặt trực tiếp cho nhân viên giao vận.\n" +
+                        "2. 📱 **Chuyển khoản qua mã QR (VietQR):** Quét mã VietQR động trực tiếp bằng ứng dụng của hơn 40 ngân hàng (Vietcombank, MB, Techcombank, ACB...) hoặc ví điện tử (MoMo, VNPay). Hệ thống tự động điền số tài khoản, số tiền và nội dung chuyển khoản chính xác 100%.\n\n" +
+                        "👉 Bạn có thể tùy chọn hình thức thanh toán thuận tiện nhất tại bước **Thanh toán đơn hàng**!",
+                Intent = "payment_methods",
+                Suggestions = new List<string> { "🚚 Chính sách giao hàng", "🏷️ Mã giảm giá hot", "🛒 Xem giỏ hàng" }
+            });
+        }
+
+        // 7. Check for Order Tracking / Status
         if (Regex.IsMatch(normalized, @"(đơn\s*hàng|tra\s*cứu|kiểm\s*tra\s*đơn|tình\s*trạng\s*đơn|order|mã\s*đơn)"))
         {
             // If user mentioned a specific numeric order code

@@ -61,6 +61,8 @@ GO
 -- Keep the original six tables. Add only frontend metadata and COD delivery fields.
 IF COL_LENGTH('dbo.DANH_MUC', 'ma_danh_muc') IS NULL
     ALTER TABLE dbo.DANH_MUC ADD ma_danh_muc VARCHAR(20) NULL;
+IF COL_LENGTH('dbo.TAI_KHOAN', 'dia_chi') IS NULL
+    ALTER TABLE dbo.TAI_KHOAN ADD dia_chi NVARCHAR(500) NULL;
 IF COL_LENGTH('dbo.SAN_PHAM', 'sizes_json') IS NULL
     ALTER TABLE dbo.SAN_PHAM ADD sizes_json NVARCHAR(MAX) NULL;
 IF COL_LENGTH('dbo.SAN_PHAM', 'colors_json') IS NULL

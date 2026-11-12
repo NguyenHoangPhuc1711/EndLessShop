@@ -17,6 +17,7 @@ namespace EndLessShop.Api.Controllers;
 public class OrdersController : ControllerBase
 {
     private readonly IDbConnectionFactory _db;
+    private readonly IConfiguration _config;
     private static readonly Regex KeyPattern = new("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
     private static readonly Regex PhonePattern = new("^[0-9]{9,11}$", RegexOptions.Compiled);
     private static readonly Regex VoucherPattern = new("^[A-Z0-9_-]{1,30}$", RegexOptions.Compiled);
@@ -29,7 +30,7 @@ public class OrdersController : ControllerBase
         [51033] = (409, "Số lượng mua vượt tồn kho của sản phẩm."),
         [51034] = (400, "Mã giảm giá không hợp lệ hoặc đã hết hạn."),
         [51035] = (400, "Thông tin người nhận không hợp lệ."),
-        [51036] = (400, "Hiện chỉ hỗ trợ thanh toán COD."),
+        [51036] = (400, "Hiện chỉ hỗ trợ thanh toán COD hoặc chuyển khoản qua mã QR (VietQR)."),
         [51037] = (401, "Vui lòng đăng nhập để đặt hàng."),
         [51038] = (400, "Tổng giá trị đơn vượt giới hạn cho phép."),
         [51039] = (409, "Khóa yêu cầu đã được dùng cho nội dung đơn khác."),
@@ -37,9 +38,10 @@ public class OrdersController : ControllerBase
         [51041] = (409, "Đơn đang được xử lý. Vui lòng thử lại cùng yêu cầu.")
     };
 
-    public OrdersController(IDbConnectionFactory db)
+    public OrdersController(IDbConnectionFactory db, IConfiguration config)
     {
         _db = db;
+        _config = config;
     }
 
     [HttpPost("quote")]
@@ -130,9 +132,10 @@ public class OrdersController : ControllerBase
             return BadRequest(new { message = "Giỏ hàng cần có 1–50 dòng sản phẩm." });
         }
 
-        if (request.Payment != "cod")
+        var paymentMethod = (request.Payment ?? "cod").Trim().ToLowerInvariant();
+        if (paymentMethod != "cod" && paymentMethod != "qr" && paymentMethod != "vietqr")
         {
-            return BadRequest(new { message = "Hiện chỉ hỗ trợ thanh toán COD." });
+            return BadRequest(new { message = "Hiện chỉ hỗ trợ thanh toán COD hoặc chuyển khoản qua mã QR (VietQR)." });
         }
 
         // Validate voucher format if supplied
@@ -196,7 +199,7 @@ public class OrdersController : ControllerBase
             {
                 items = normalizedItems.Select(x => new { id = x.Id, size = x.Size, color = x.Color, qty = x.Qty }),
                 voucherCode,
-                payment = "cod",
+                payment = paymentMethod,
                 delivery = new
                 {
                     fullName = d.FullName.Trim(),
@@ -215,7 +218,7 @@ public class OrdersController : ControllerBase
         parameters.Add("@items", itemsJson, DbType.String);
         parameters.Add("@voucher_code", voucherCode, DbType.AnsiString, size: 30);
         parameters.Add("@create", isCreate, DbType.Boolean);
-        parameters.Add("@payment", "cod", DbType.AnsiString, size: 20);
+        parameters.Add("@payment", paymentMethod, DbType.AnsiString, size: 20);
 
         if (isCreate && request.Delivery != null)
         {
@@ -225,6 +228,7 @@ public class OrdersController : ControllerBase
             parameters.Add("@note", request.Delivery.Note?.Trim(), DbType.String, size: 1000);
             parameters.Add("@request_key", requestKey, DbType.AnsiString, size: 36);
             parameters.Add("@request_hash", requestHash, DbType.AnsiStringFixedLength, size: 64);
+            parameters.Add("@save_shipping", request.SaveShippingInfo == true, DbType.Boolean);
         }
 
         try
@@ -274,6 +278,11 @@ public class OrdersController : ControllerBase
                     Items = orderItems,
                     Replayed = (bool)orderHeader.replayed
                 };
+
+                if (order.Payment == "qr" || order.Payment == "vietqr")
+                {
+                    order.QrInfo = BuildQrInfo(order.Code, order.Total);
+                }
 
                 return StatusCode(order.Replayed ? 200 : 201, new { order });
             }
@@ -332,11 +341,37 @@ public class OrdersController : ControllerBase
                 Items = orderItems
             };
 
+            if (order.Payment == "qr" || order.Payment == "vietqr")
+            {
+                order.QrInfo = BuildQrInfo(order.Code, order.Total);
+            }
+
             return Ok(new { order });
         }
         catch (SqlException ex) when (ex.Number == 51040)
         {
             return NotFound(new { message = "Không tìm thấy đơn hàng của bạn." });
         }
+    }
+
+    private PaymentQrInfo BuildQrInfo(string orderCode, int total)
+    {
+        var bankId = _config["VietQr:BankId"] ?? "MB";
+        var bankName = _config["VietQr:BankName"] ?? "MBBank (Ngân Hàng TMCP Quân Đội)";
+        var accountNo = _config["VietQr:AccountNo"] ?? "0987654321";
+        var accountName = _config["VietQr:AccountName"] ?? "ENDLESS SHOP";
+        var description = orderCode;
+        var qrUrl = $"https://img.vietqr.io/image/{bankId}-{accountNo}-compact2.png?amount={total}&addInfo={Uri.EscapeDataString(description)}&accountName={Uri.EscapeDataString(accountName)}";
+
+        return new PaymentQrInfo
+        {
+            BankId = bankId,
+            BankName = bankName,
+            AccountNo = accountNo,
+            AccountName = accountName,
+            Amount = total,
+            Description = description,
+            QrUrl = qrUrl
+        };
     }
 }

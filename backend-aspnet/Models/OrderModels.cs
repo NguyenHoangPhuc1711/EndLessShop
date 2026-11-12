@@ -45,6 +45,9 @@ public class OrderCheckoutRequest
 
     [JsonPropertyName("delivery")]
     public DeliveryInfo? Delivery { get; set; }
+
+    [JsonPropertyName("saveShippingInfo")]
+    public bool? SaveShippingInfo { get; set; }
 }
 
 public class PricedItemDto
@@ -159,4 +162,31 @@ public class OrderDetailDto
 
     [JsonPropertyName("replayed")]
     public bool Replayed { get; set; }
+
+    [JsonPropertyName("qrInfo")]
+    public PaymentQrInfo? QrInfo { get; set; }
+}
+
+public class PaymentQrInfo
+{
+    [JsonPropertyName("bankId")]
+    public string BankId { get; set; } = string.Empty;
+
+    [JsonPropertyName("bankName")]
+    public string BankName { get; set; } = string.Empty;
+
+    [JsonPropertyName("accountNo")]
+    public string AccountNo { get; set; } = string.Empty;
+
+    [JsonPropertyName("accountName")]
+    public string AccountName { get; set; } = string.Empty;
+
+    [JsonPropertyName("amount")]
+    public int Amount { get; set; }
+
+    [JsonPropertyName("description")]
+    public string Description { get; set; } = string.Empty;
+
+    [JsonPropertyName("qrUrl")]
+    public string QrUrl { get; set; } = string.Empty;
 }

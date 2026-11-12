@@ -29,7 +29,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SELECT tai_khoan_id AS id, ten_dang_nhap AS username, mat_khau AS passwordHash,
-           ho_ten AS fullName, email, sdt AS phone, vai_tro AS role
+           ho_ten AS fullName, email, sdt AS phone, vai_tro AS role, dia_chi AS address
     FROM dbo.TAI_KHOAN WHERE ten_dang_nhap=@username;
 END;
 GO
@@ -38,6 +38,29 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SELECT tai_khoan_id AS id, ten_dang_nhap AS username, ho_ten AS fullName,
-           email, sdt AS phone, vai_tro AS role
+           email, sdt AS phone, vai_tro AS role, dia_chi AS address
     FROM dbo.TAI_KHOAN WHERE tai_khoan_id=@id;
+END;
+GO
+CREATE OR ALTER PROCEDURE dbo.auth_update_shipping_info
+    @user_id INT,
+    @full_name NVARCHAR(100) = NULL,
+    @phone VARCHAR(15) = NULL,
+    @address NVARCHAR(500)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM dbo.TAI_KHOAN WHERE tai_khoan_id = @user_id)
+        THROW 51011, 'Account not found.', 1;
+
+    UPDATE dbo.TAI_KHOAN
+    SET dia_chi = @address,
+        ho_ten = COALESCE(NULLIF(LTRIM(RTRIM(@full_name)), N''), ho_ten),
+        sdt = COALESCE(NULLIF(LTRIM(RTRIM(@phone)), ''), sdt)
+    WHERE tai_khoan_id = @user_id;
+
+    SELECT tai_khoan_id AS id, ten_dang_nhap AS username, ho_ten AS fullName,
+           email, sdt AS phone, vai_tro AS role, dia_chi AS address
+    FROM dbo.TAI_KHOAN
+    WHERE tai_khoan_id = @user_id;
 END;

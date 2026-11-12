@@ -124,6 +124,7 @@ public class AuthController : ControllerBase
             FullName = account.fullName,
             Email = account.email,
             Phone = account.phone,
+            Address = account.address,
             Role = account.role
         };
 
@@ -210,5 +211,100 @@ public class AuthController : ControllerBase
             username = (string)account.ten_dang_nhap,
             maskedEmail
         });
+    }
+
+    [HttpGet("shipping-info")]
+    public async Task<IActionResult> GetShippingInfo()
+    {
+        var userId = HttpContext.Session.GetInt32("userId");
+        if (!userId.HasValue)
+        {
+            return Unauthorized(new { message = "Vui lòng đăng nhập." });
+        }
+
+        using var connection = _db.CreateConnection();
+        var parameters = new DynamicParameters();
+        parameters.Add("@id", userId.Value, DbType.Int32);
+
+        var user = await connection.QuerySingleOrDefaultAsync<UserDto>(
+            "dbo.auth_profile",
+            parameters,
+            commandType: CommandType.StoredProcedure);
+
+        if (user == null)
+        {
+            return NotFound(new { message = "Không tìm thấy thông tin tài khoản." });
+        }
+
+        return Ok(new
+        {
+            fullName = user.FullName,
+            phone = user.Phone,
+            address = user.Address
+        });
+    }
+
+    [HttpPut("shipping-info")]
+    [HttpPost("shipping-info")]
+    public async Task<IActionResult> UpdateShippingInfo([FromBody] UpdateShippingInfoRequest request)
+    {
+        var userId = HttpContext.Session.GetInt32("userId");
+        if (!userId.HasValue)
+        {
+            return Unauthorized(new { message = "Vui lòng đăng nhập để lưu thông tin giao hàng." });
+        }
+
+        if (!SecurityValidator.ValidateCsrfAndOrigin(HttpContext))
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new 
+            { 
+                message = "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang.", 
+                code = "csrf_invalid" 
+            });
+        }
+
+        var fullName = request?.FullName?.Trim();
+        var phone = request?.Phone?.Trim();
+        var address = request?.Address?.Trim() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(address) || address.Length > 500)
+        {
+            return BadRequest(new { message = "Địa chỉ nhận hàng không được để trống và tối đa 500 ký tự." });
+        }
+
+        if (!string.IsNullOrWhiteSpace(fullName) && fullName.Length > 100)
+        {
+            return BadRequest(new { message = "Họ và tên tối đa 100 ký tự." });
+        }
+
+        if (!string.IsNullOrWhiteSpace(phone) && !Regex.IsMatch(phone, "^[0-9]{9,11}$"))
+        {
+            return BadRequest(new { message = "Số điện thoại nhận hàng phải gồm 9–11 chữ số." });
+        }
+
+        using var connection = _db.CreateConnection();
+        var parameters = new DynamicParameters();
+        parameters.Add("@user_id", userId.Value, DbType.Int32);
+        parameters.Add("@full_name", string.IsNullOrWhiteSpace(fullName) ? null : fullName, DbType.String, size: 100);
+        parameters.Add("@phone", string.IsNullOrWhiteSpace(phone) ? null : phone, DbType.AnsiString, size: 15);
+        parameters.Add("@address", address, DbType.String, size: 500);
+
+        try
+        {
+            var updatedUser = await connection.QuerySingleAsync<UserDto>(
+                "dbo.auth_update_shipping_info",
+                parameters,
+                commandType: CommandType.StoredProcedure);
+
+            return Ok(new
+            {
+                message = "Đã lưu thông tin giao hàng thành công.",
+                user = updatedUser
+            });
+        }
+        catch (SqlException ex) when (ex.Number == 51011)
+        {
+            return NotFound(new { message = "Không tìm thấy tài khoản." });
+        }
     }
 }

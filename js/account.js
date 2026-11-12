@@ -14,22 +14,18 @@
     try {
       const base = new URL(EndlessConfig.pageBase);
       const url = new URL(value, base);
-      const pages = ['', 'index.html', 'checkout.html'];
+      const pages = ['', 'index.html', 'checkout.html', 'account.html'];
       if (url.origin !== location.origin || url.username || url.password ||
           !pages.some(page => new URL(page || './', base).pathname === url.pathname)) return null;
       return (url.pathname === base.pathname ? 'index.html' : url.pathname.slice(base.pathname.length)) + url.search + url.hash;
     } catch { return null; }
   }
   const destination = safeNext(params.get('next')) ||
-    (['index.html', 'checkout.html'].includes(pageName) ? safeNext(location.href) : safeNext(document.referrer)) || fallback;
+    (['index.html', 'checkout.html', 'account.html'].includes(pageName) ? safeNext(location.href) : safeNext(document.referrer)) || fallback;
   function pageLink(name, registered) {
     const query = new URLSearchParams({ next: destination });
     if (registered) query.set('registered', '1');
     return name + '?' + query;
-  }
-  if (pageName === 'account.html') {
-    location.replace(pageLink('login.html'));
-    return;
   }
   document.querySelectorAll('[data-register-link]').forEach(link => { link.href = pageLink('register.html'); });
   document.querySelectorAll('[data-login-link]').forEach(link => { link.href = pageLink('login.html'); });
@@ -39,7 +35,7 @@
     login.href = pageLink('login.html');
     root.insertAdjacentHTML('beforeend', '<div class="account-session" hidden><button type="button" class="account-trigger" aria-expanded="false" aria-controls="accountMenu' + index + '" aria-label="Tài khoản">' + icon +
       '<span class="account-name" data-account-name></span><span class="account-chevron" aria-hidden="true">⌄</span></button>' +
-      '<div id="accountMenu' + index + '" class="account-menu" hidden><a href="checkout.html#lich-su">Đơn hàng của tôi</a><a href="admin.html" data-admin-link hidden>Bảng quản trị (Admin)</a><button type="button" data-auth-logout>Đăng xuất</button></div></div>');
+      '<div id="accountMenu' + index + '" class="account-menu" hidden><a href="account.html">Hồ sơ &amp; Địa chỉ giao hàng</a><a href="checkout.html#lich-su">Đơn hàng của tôi</a><a href="admin.html" data-admin-link hidden>Bảng quản trị (Admin)</a><button type="button" data-auth-logout>Đăng xuất</button></div></div>');
     const session = root.querySelector('.account-session');
     const trigger = root.querySelector('.account-trigger');
     const menu = root.querySelector('.account-menu');
@@ -108,7 +104,40 @@
     });
     if (forms) forms.hidden = Boolean(user);
     shortcutCounts();
+    renderProfile();
     window.dispatchEvent(new CustomEvent('endless:auth-changed', { detail: { user } }));
+  }
+
+  function renderProfile() {
+    const loadingEl = document.getElementById('accountLoading');
+    const guestEl = document.getElementById('guestSection');
+    const profileEl = document.getElementById('profileSection');
+    if (!profileEl) return;
+    if (loadingEl) loadingEl.hidden = true;
+    if (!user) {
+      if (guestEl) guestEl.hidden = false;
+      profileEl.hidden = true;
+      return;
+    }
+    if (guestEl) guestEl.hidden = true;
+    profileEl.hidden = false;
+
+    const viewUser = document.getElementById('viewUsername');
+    const viewEmail = document.getElementById('viewEmail');
+    const viewRole = document.getElementById('viewRole');
+    if (viewUser) viewUser.textContent = user.username || '—';
+    if (viewEmail) viewEmail.textContent = user.email || '—';
+    if (viewRole) {
+      viewRole.textContent = (user.role === 'admin' || user.vaiTro === 'admin')
+        ? 'Quản trị viên (Admin)' : 'Khách hàng thân thiết';
+    }
+
+    const fullNameInput = document.getElementById('profileFullName');
+    const phoneInput = document.getElementById('profilePhone');
+    const addressInput = document.getElementById('profileAddress');
+    if (fullNameInput && !fullNameInput.value) fullNameInput.value = user.fullName || '';
+    if (phoneInput && !phoneInput.value) phoneInput.value = user.phone || '';
+    if (addressInput && !addressInput.value) addressInput.value = user.address || '';
   }
   async function request(endpoint, body) {
     if (body && !csrfToken) {
@@ -218,6 +247,42 @@
       }
     });
   }
+  const profileForm = document.getElementById('profileShippingForm');
+  if (profileForm) {
+    profileForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!user) return;
+      const btn = document.getElementById('btnSaveProfileShipping');
+      const msg = document.getElementById('profileShippingMsg');
+      const label = btn ? btn.textContent : '';
+      const fullName = (document.getElementById('profileFullName')?.value || '').trim();
+      const phone = (document.getElementById('profilePhone')?.value || '').trim();
+      const address = (document.getElementById('profileAddress')?.value || '').trim();
+      if (!address) {
+        message(msg, 'Vui lòng nhập địa chỉ nhận hàng chi tiết.', true);
+        return;
+      }
+      if (phone && !/^[0-9]{9,11}$/.test(phone)) {
+        message(msg, 'Số điện thoại nhận hàng phải gồm 9 đến 11 chữ số.', true);
+        return;
+      }
+      if (btn) { btn.disabled = true; btn.textContent = 'Đang lưu…'; }
+      message(msg, '', false);
+      try {
+        const data = await request('shipping-info', { fullName, phone, address });
+        message(msg, '✓ ' + (data.message || 'Đã lưu thông tin giao hàng thành công!'), false);
+        if (data.user) {
+          user = data.user;
+          render();
+        }
+      } catch (error) {
+        message(msg, error.message, true);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = label; }
+      }
+    });
+  }
+
   document.querySelectorAll('[data-auth-logout]').forEach(button => {
     button.addEventListener('click', async () => {
       if (button.disabled) return;

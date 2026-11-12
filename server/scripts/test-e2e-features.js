@@ -372,23 +372,137 @@ async function runTests() {
   console.log(`  🔄 Đã phục hồi tồn kho sản phẩm ID ${sampleProduct.id} về ${originalStock} chiếc`);
   console.log('  ✅ [PASS] Luồng quản trị đơn hàng và tồn kho vận hành hoàn hảo!\n');
 
+  // 13. Customer Saved Shipping Information Feature
+  console.log('[13/13] Kiểm thử Lưu & Tự động Điền Thông tin Giao hàng Tài khoản Khách hàng...');
+  // 13a. Unauthenticated update rejected
+  const guestClient = new TestClient('GuestUser');
+  const unauthShipRes = await guestClient.call('/api/auth/shipping-info', 'POST', {
+    fullName: 'Khách Ẩn Danh',
+    phone: '0912345678',
+    address: 'Địa chỉ ẩn danh'
+  });
+  assert.equal(unauthShipRes.status, 401, 'Khách chưa đăng nhập phải bị từ chối');
+
+  // 13b. Validation: Empty address rejected
+  const emptyAddrRes = await customer.call('/api/auth/shipping-info', 'POST', {
+    fullName: 'Nguyễn Văn Test',
+    phone: '0987654321',
+    address: '   '
+  });
+  assert.equal(emptyAddrRes.status, 400, 'Địa chỉ rỗng phải bị từ chối');
+
+  // 13c. Validation: Invalid phone rejected
+  const invalidPhoneRes = await customer.call('/api/auth/shipping-info', 'POST', {
+    fullName: 'Nguyễn Văn Test',
+    phone: '123abc456',
+    address: '123 Lê Duẩn, Quận 1, TP.HCM'
+  });
+  assert.equal(invalidPhoneRes.status, 400, 'Số điện thoại không hợp lệ phải bị từ chối');
+
+  // 13d. Customer saves valid shipping info
+  const testAddress = '123 Phố Thời Trang Scandinavian, Phường Bến Nghé, Quận 1, TP.HCM';
+  const saveShipRes = await customer.call('/api/auth/shipping-info', 'POST', {
+    fullName: 'Nguyễn Văn Test Đã Lưu',
+    phone: '0987654321',
+    address: testAddress
+  });
+  assert.equal(saveShipRes.status, 200);
+  assert.equal(saveShipRes.body.user.address, testAddress);
+  console.log(`  📍 Đã lưu thành công địa chỉ giao hàng vào tài khoản: "${testAddress}"`);
+
+  // 13e. Check /api/auth/me returns saved address
+  const refreshedCust = await customer.call('/api/auth/me');
+  assert.equal(refreshedCust.status, 200);
+  assert.equal(refreshedCust.body.user.address, testAddress);
+  assert.equal(refreshedCust.body.user.phone, '0987654321');
+  console.log(`  👤 /api/auth/me phản hồi chính xác thông tin giao hàng đã lưu của khách`);
+
+  // 13f. Check /api/auth/shipping-info returns saved info
+  const getShipRes = await customer.call('/api/auth/shipping-info');
+  assert.equal(getShipRes.status, 200);
+  assert.equal(getShipRes.body.address, testAddress);
+  assert.equal(getShipRes.body.phone, '0987654321');
+  console.log(`  🚚 /api/auth/shipping-info truy xuất đúng thông tin giao hàng mặc định`);
+
+  // 13g. Checkout order with saveShippingInfo: true updates address automatically
+  const newDeliveryAddress = '456 Đường Nguyễn Trãi, Phường 2, Quận 5, TP.HCM';
+  const secondKey = randomUUID();
+  const checkoutWithSave = await customer.call('/api/orders', 'POST', {
+    items: [{ id: sampleProduct.id, size: 'M', color: 'Đen', qty: 1 }],
+    payment: 'cod',
+    delivery: {
+      fullName: 'Nguyễn Văn Test',
+      phone: '0912345678',
+      address: newDeliveryAddress,
+      note: 'Giao giờ hành chính'
+    },
+    saveShippingInfo: true
+  }, { 'Idempotency-Key': secondKey });
+  assert.equal(checkoutWithSave.status, 201);
+  const secondOrderId = checkoutWithSave.body.order.id;
+
+  // Verify /api/auth/me now reflects the updated address from checkout
+  const custAfterCheckout = await customer.call('/api/auth/me');
+  assert.equal(custAfterCheckout.body.user.address, newDeliveryAddress);
+  console.log(`  🛒 Đặt hàng COD kèm tùy chọn lưu thông tin giao hàng -> Tự động cập nhật tài khoản thành công: "${newDeliveryAddress}"`);
+  console.log('  ✅ [PASS] Tính năng Lưu Thông Tin Giao Hàng Tài Khoản Khách Hàng vận hành hoàn hảo 100%!\n');
+
+  console.log('[14/14] Kiểm thử Thanh Toán Qua Mã QR (VietQR)...');
+  const qrKey = crypto.randomUUID();
+  const qrOrderRes = await customer.call('/api/orders', 'POST', {
+    items: [{ id: sampleProduct.id, size: 'L', color: 'Trắng', qty: 1 }],
+    payment: 'qr',
+    delivery: {
+      fullName: 'Khách Hàng QR',
+      phone: '0988776655',
+      address: '789 Đường Hai Bà Trưng, Quận 3, TP.HCM',
+      note: 'Thanh toán quét mã VietQR'
+    }
+  }, { 'Idempotency-Key': qrKey });
+
+  assert.equal(qrOrderRes.status, 201);
+  assert.equal(qrOrderRes.body.order.payment, 'qr');
+  assert.ok(qrOrderRes.body.order.qrInfo, 'qrInfo must be present for QR orders');
+  assert.equal(qrOrderRes.body.order.qrInfo.bankId, 'MB');
+  assert.ok(qrOrderRes.body.order.qrInfo.qrUrl.includes('img.vietqr.io'));
+  assert.ok(qrOrderRes.body.order.qrInfo.description.includes(qrOrderRes.body.order.code));
+  const qrOrderId = qrOrderRes.body.order.id;
+  console.log(`  📱 Tạo đơn hàng thanh toán QR thành công: Mã #${qrOrderRes.body.order.code} (ID: ${qrOrderId})`);
+  console.log(`  🏦 Thông tin VietQR: Ngân hàng ${qrOrderRes.body.order.qrInfo.bankName} - STK: ${qrOrderRes.body.order.qrInfo.accountNo}`);
+  console.log(`  🖼️ Link ảnh VietQR: ${qrOrderRes.body.order.qrInfo.qrUrl.slice(0, 70)}...`);
+
+  // Verify fetching order returns qrInfo
+  const fetchQrOrder = await customer.call(`/api/orders/${qrOrderId}`);
+  assert.equal(fetchQrOrder.status, 200);
+  assert.equal(fetchQrOrder.body.order.payment, 'qr');
+  assert.ok(fetchQrOrder.body.order.qrInfo);
+
+  // Verify admin can view QR payment method
+  const adminOrderDetail = await admin.call(`/api/admin/orders/${qrOrderId}`);
+  assert.equal(adminOrderDetail.status, 200);
+  assert.equal(adminOrderDetail.body.order.payment, 'qr');
+  console.log('  👑 Quản trị viên xác nhận thông tin đơn hàng QR chính xác');
+  console.log('  ✅ [PASS] Tính năng Thanh Toán Bằng Mã QR (VietQR) vận hành hoàn hảo 100%!\n');
+
   // Cleanup test accounts
   console.log('🧹 Dọn dẹp tài khoản kiểm thử khỏi cơ sở dữ liệu...');
   await pool.request()
-    .input('orderId', sql.Int, createdOrderId)
+    .input('orderId1', sql.Int, createdOrderId)
+    .input('orderId2', sql.Int, secondOrderId)
+    .input('orderId3', sql.Int, qrOrderId)
     .input('cust', sql.VarChar(50), customerUsername)
     .input('adm', sql.VarChar(50), adminUsername)
     .query(`
       SET QUOTED_IDENTIFIER ON;
-      DELETE FROM dbo.CHI_TIET_HOA_DON WHERE hoa_don_id = @orderId;
-      DELETE FROM dbo.HOA_DON WHERE hoa_don_id = @orderId;
+      DELETE FROM dbo.CHI_TIET_HOA_DON WHERE hoa_don_id IN (@orderId1, @orderId2, @orderId3);
+      DELETE FROM dbo.HOA_DON WHERE hoa_don_id IN (@orderId1, @orderId2, @orderId3);
       DELETE FROM dbo.TAI_KHOAN WHERE ten_dang_nhap IN (@cust, @adm);
     `);
   await pool.close();
   console.log('  ✅ Dữ liệu kiểm thử đã được dọn sạch hoàn toàn, bảo toàn tính toàn vẹn CSDL.\n');
 
   console.log('================================================================');
-  console.log('🎉 TẤT CẢ 12/12 TÍNH NĂNG VÀ LUỒNG VẬN HÀNH ĐÃ PASS 100%!');
+  console.log('🎉 TẤT CẢ 14/14 TÍNH NĂNG VÀ LUỒNG VẬN HÀNH ĐÃ PASS 100%!');
   console.log('================================================================');
 }
 

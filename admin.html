@@ -1016,6 +1016,7 @@
           <div style="font-size: 13px; line-height: 1.6;">
             <div>📞 <strong>SĐT:</strong> <span id="detailPhone">—</span></div>
             <div>📍 <strong>Địa chỉ giao:</strong> <span id="detailAddress">—</span></div>
+            <div>💳 <strong>Phương thức:</strong> <span id="detailPaymentMethod">—</span></div>
             <div style="color: var(--text-muted);">📝 <strong>Ghi chú:</strong> <span id="detailNote">Không có ghi chú</span></div>
             <div style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">🕒 <strong>Ngày đặt:</strong> <span id="detailDate">—</span></div>
           </div>
@@ -1053,7 +1054,7 @@
             <span id="detailDiscount">-0₫</span>
           </div>
           <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; padding-top: 8px; border-top: 1px dashed var(--border-strong); margin-top: 6px;">
-            <span>TỔNG TIỀN COD THU HỘ:</span>
+            <span id="detailTotalLabel">TỔNG TIỀN:</span>
             <span id="detailTotal" style="color: #B45309; font-size: 17px;">0₫</span>
           </div>
         </div>
@@ -1518,6 +1519,10 @@
           ? new Date(o.date).toLocaleString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
           : '—';
         const statusBadge = getOrderStatusBadge(o.status);
+        const isQr = o.payment === 'qr' || o.payment === 'vietqr';
+        const paymentBadge = isQr 
+          ? '<span class="status-tag" style="background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; font-size:11px; padding:2px 6px;">📱 VietQR</span>' 
+          : '<span class="status-tag" style="background:#F3F4F6; color:#374151; border:1px solid #E5E7EB; font-size:11px; padding:2px 6px;">💵 COD</span>';
         const voucherTag = o.voucherCode 
           ? `<span class="code-mono" style="font-size: 12px; color: #15803D;">${escapeHtml(o.voucherCode)}</span>` 
           : '<span style="color: var(--text-muted);">—</span>';
@@ -1526,7 +1531,7 @@
         if (o.status === 'cho_xu_ly') {
           quickBtn = `<button class="btn-sm btn-sm-primary" onclick="changeOrderStatus(${o.id}, 'dang_giao')">Duyệt Giao</button>`;
         } else if (o.status === 'dang_giao') {
-          quickBtn = `<button class="btn-sm" style="background: #15803D; color: #FFF; border-color: #15803D;" onclick="changeOrderStatus(${o.id}, 'hoan_thanh')">Đã Thu COD</button>`;
+          quickBtn = `<button class="btn-sm" style="background: #15803D; color: #FFF; border-color: #15803D;" onclick="changeOrderStatus(${o.id}, 'hoan_thanh')">Hoàn Tất</button>`;
         }
 
         return `
@@ -1543,7 +1548,10 @@
                 📍 ${escapeHtml(o.address || '—')}
               </div>
             </td>
-            <td><strong style="color: #B45309; font-size: 14px;">${Number(o.total || 0).toLocaleString('vi-VN')}₫</strong></td>
+            <td>
+              <strong style="color: #B45309; font-size: 14px;">${Number(o.total || 0).toLocaleString('vi-VN')}₫</strong>
+              <div style="margin-top: 3px;">${paymentBadge}</div>
+            </td>
             <td>${voucherTag}</td>
             <td>${statusBadge}</td>
             <td style="text-align: right;">
@@ -1611,6 +1619,13 @@
         document.getElementById('detailStatusBadge').innerHTML = getOrderStatusBadge(order.status);
         document.getElementById('detailPhone').innerText = order.phone || '—';
         document.getElementById('detailAddress').innerText = order.address || '—';
+        const isDetailQr = order.payment === 'qr' || order.payment === 'vietqr';
+        document.getElementById('detailPaymentMethod').innerHTML = isDetailQr
+          ? '<span style="color:#1D4ED8; font-weight:700;">📱 Chuyển khoản mã QR (VietQR)</span>'
+          : '<span style="color:#374151; font-weight:600;">💵 Thanh toán khi nhận hàng (COD)</span>';
+        if (document.getElementById('detailTotalLabel')) {
+          document.getElementById('detailTotalLabel').innerText = isDetailQr ? 'TỔNG TIỀN (VIETQR):' : 'TỔNG TIỀN COD THU HỘ:';
+        }
         document.getElementById('detailNote').innerText = order.note || 'Không có ghi chú';
         document.getElementById('detailDate').innerText = order.date 
           ? new Date(order.date).toLocaleString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })

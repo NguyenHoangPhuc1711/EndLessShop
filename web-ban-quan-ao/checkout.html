@@ -56,6 +56,8 @@
         </div>
         <a href="checkout.html#thanh-toan">Thanh Toán</a>
         <a href="checkout.html#lich-su">Lịch Sử Giao Dịch</a>
+        <a href="size-guide.html">Chọn Size</a>
+        <a href="policy.html">Chính Sách</a>
         <a href="index.html#lien-he">Liên Hệ</a>
       </nav>
 
@@ -86,12 +88,16 @@
 
     <div class="container checkout-layout">
       <section class="checkout-panel" id="thanh-toan">
-        <div class="checkout-panel__heading">
+        <div class="checkout-panel__heading" id="checkoutBillingHeading">
           <span class="checkout-step">01</span>
           <div>
             <h2>Thông tin giao hàng</h2>
             <p>Nhập thông tin để cửa hàng gửi đơn đến bạn.</p>
           </div>
+        </div>
+        <div class="checkout-saved-badge" id="checkoutSavedBadge" hidden>
+          <span class="checkout-saved-badge__icon">📍</span>
+          <span class="checkout-saved-badge__text" id="checkoutSavedBadgeText">Đã tự động điền từ thông tin tài khoản của bạn.</span>
         </div>
         <form id="checkoutForm" class="checkout-form">
           <div class="checkout-form__fields">
@@ -108,21 +114,58 @@
               <textarea id="note" name="note" rows="3"></textarea>
             </label>
           </div>
-          <fieldset class="payment-methods">
+          <div class="checkout-save-wrapper" id="checkoutSaveWrapper" hidden>
+            <label class="checkout-save-label">
+              <input type="checkbox" id="saveShippingInfo" name="saveShippingInfo" checked>
+              <span>Lưu thông tin giao hàng này vào tài khoản cho lần mua sau</span>
+            </label>
+            <button type="button" class="btn btn--ghost btn--sm checkout-save-now-btn" id="btnSaveShippingNow">Lưu vào tài khoản</button>
+          </div>
+          <p class="checkout-save-msg" id="shippingSaveMsg" role="status" aria-live="polite"></p>
+          <fieldset class="payment-methods" id="paymentMethodsFieldset">
             <legend>Phương thức thanh toán</legend>
-            <label><input type="radio" name="payment" value="cod" checked> <span><strong>Thanh toán khi nhận hàng</strong><small>COD · Trả tiền khi nhận đơn</small></span></label>
+            <div class="payment-methods-grid">
+              <label class="payment-option is-selected" id="paymentOptCod">
+                <input type="radio" name="payment" value="cod" checked>
+                <div class="payment-option__info">
+                  <div class="payment-option__title">
+                    <span class="payment-icon">💵</span>
+                    <strong>Thanh toán khi nhận hàng (COD)</strong>
+                  </div>
+                  <small>Kiểm tra hàng trước khi nhận, thanh toán tiền mặt cho bưu tá</small>
+                </div>
+              </label>
+              <label class="payment-option" id="paymentOptQr">
+                <input type="radio" name="payment" value="qr">
+                <div class="payment-option__info">
+                  <div class="payment-option__title">
+                    <span class="payment-icon">📱</span>
+                    <strong>Chuyển khoản qua mã QR</strong>
+                    <span class="badge-vietqr">VietQR</span>
+                  </div>
+                  <small>Quét mã thanh toán tức thì bằng mọi App ngân hàng &amp; Ví điện tử</small>
+                </div>
+              </label>
+            </div>
+            
+            <div class="payment-qr-info-note" id="paymentQrInfoNote" hidden>
+              <div class="payment-qr-info-note__inner">
+                <span class="qr-info-icon">⚡</span>
+                <p>Mã VietQR động cùng thông tin số tài khoản sẽ hiển thị ngay sau khi bấm <strong>Tiến hành thanh toán QR</strong> để bạn quét chuyển khoản an toàn.</p>
+              </div>
+            </div>
           </fieldset>
           <p class="checkout-notice" id="checkoutNotice" role="status"></p>
           <p id="checkoutCatalogNotice" class="catalog-notice" role="status"></p>
           <button type="button" id="checkoutCatalogRetry" class="btn btn--ghost" hidden>Thử tải lại sản phẩm</button>
           <p id="checkoutLogin" hidden><a class="btn btn--ghost" href="account.html">Đăng nhập để đặt hàng</a></p>
-          <p class="checkout-notice">Đơn COD được lưu trên máy chủ. Chỉ thanh toán khi nhận hàng.</p>
-          <button type="submit" class="btn btn--primary btn--full" id="placeOrderBtn">Xác nhận đặt hàng</button>
+          <p class="checkout-notice" id="checkoutPaymentHint">Đơn COD được lưu trên máy chủ. Chỉ thanh toán khi nhận hàng.</p>
+          <button type="submit" class="btn btn--primary btn--full" id="placeOrderBtn">Xác nhận đặt hàng COD</button>
         </form>
         <div class="checkout-success" id="checkoutSuccess" hidden aria-live="polite"></div>
       </section>
 
-      <aside class="checkout-panel order-summary" aria-labelledby="orderSummaryTitle">
+      <aside class="checkout-panel order-summary" id="orderSummaryAside" aria-labelledby="orderSummaryTitle">
         <div class="checkout-panel__heading">
           <span class="checkout-step">02</span>
           <div>
@@ -182,6 +225,8 @@
       <div>
         <h4>Điều hướng</h4>
         <p><a href="index.html#san-pham">Sản phẩm</a></p>
+        <p><a href="size-guide.html">Hướng dẫn chọn size</a></p>
+        <p><a href="policy.html">Chính sách đổi trả &amp; bảo hành</a></p>
         <p><a href="#thanh-toan">Thanh toán</a></p>
         <p><a href="#lich-su">Lịch sử giao dịch</a></p>
       </div>
@@ -191,8 +236,8 @@
   <script src="js/config.js"></script>
   <script src="js/navigation.js"></script>
   <script src="js/catalog.js"></script>
-  <script src="js/checkout.js"></script>
-  <script src="js/account.js"></script>
+  <script src="js/checkout.js?v=2.4"></script>
+  <script src="js/account.js?v=2.2"></script>
   <script src="js/chatbot.js?v=1.0"></script>
 </body>
 </html>

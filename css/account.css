@@ -98,6 +98,123 @@
 .header .search-box { margin-left: auto; flex: 0 0 auto; }
 .header__icons { margin-left: 0; flex-shrink: 0; gap: 8px; }
 .checkout-intro .checkout-back-link { margin-top: 16px; }
+
+/* Account Profile & Shipping Info Layout */
+.account-profile-header {
+  margin-bottom: 32px;
+}
+.account-profile-header h1 {
+  font-size: clamp(28px, 4vw, 40px);
+  margin-bottom: 8px;
+}
+.account-profile-header h1 span {
+  color: var(--color-accent);
+}
+.account-profile-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.8fr);
+  gap: 28px;
+  align-items: start;
+}
+.account-profile-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.account-profile-card {
+  padding: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+.account-profile-card h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--color-ink);
+}
+.account-profile-card .card-subtext {
+  font-size: 13px;
+  color: var(--color-ink-light);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.account-info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.account-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.account-info-item .info-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-light);
+}
+.account-info-item .info-value {
+  font-size: 14px;
+  color: var(--color-ink);
+  word-break: break-all;
+}
+.account-role-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.account-quick-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
+}
+.account-quick-nav a,
+.account-quick-nav button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-background);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.account-quick-nav a:hover,
+.account-quick-nav button:hover {
+  background: var(--color-surface);
+  border-color: var(--color-ink-light);
+}
+.account-quick-nav button.btn-logout {
+  color: #a33a3a;
+  border-color: rgba(163, 58, 58, 0.2);
+}
+.account-quick-nav button.btn-logout:hover {
+  background: rgba(163, 58, 58, 0.05);
+}
+@media (max-width: 860px) {
+  .account-profile-layout {
+    grid-template-columns: 1fr;
+  }
+}
 @media (max-width: 1024px) {
   .header { margin-bottom: 0; }
   .header__inner { height: auto; min-height: 68px; flex-wrap: wrap; padding-top: 10px; padding-bottom: 10px; gap: 10px 16px; }

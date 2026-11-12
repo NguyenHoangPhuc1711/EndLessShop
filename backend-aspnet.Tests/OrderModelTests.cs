@@ -74,4 +74,67 @@ public class OrderModelTests
         Assert.Equal(4, deserialized.Sizes.Count);
         Assert.True(deserialized.IsNew);
     }
+
+    [Fact]
+    public void OrderCheckoutRequest_QrPayment_Serialization_PreservesQrMethod()
+    {
+        var request = new OrderCheckoutRequest
+        {
+            Items = new List<OrderItemInput>
+            {
+                new() { Id = 1, Size = "M", Color = "Đen", Qty = 1 }
+            },
+            Payment = "qr",
+            Delivery = new DeliveryInfo
+            {
+                FullName = "Trần Thị B",
+                Phone = "0912345678",
+                Address = "456 Đường Nguyễn Trãi, Quận 5, TP.HCM"
+            }
+        };
+
+        var json = JsonSerializer.Serialize(request, _jsonOptions);
+        Assert.Contains("\"payment\":\"qr\"", json);
+
+        var deserialized = JsonSerializer.Deserialize<OrderCheckoutRequest>(json, _jsonOptions);
+        Assert.NotNull(deserialized);
+        Assert.Equal("qr", deserialized.Payment);
+    }
+
+    [Fact]
+    public void OrderDetailDto_WithPaymentQrInfo_SerializesCorrectly()
+    {
+        var order = new OrderDetailDto
+        {
+            Id = 2050,
+            Code = "ENDLESS-2050",
+            Date = DateTime.UtcNow,
+            Status = "cho_xu_ly",
+            Payment = "qr",
+            Subtotal = 350000,
+            Discount = 0,
+            Total = 350000,
+            QrInfo = new PaymentQrInfo
+            {
+                BankId = "MB",
+                BankName = "MBBank",
+                AccountNo = "0987654321",
+                AccountName = "ENDLESS SHOP",
+                Amount = 350000,
+                Description = "ENDLESS-2050",
+                QrUrl = "https://img.vietqr.io/image/MB-0987654321-compact2.png?amount=350000&addInfo=ENDLESS-2050&accountName=ENDLESS%20SHOP"
+            }
+        };
+
+        var json = JsonSerializer.Serialize(order, _jsonOptions);
+        Assert.Contains("\"qrInfo\":", json);
+        Assert.Contains("\"bankId\":\"MB\"", json);
+        Assert.Contains("\"qrUrl\":", json);
+
+        var deserialized = JsonSerializer.Deserialize<OrderDetailDto>(json, _jsonOptions);
+        Assert.NotNull(deserialized);
+        Assert.NotNull(deserialized.QrInfo);
+        Assert.Equal("MB", deserialized.QrInfo.BankId);
+        Assert.Equal(350000, deserialized.QrInfo.Amount);
+    }
 }
