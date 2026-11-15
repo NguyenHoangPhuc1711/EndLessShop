@@ -14,14 +14,14 @@
     try {
       const base = new URL(EndlessConfig.pageBase);
       const url = new URL(value, base);
-      const pages = ['', 'index.html', 'checkout.html', 'account.html'];
+      const pages = ['', 'index.html', 'checkout.html', 'account.html', 'forgot-password.html', 'staff.html', 'admin.html'];
       if (url.origin !== location.origin || url.username || url.password ||
           !pages.some(page => new URL(page || './', base).pathname === url.pathname)) return null;
       return (url.pathname === base.pathname ? 'index.html' : url.pathname.slice(base.pathname.length)) + url.search + url.hash;
     } catch { return null; }
   }
   const destination = safeNext(params.get('next')) ||
-    (['index.html', 'checkout.html', 'account.html'].includes(pageName) ? safeNext(location.href) : safeNext(document.referrer)) || fallback;
+    (['index.html', 'checkout.html', 'account.html', 'staff.html', 'admin.html'].includes(pageName) ? safeNext(location.href) : safeNext(document.referrer)) || fallback;
   function pageLink(name, registered) {
     const query = new URLSearchParams({ next: destination });
     if (registered) query.set('registered', '1');
@@ -35,7 +35,12 @@
     login.href = pageLink('login.html');
     root.insertAdjacentHTML('beforeend', '<div class="account-session" hidden><button type="button" class="account-trigger" aria-expanded="false" aria-controls="accountMenu' + index + '" aria-label="Tài khoản">' + icon +
       '<span class="account-name" data-account-name></span><span class="account-chevron" aria-hidden="true">⌄</span></button>' +
-      '<div id="accountMenu' + index + '" class="account-menu" hidden><a href="account.html">Hồ sơ &amp; Địa chỉ giao hàng</a><a href="checkout.html#lich-su">Đơn hàng của tôi</a><a href="admin.html" data-admin-link hidden>Bảng quản trị (Admin)</a><button type="button" data-auth-logout>Đăng xuất</button></div></div>');
+      '<div id="accountMenu' + index + '" class="account-menu" hidden>' +
+      '<a href="account.html">Hồ sơ &amp; Địa chỉ giao hàng</a>' +
+      '<a href="checkout.html#lich-su">Đơn hàng của tôi</a>' +
+      '<a href="staff.html" data-staff-link hidden>Quản lý đơn (Nhân viên)</a>' +
+      '<a href="admin.html" data-admin-link hidden>Trang quản trị (Admin)</a>' +
+      '<button type="button" data-auth-logout>Đăng xuất</button></div></div>');
     const session = root.querySelector('.account-session');
     const trigger = root.querySelector('.account-trigger');
     const menu = root.querySelector('.account-menu');
@@ -89,24 +94,6 @@
     document.querySelectorAll('[data-cart-badge]').forEach(el => { el.textContent = cartCount; });
     document.querySelectorAll('[data-wishlist-badge]').forEach(el => { el.textContent = wishlistCount; });
   }
-  function render() {
-    widgets.forEach(widget => {
-      widget.login.hidden = Boolean(user);
-      widget.session.hidden = !user;
-      widget.root.querySelector('[data-account-name]').textContent = user ? user.username : '';
-      widget.trigger.title = user ? user.fullName : '';
-      widget.trigger.setAttribute('aria-label', user ? 'Tài khoản ' + user.username : 'Tài khoản');
-      const adminLink = widget.menu.querySelector('[data-admin-link]');
-      if (adminLink) {
-        adminLink.hidden = !(user && (user.role === 'admin' || user.vaiTro === 'admin'));
-      }
-      if (!user) widget.close(false);
-    });
-    if (forms) forms.hidden = Boolean(user);
-    shortcutCounts();
-    renderProfile();
-    window.dispatchEvent(new CustomEvent('endless:auth-changed', { detail: { user } }));
-  }
 
   function renderProfile() {
     const loadingEl = document.getElementById('accountLoading');
@@ -128,8 +115,9 @@
     if (viewUser) viewUser.textContent = user.username || '—';
     if (viewEmail) viewEmail.textContent = user.email || '—';
     if (viewRole) {
-      viewRole.textContent = (user.role === 'admin' || user.vaiTro === 'admin')
-        ? 'Quản trị viên (Admin)' : 'Khách hàng thân thiết';
+      viewRole.textContent = user.role === 'admin'
+        ? 'Quản trị viên (Admin)'
+        : user.role === 'nhan_vien' ? 'Nhân viên hệ thống' : 'Khách hàng thân thiết';
     }
 
     const fullNameInput = document.getElementById('profileFullName');
@@ -139,6 +127,30 @@
     if (phoneInput && !phoneInput.value) phoneInput.value = user.phone || '';
     if (addressInput && !addressInput.value) addressInput.value = user.address || '';
   }
+
+  function render() {
+    widgets.forEach(widget => {
+      widget.login.hidden = Boolean(user);
+      widget.session.hidden = !user;
+      widget.root.querySelector('[data-account-name]').textContent = user ? user.username : '';
+      widget.trigger.title = user ? user.fullName : '';
+      widget.trigger.setAttribute('aria-label', user ? 'Tài khoản ' + user.username : 'Tài khoản');
+      const staffLink = widget.menu.querySelector('[data-staff-link]');
+      if (staffLink) {
+        staffLink.hidden = !(user && ['admin', 'nhan_vien'].includes(user.role));
+      }
+      const adminLink = widget.menu.querySelector('[data-admin-link]');
+      if (adminLink) {
+        adminLink.hidden = !(user && user.role === 'admin');
+      }
+      if (!user) widget.close(false);
+    });
+    if (forms) forms.hidden = Boolean(user);
+    shortcutCounts();
+    renderProfile();
+    window.dispatchEvent(new CustomEvent('endless:auth-changed', { detail: { user } }));
+  }
+
   async function request(endpoint, body) {
     if (body && !csrfToken) {
       const response = await fetch(EndlessConfig.apiUrl('auth/csrf'), { credentials: EndlessConfig.credentials, cache: 'no-store' });
@@ -158,6 +170,7 @@
     }
     return data;
   }
+
   ['login', 'register'].forEach(action => {
     const form = document.getElementById(action + 'Form');
     if (!form) return;
@@ -194,59 +207,43 @@
     });
   });
 
-  // Forgot Password handler (Customers only)
-  const toggleForgotBtn = document.getElementById('toggleForgotBtn');
-  const forgotBox = document.getElementById('forgotPasswordBox');
-  const cancelForgotBtn = document.getElementById('cancelForgotBtn');
+  // Forgot Password handler (Standalone page & legacy form support)
   const forgotForm = document.getElementById('forgotPasswordForm');
   const forgotMsg = document.getElementById('forgotMessage');
-
-  if (toggleForgotBtn && forgotBox) {
-    toggleForgotBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      forgotBox.hidden = !forgotBox.hidden;
-      if (!forgotBox.hidden) {
-        const input = forgotBox.querySelector('input');
-        if (input) input.focus();
-        message(forgotMsg, '', false);
-      }
-    });
-  }
-
-  if (cancelForgotBtn && forgotBox) {
-    cancelForgotBtn.addEventListener('click', () => {
-      forgotBox.hidden = true;
-      message(forgotMsg, '', false);
-    });
-  }
 
   if (forgotForm) {
     forgotForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const button = forgotForm.querySelector('[type="submit"]');
-      if (button.disabled) return;
-      const label = button.textContent;
+      if (button && button.disabled) return;
+      const label = button ? button.textContent : '';
       const identifier = (forgotForm.querySelector('[name="identifier"]')?.value || '').trim();
       if (!identifier) {
         message(forgotMsg, 'Vui lòng nhập tên đăng nhập hoặc email.', true);
         return;
       }
-      button.disabled = true;
-      button.textContent = 'Đang kiểm tra…';
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Đang gửi email…';
+      }
       message(forgotMsg, '', false);
       try {
         const data = await request('forgot-password', { identifier });
-        message(forgotMsg, data.message || 'Đã gửi yêu cầu khôi phục mật khẩu thành công.', false);
+        message(forgotMsg, data.message || 'Mật khẩu mới đã được gửi thành công.', false);
         const idInput = forgotForm.querySelector('[name="identifier"]');
         if (idInput) idInput.value = '';
       } catch (err) {
         message(forgotMsg, err.message, true);
       } finally {
-        button.disabled = false;
-        button.textContent = label;
+        if (button) {
+          button.disabled = false;
+          button.textContent = label;
+        }
       }
     });
   }
+
+  // Shipping Info Save Handler (account.html)
   const profileForm = document.getElementById('profileShippingForm');
   if (profileForm) {
     profileForm.addEventListener('submit', async event => {
@@ -258,6 +255,10 @@
       const fullName = (document.getElementById('profileFullName')?.value || '').trim();
       const phone = (document.getElementById('profilePhone')?.value || '').trim();
       const address = (document.getElementById('profileAddress')?.value || '').trim();
+      if (!fullName) {
+        message(msg, 'Vui lòng nhập họ và tên người nhận.', true);
+        return;
+      }
       if (!address) {
         message(msg, 'Vui lòng nhập địa chỉ nhận hàng chi tiết.', true);
         return;
@@ -272,9 +273,55 @@
         const data = await request('shipping-info', { fullName, phone, address });
         message(msg, '✓ ' + (data.message || 'Đã lưu thông tin giao hàng thành công!'), false);
         if (data.user) {
-          user = data.user;
+          user = { ...user, ...data.user };
           render();
         }
+      } catch (error) {
+        message(msg, error.message, true);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = label; }
+      }
+    });
+  }
+
+  // Change Password Handler (account.html)
+  const changePasswordForm = document.getElementById('changePasswordForm');
+  if (changePasswordForm) {
+    changePasswordForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!user) return;
+      const btn = document.getElementById('btnChangePassword');
+      const msg = document.getElementById('changePasswordMsg');
+      const label = btn ? btn.textContent : '';
+
+      const currentPassword = changePasswordForm.querySelector('[name="currentPassword"]')?.value || '';
+      const newPassword = changePasswordForm.querySelector('[name="newPassword"]')?.value || '';
+      const confirmPassword = changePasswordForm.querySelector('[name="confirmNewPassword"]')?.value || '';
+
+      if (!currentPassword) {
+        message(msg, 'Vui lòng nhập mật khẩu hiện tại.', true);
+        return;
+      }
+      if (!newPassword || newPassword.length < 10) {
+        message(msg, 'Mật khẩu mới phải có tối thiểu 10 ký tự.', true);
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        message(msg, 'Xác nhận mật khẩu không trùng khớp.', true);
+        return;
+      }
+      if (currentPassword === newPassword) {
+        message(msg, 'Mật khẩu mới phải khác mật khẩu hiện tại.', true);
+        return;
+      }
+
+      if (btn) { btn.disabled = true; btn.textContent = 'Đang cập nhật…'; }
+      message(msg, '', false);
+
+      try {
+        const data = await request('change-password', { currentPassword, newPassword, confirmPassword });
+        message(msg, '✓ ' + (data.message || 'Đổi mật khẩu thành công!'), false);
+        changePasswordForm.reset();
       } catch (error) {
         message(msg, error.message, true);
       } finally {
@@ -292,14 +339,18 @@
       try {
         await request('logout', {});
         csrfToken = null; user = null; render(); message(status, 'Đã đăng xuất.', false);
+        if (pageName === 'account.html') {
+          renderProfile();
+        }
       } catch (error) {
         if (status) message(status, error.message, true); else window.alert(error.message);
       } finally { button.disabled = false; button.textContent = label; }
     });
   });
+
   request('me').then(data => {
     user = data.user; render();
-    if (user && ['login.html', 'register.html'].includes(pageName)) { location.replace(destination); return; }
+    if (user && ['login.html', 'register.html', 'forgot-password.html'].includes(pageName)) { location.replace(destination); return; }
     message(status, params.get('registered') === '1' ? 'Đăng ký thành công. Vui lòng đăng nhập.' : '', false);
   }).catch(() => {
     render();

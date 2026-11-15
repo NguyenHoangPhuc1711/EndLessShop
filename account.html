@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Hồ sơ &amp; Thông tin giao hàng | Endless</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css?v=2.0">
   <link rel="stylesheet" href="css/checkout.css?v=2.0">
   <link rel="stylesheet" href="css/account.css?v=2.2">
@@ -33,30 +31,24 @@
       <nav class="nav" aria-label="Điều hướng chính">
         <a href="index.html#trang-chu" class="nav__link">Trang Chủ</a>
         <div class="nav-menu">
-          <button class="nav-menu__trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="productMegaMenu">
-            Bộ Sưu Tập <span aria-hidden="true">⌄</span>
-          </button>
+          <button class="nav-menu__trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="productMegaMenu">Bộ Sưu Tập <span aria-hidden="true">⌄</span></button>
           <div class="mega-menu" id="productMegaMenu" aria-hidden="true">
             <div class="mega-menu__column">
-              <h2>Khám phá</h2>
-              <a class="mega-menu__feature" href="index.html#san-pham">
-                <span class="mega-menu__eyebrow">FALL / WINTER 2026</span>
-                <strong>Tất cả thiết kế</strong>
-                <span>Thời trang bền vững cho phong cách tối giản hằng ngày.</span>
-              </a>
+              <h2>Khám Phá</h2>
+              <a class="mega-menu__feature" href="index.html#san-pham"><span class="mega-menu__eyebrow">ESSENTIALS</span><strong>Tất Cả Sản Phẩm</strong><span>Thời trang tối giản cho cuộc sống thường ngày.</span></a>
             </div>
             <div class="mega-menu__column">
-              <h2>Áo Nam / Nữ</h2>
+              <h2>Áo</h2>
               <a href="index.html?category=ao#san-pham">Tất cả áo</a>
-              <a href="index.html?category=ao&amp;q=thun#san-pham">Áo thun cotton</a>
-              <a href="index.html?category=ao&amp;q=sơ-mi#san-pham">Áo sơ mi Oxford</a>
+              <a href="index.html?category=ao&amp;q=thun#san-pham">Áo thun oversize</a>
+              <a href="index.html?category=ao&amp;q=sơ-mi#san-pham">Áo sơ mi oxford</a>
               <a href="index.html?category=ao&amp;q=khoác#san-pham">Áo khoác bomber</a>
             </div>
             <div class="mega-menu__column">
               <h2>Quần &amp; Váy</h2>
-              <a href="index.html?category=quan#san-pham">Quần dài &amp; Shorts</a>
-              <a href="index.html?category=quan&amp;q=jean#san-pham">Quần jean slim</a>
-              <a href="index.html?category=vay#san-pham">Váy liền thân</a>
+              <a href="index.html?category=quan#san-pham">Quần tây relaxed</a>
+              <a href="index.html?category=quan&amp;q=jean#san-pham">Quần jean ống đứng</a>
+              <a href="index.html?category=vay#san-pham">Đầm suông linen</a>
               <a href="index.html?category=vay&amp;q=chân-váy#san-pham">Chân váy xếp ly</a>
             </div>
             <div class="mega-menu__column">
@@ -121,46 +113,69 @@
             <p class="card-subtext">Thông tin đăng nhập và định danh tài khoản.</p>
             <ul class="account-info-list">
               <li class="account-info-item">
-                <span class="info-label">Tên đăng nhập</span>
-                <strong class="info-value" id="viewUsername">—</strong>
+                <span class="info-label">TÊN ĐĂNG NHẬP</span>
+                <span class="info-value" id="viewUsername">—</span>
               </li>
               <li class="account-info-item">
-                <span class="info-label">Email liên kết</span>
-                <strong class="info-value" id="viewEmail">—</strong>
+                <span class="info-label">EMAIL LIÊN KẾT</span>
+                <span class="info-value" id="viewEmail">—</span>
               </li>
               <li class="account-info-item">
-                <span class="info-label">Vai trò hệ thống</span>
+                <span class="info-label">VAI TRÒ HỆ THỐNG</span>
                 <div><span class="account-role-badge" id="viewRole">Khách hàng</span></div>
               </li>
             </ul>
 
             <div class="account-quick-nav">
               <a href="checkout.html#lich-su">📦 Đơn hàng của tôi (Lịch sử)</a>
-              <a href="checkout.html#thanh-toan">🛒 Đến trang thanh toán COD</a>
+              <a href="checkout.html">🛒 Đến trang thanh toán COD</a>
               <a href="index.html#san-pham">← Tiếp tục mua sắm</a>
               <button type="button" class="btn-logout" data-auth-logout>Đăng xuất</button>
             </div>
           </div>
         </aside>
 
-        <section class="account-profile-card">
-          <h2>Thông tin giao hàng mặc định</h2>
-          <p class="card-subtext">Thông tin này sẽ được tự động điền tại bước Thanh toán COD để bạn không cần nhập lại mỗi khi đặt đơn mới.</p>
+        <div class="account-profile-forms">
+          <!-- Thông tin giao hàng mặc định -->
+          <section class="account-profile-card">
+            <h2>Thông tin giao hàng mặc định</h2>
+            <p class="card-subtext">Thông tin này sẽ được tự động điền tại bước Thanh toán COD để bạn không cần nhập lại mỗi khi đặt đơn mới.</p>
 
-          <form id="profileShippingForm" class="account-form">
-            <label for="profileFullName">Họ và tên người nhận</label>
-            <input type="text" id="profileFullName" name="fullName" placeholder="Ví dụ: Nguyễn Văn A" autocomplete="name" required maxlength="100">
+            <form id="profileShippingForm" class="account-form">
+              <label for="profileFullName">Họ và tên người nhận</label>
+              <input type="text" id="profileFullName" name="fullName" placeholder="Ví dụ: Nguyễn Văn A" autocomplete="name" required maxlength="100">
 
-            <label for="profilePhone">Số điện thoại nhận hàng</label>
-            <input type="tel" id="profilePhone" name="phone" placeholder="Ví dụ: 0987654321" autocomplete="tel" pattern="[0-9]{9,11}" title="Nhập số điện thoại gồm 9 đến 11 chữ số" required>
+              <label for="profilePhone">Số điện thoại nhận hàng</label>
+              <input type="tel" id="profilePhone" name="phone" placeholder="Ví dụ: 0987654321" autocomplete="tel" pattern="[0-9]{9,11}" title="Nhập số điện thoại gồm 9 đến 11 chữ số" required>
 
-            <label for="profileAddress">Địa chỉ nhận hàng chi tiết</label>
-            <input type="text" id="profileAddress" name="address" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành..." autocomplete="street-address" required maxlength="500">
+              <label for="profileAddress">Địa chỉ nhận hàng chi tiết</label>
+              <input type="text" id="profileAddress" name="address" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành..." autocomplete="street-address" required maxlength="500">
 
-            <button type="submit" class="btn btn--primary" id="btnSaveProfileShipping">Lưu thông tin giao hàng</button>
-            <p class="account-message" id="profileShippingMsg" role="status" aria-live="polite"></p>
-          </form>
-        </section>
+              <button type="submit" class="btn btn--primary" id="btnSaveProfileShipping">Lưu thông tin giao hàng</button>
+              <p class="account-message" id="profileShippingMsg" role="status" aria-live="polite"></p>
+            </form>
+          </section>
+
+          <!-- Khu vực đổi mật khẩu tài khoản -->
+          <section class="account-profile-card" style="margin-top: 24px;">
+            <h2>Đổi mật khẩu tài khoản</h2>
+            <p class="card-subtext">Cập nhật mật khẩu định kỳ để nâng cao tính bảo mật cho tài khoản của bạn.</p>
+
+            <form id="changePasswordForm" class="account-form">
+              <label for="currentPassword">Mật khẩu hiện tại</label>
+              <input type="password" id="currentPassword" name="currentPassword" placeholder="Nhập mật khẩu đang dùng" autocomplete="current-password" required maxlength="128">
+
+              <label for="newPassword">Mật khẩu mới</label>
+              <input type="password" id="newPassword" name="newPassword" placeholder="Tối thiểu 10 ký tự" autocomplete="new-password" required maxlength="128">
+
+              <label for="confirmNewPassword">Xác nhận mật khẩu mới</label>
+              <input type="password" id="confirmNewPassword" name="confirmNewPassword" placeholder="Nhập lại mật khẩu mới" autocomplete="new-password" required maxlength="128">
+
+              <button type="submit" class="btn btn--primary" id="btnChangePassword">Cập nhật mật khẩu</button>
+              <p class="account-message" id="changePasswordMsg" role="status" aria-live="polite"></p>
+            </form>
+          </section>
+        </div>
       </div>
     </div>
   </main>
@@ -174,7 +189,7 @@
       <div>
         <h4>Liên hệ</h4>
         <p>Email: EndlessGroup@gmail.com</p>
-        <p>Hotline: 1900 8888</p>
+        <p>Hotline: 0971 438 198</p>
         <p>Địa chỉ: 123 Phố Thời Trang, Hà Nội</p>
       </div>
       <div>
@@ -189,7 +204,7 @@
   <script src="js/config.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/navigation.js"></script>
-  <script src="js/account.js?v=2.2"></script>
+  <script src="js/account.js?v=2.3"></script>
   <script src="js/chatbot.js"></script>
 </body>
 </html>
