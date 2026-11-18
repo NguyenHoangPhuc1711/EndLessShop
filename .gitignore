@@ -70,6 +70,7 @@ Thumbs.db
 # .NET build outputs
 bin/
 obj/
+publish/
 *.user
 *.suo
 

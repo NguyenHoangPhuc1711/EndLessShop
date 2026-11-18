@@ -6,6 +6,7 @@
 let products = [];
 let catalogReady = false;
 let catalogLoading = false;
+let catalogFromFallback = false;
 let cart = [];
 const escapeHtml = EndlessCatalog.escapeHtml;
 
@@ -853,13 +854,17 @@ async function loadCatalog() {
   document.getElementById("catalogStatus").textContent = "Đang tải sản phẩm từ cửa hàng…";
   document.getElementById("retryCatalog").hidden = true;
   setCatalogControls(false);
+  catalogFromFallback = false;
   try {
     products = await EndlessCatalog.fetchProducts();
+    catalogFromFallback = typeof EndlessCatalog.isFallback === "function" && EndlessCatalog.isFallback();
     cart = EndlessCatalog.reconcileCart(EndlessCatalog.readArray("moc_cart"), products);
     wishlist = EndlessCatalog.reconcileWishlist(EndlessCatalog.readArray("moc_wishlist"), products);
-    // Only reconcile/save after a successful API response. API errors never overwrite the old cart.
-    saveCart();
-    saveWishlist();
+    // Only persist reconciliation when backed by live API data; fallback must never prune saved carts/wishlists.
+    if (!catalogFromFallback) {
+      saveCart();
+      saveWishlist();
+    }
     const code = EndlessCatalog.readText("moc_voucher");
     appliedVoucher = Object.hasOwn(voucherList, code || "") ? voucherList[code] : null;
     catalogReady = true;
@@ -869,6 +874,7 @@ async function loadCatalog() {
   } catch {
     products = [];
     catalogReady = false;
+    catalogFromFallback = false;
     document.getElementById("resultCount").textContent = "Chưa tải được sản phẩm";
     document.getElementById("catalogStatus").textContent = "Không tải được danh sách sản phẩm từ API. Vui lòng kiểm tra kết nối và thử lại.";
     document.getElementById("retryCatalog").hidden = false;
@@ -885,11 +891,19 @@ function setCatalogControls(enabled) {
 }
 
 function showStorageNotice() {
-  document.getElementById("catalogNotice").textContent = EndlessCatalog.notice();
+  const parts = [];
+  if (catalogFromFallback) {
+    parts.push("Đang hiển thị danh mục tĩnh dự phòng (chưa kết nối API máy chủ); giỏ đã lưu được giữ nguyên.");
+  }
+  const storageNotice = EndlessCatalog.notice();
+  if (storageNotice) parts.push(storageNotice);
+  document.getElementById("catalogNotice").textContent = parts.join(" ");
 }
 
 function initializeCatalogView() {
   renderFilterOptions();
+  const allTab = document.querySelector(".category-tab[data-category='all']");
+  if (allTab) allTab.textContent = "Tất cả (" + products.length + ")";
   const params = new URLSearchParams(window.location.search);
   const category = params.get("category");
   if (category && ["ao", "quan", "vay", "phukien"].includes(category)) {

@@ -31,7 +31,7 @@ window.FALLBACK_PRODUCTS = [
     "name": "Áo thun basic cotton",
     "category": "ao",
     "price": 189000,
-    "stock": 24,
+    "stock": 50,
     "sizes": [
       "S",
       "M",
@@ -377,33 +377,5 @@ window.FALLBACK_PRODUCTS = [
     },
     "description": "Thắt lưng da tổng hợp, khóa kim loại chắc chắn, dễ phối nhiều loại quần.",
     "isNew": false
-  },
-  {
-    "id": 2044,
-    "name": "Áo Cardigan Dệt Kim Bắc Âu",
-    "category": "ao",
-    "price": 420000,
-    "stock": 44,
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL"
-    ],
-    "colors": [
-      "Be",
-      "Xám Khói",
-      "Đen"
-    ],
-    "images": [
-      "img/id 3.jpg"
-    ],
-    "colorImageIndices": {
-      "Be": 0,
-      "Xám Khói": 0,
-      "Đen": 0
-    },
-    "description": "Áo cardigan dệt kim phong cách Bắc Âu tối giản, chất liệu len dệt mềm ấm áp cao cấp.",
-    "isNew": true
   }
 ];

@@ -20,11 +20,16 @@ if (args.Contains("--healthcheck"))
     }
 }
 
+LoadGeminiKeyFromDotEnvIfMissing();
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Register Core Services
 builder.Services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
 builder.Services.AddSingleton<IPasswordService, PasswordService>();
+builder.Services.AddMemoryCache();
+builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection(GeminiOptions.SectionName));
+builder.Services.AddHttpClient<IGeminiChatService, GeminiChatService>();
 
 // Session & Memory Cache
 builder.Services.AddDistributedMemoryCache();
@@ -55,12 +60,28 @@ builder.Services.AddRateLimiter(options =>
                 QueueLimit = 0
             });
     });
+    options.AddPolicy("chat-limit", httpContext =>
+    {
+        var clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            clientIp,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 30,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
+    });
     options.OnRejected = async (context, token) =>
     {
-        context.HttpContext.Response.Headers.RetryAfter = "900";
+        var isChatEndpoint = context.HttpContext.Request.Path.StartsWithSegments("/api/chat", StringComparison.OrdinalIgnoreCase);
+        context.HttpContext.Response.Headers.RetryAfter = isChatEndpoint ? "60" : "900";
         await context.HttpContext.Response.WriteAsJsonAsync(new
         {
-            message = "Quá nhiều yêu cầu. Vui lòng thử lại sau 15 phút.",
+            message = isChatEndpoint
+                ? "Quá nhiều tin nhắn trong thời gian ngắn. Vui lòng thử lại sau 1 phút."
+                : "Quá nhiều yêu cầu. Vui lòng thử lại sau 15 phút.",
             code = "rate_limit_exceeded"
         }, cancellationToken: token);
     };
@@ -130,3 +151,65 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static void LoadGeminiKeyFromDotEnvIfMissing()
+{
+    if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("GEMINI_API_KEY")))
+    {
+        return;
+    }
+
+    var candidatePaths = new[]
+    {
+        Path.Combine(Directory.GetCurrentDirectory(), ".env"),
+        Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", ".env")),
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".env")
+    };
+
+    foreach (var path in candidatePaths)
+    {
+        if (!File.Exists(path))
+        {
+            continue;
+        }
+
+        try
+        {
+            foreach (var rawLine in File.ReadLines(path))
+            {
+                var line = rawLine.Trim();
+                if (string.IsNullOrEmpty(line) || line.StartsWith('#'))
+                {
+                    continue;
+                }
+
+                if (line.StartsWith("export ", StringComparison.Ordinal))
+                {
+                    line = line.Substring(7).TrimStart();
+                }
+
+                const string prefix = "GEMINI_API_KEY=";
+                if (!line.StartsWith(prefix, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                var val = line.Substring(prefix.Length).Trim();
+                if (val.Length >= 2 && ((val.StartsWith('"') && val.EndsWith('"')) || (val.StartsWith('\'') && val.EndsWith('\''))))
+                {
+                    val = val.Substring(1, val.Length - 2);
+                }
+
+                if (!string.IsNullOrWhiteSpace(val))
+                {
+                    Environment.SetEnvironmentVariable("GEMINI_API_KEY", val);
+                    return;
+                }
+            }
+        }
+        catch
+        {
+            // Ignore unreadable local .env files
+        }
+    }
+}

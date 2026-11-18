@@ -383,7 +383,9 @@
     try {
       const products = await C.fetchProducts();
       cart.splice(0, cart.length, ...C.reconcileCart(C.readArray('moc_cart'), products));
-      C.write('moc_cart', JSON.stringify(cart));
+      if (!(typeof C.isFallback === 'function' && C.isFallback())) {
+        C.write('moc_cart', JSON.stringify(cart));
+      }
       ready = true; renderSummary(); await recoverOrQuote();
     } catch (error) {
       document.getElementById('checkoutItems').textContent = 'Không tải được sản phẩm từ API. Giỏ đã lưu được giữ nguyên.';

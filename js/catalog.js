@@ -1,7 +1,8 @@
-/* Shared catalog loading, safe storage and legacy cart reconciliation. No sample fallback. */
+/* Shared catalog loading, safe storage, offline sample fallback flag, and cart reconciliation. */
 (function () {
   'use strict';
   const notices = new Set();
+  let usingFallback = false;
   const validId = value => Number.isSafeInteger(value) && value > 0;
   const validMoney = value => Number.isSafeInteger(value) && value >= 0;
   const validQty = value => Number.isSafeInteger(value) && value > 0 && value <= 999;
@@ -78,14 +79,19 @@
   }
 
   async function fetchProducts() {
+    usingFallback = false;
     const apiUrl = EndlessConfig.apiUrl('products');
     if (apiUrl) {
+      const timeoutMs = EndlessConfig.API_BASE ? 4000 : 10000;
+      const fetchOptions = {
+        credentials: EndlessConfig.credentials,
+        cache: 'no-store'
+      };
+      if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+        fetchOptions.signal = AbortSignal.timeout(timeoutMs);
+      }
       try {
-        const response = await fetch(apiUrl, {
-          credentials: EndlessConfig.credentials,
-          cache: 'no-store',
-          signal: AbortSignal.timeout(3500)
-        });
+        const response = await fetch(apiUrl, fetchOptions);
         if (response.ok) {
           return validateProducts(await response.json());
         }
@@ -94,19 +100,11 @@
       }
     }
 
-    // Dự phòng thông minh cho GitHub Pages hoặc môi trường tĩnh khi backend / tunnel chưa bật
+    // Dự phòng khi trang tải FALLBACK_PRODUCTS (chỉ dùng cho storefront tĩnh khi backend/tunnel chưa bật)
     if (Array.isArray(window.FALLBACK_PRODUCTS) && window.FALLBACK_PRODUCTS.length > 0) {
+      usingFallback = true;
       return validateProducts(window.FALLBACK_PRODUCTS);
     }
-
-    try {
-      const pageBase = window.EndlessConfig?.pageBase || new URL('.', window.location.href).href;
-      const staticUrl = new URL('data/products.json', pageBase).href;
-      const staticRes = await fetch(staticUrl, { cache: 'no-store' });
-      if (staticRes.ok) {
-        return validateProducts(await staticRes.json());
-      }
-    } catch {}
 
     throw new Error('Catalog API unavailable');
   }
@@ -157,5 +155,6 @@
   }
 
   window.EndlessCatalog = { fetchProducts, validateProducts, imagePath, escapeHtml, readArray, readText,
-    write, reconcileCart, reconcileWishlist, readOrders, notice: () => [...notices].join(' ') };
+    write, reconcileCart, reconcileWishlist, readOrders, isFallback: () => usingFallback,
+    notice: () => [...notices].join(' ') };
 }());

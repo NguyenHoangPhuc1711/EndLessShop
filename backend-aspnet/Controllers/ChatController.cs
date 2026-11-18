@@ -1,10 +1,14 @@
 using System.Data;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Dapper;
 using EndLessShop.Api.Data;
 using EndLessShop.Api.Models;
+using EndLessShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace EndLessShop.Api.Controllers;
 
@@ -12,15 +16,25 @@ namespace EndLessShop.Api.Controllers;
 [Route("api/[controller]")]
 public class ChatController : ControllerBase
 {
-    private readonly IDbConnectionFactory _db;
+    private const string StoreSnapshotCacheKey = "endless:chat:store_snapshot";
 
-    public ChatController(IDbConnectionFactory db)
+    private readonly IDbConnectionFactory _db;
+    private readonly IGeminiChatService? _geminiChatService;
+    private readonly IMemoryCache? _memoryCache;
+
+    public ChatController(
+        IDbConnectionFactory db,
+        IGeminiChatService? geminiChatService = null,
+        IMemoryCache? memoryCache = null)
     {
         _db = db;
+        _geminiChatService = geminiChatService;
+        _memoryCache = memoryCache;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Message([FromBody] ChatMessageRequest? request)
+    [EnableRateLimiting("chat-limit")]
+    public async Task<IActionResult> Message([FromBody] ChatMessageRequest? request, CancellationToken cancellationToken = default)
     {
         var rawText = request?.Message?.Trim() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(rawText))
@@ -155,11 +169,22 @@ public class ChatController : ControllerBase
         // 8. Check for Products / Shopping inquiry
         if (Regex.IsMatch(normalized, @"(áo|sơ\s*mi|khoác|quần|jean|váy|đầm|phụ\s*kiện|túi|mũ|sản\s*phẩm|bán\s*chạy|mới|mẫu\s*nào|giá)"))
         {
+            if (_geminiChatService?.IsConfigured == true && IsAdvisoryProductQuestion(normalized))
+            {
+                var aiProductResponse = await TryHandleWithGeminiAsync(rawText, request?.History, cancellationToken);
+                if (aiProductResponse != null)
+                {
+                    return Ok(aiProductResponse);
+                }
+            }
+
             return await HandleProductsSearch(normalized);
         }
 
-        // 9. Check for Greeting / Thank you
-        if (Regex.IsMatch(normalized, @"(chào|hello|hi|hey|alo|bạn\s*ơi|cảm\s*ơn|thanks|thank\s*you)"))
+        // 9. Check for short Greeting / Thank you
+        var isShortGreeting = rawText.Length <= 30 && !rawText.Contains('?');
+        if ((isShortGreeting || _geminiChatService?.IsConfigured != true) &&
+            Regex.IsMatch(normalized, @"(chào|hello|hi|hey|alo|bạn\s*ơi|cảm\s*ơn|thanks|thank\s*you)"))
         {
             return Ok(new ChatResponse
             {
@@ -169,7 +194,16 @@ public class ChatController : ControllerBase
             });
         }
 
-        // 10. General Fallback
+        // 10. Hybrid AI Assistant (Google AI Studio) with safe rule-based fallback
+        if (_geminiChatService?.IsConfigured == true)
+        {
+            var aiResponse = await TryHandleWithGeminiAsync(rawText, request?.History, cancellationToken);
+            if (aiResponse != null)
+            {
+                return Ok(aiResponse);
+            }
+        }
+
         return Ok(new ChatResponse
         {
             Reply = "Dạ em đã ghi nhận câu hỏi của quý khách. Em có thể hỗ trợ nhanh nhất cho quý khách ở các mục bên dưới, hoặc kết nối đến Hotline `1900 8888` để gặp chuyên viên trực tiếp ạ!",
@@ -389,29 +423,14 @@ public class ChatController : ControllerBase
             sql += " ORDER BY p.la_moi DESC, p.san_pham_id ASC;";
 
             var rows = await connection.QueryAsync<dynamic>(sql, parameters);
-            var products = rows.Select(r =>
+            var products = rows.Select(r => new ChatProductCardDto
             {
-                string? firstImg = null;
-                string? imgJson = (string?)r.images_json;
-                if (!string.IsNullOrWhiteSpace(imgJson))
-                {
-                    try
-                    {
-                        var imgs = JsonSerializer.Deserialize<List<string>>(imgJson);
-                        firstImg = imgs?.FirstOrDefault();
-                    }
-                    catch { }
-                }
-
-                return new ChatProductCardDto
-                {
-                    Id = (int)r.san_pham_id,
-                    Name = (string)r.ten_sp,
-                    Price = (int)r.gia,
-                    Category = (string)r.ma_danh_muc,
-                    Description = (string?)r.mo_ta,
-                    Image = firstImg
-                };
+                Id = (int)r.san_pham_id,
+                Name = (string)r.ten_sp,
+                Price = (int)r.gia,
+                Category = (string)r.ma_danh_muc,
+                Description = (string?)r.mo_ta,
+                Image = ExtractFirstImage((string?)r.images_json)
             }).ToList();
 
             if (products.Count == 0)
@@ -498,4 +517,179 @@ public class ChatController : ControllerBase
             });
         }
     }
+
+    private static bool IsAdvisoryProductQuestion(string normalizedText)
+    {
+        return normalizedText.Contains('?') ||
+               Regex.IsMatch(
+                   normalizedText,
+                   @"(phối|mix|chất\s*liệu|vải|mặc\s*đi|hợp\s*với|phong\s*cách|so\s*sánh|nên\s*chọn|nên\s*mua|tư\s*vấn|tầm\s*giá|dưới\s*\d|trên\s*\d|khoảng\s*\d|set\s*đồ|outfit|mùa\s*(?:đông|hè|thu|xuân)|lạnh|nóng|công\s*sở|đi\s*(?:làm|chơi|học|tiệc)|co\s*giãn|chống\s*nước|thoáng|mỏng|dày|bền)"
+               );
+    }
+
+    private async Task<ChatResponse?> TryHandleWithGeminiAsync(
+        string userMessage,
+        IReadOnlyList<ChatHistoryTurn>? history,
+        CancellationToken cancellationToken)
+    {
+        if (_geminiChatService == null || !_geminiChatService.IsConfigured)
+        {
+            return null;
+        }
+
+        var snapshot = await GetStoreSnapshotAsync();
+        var aiResult = await _geminiChatService.GenerateReplyAsync(
+            userMessage,
+            history,
+            snapshot.ContextText,
+            cancellationToken);
+
+        if (aiResult == null || string.IsNullOrWhiteSpace(aiResult.Reply))
+        {
+            return null;
+        }
+
+        var verifiedProducts = aiResult.RecommendedProductIds
+            .Where(snapshot.ProductsById.ContainsKey)
+            .Select(id => snapshot.ProductsById[id])
+            .Take(4)
+            .ToList();
+
+        var suggestions = aiResult.Suggestions.Count > 0
+            ? aiResult.Suggestions
+            : new List<string> { "🧥 Gợi ý áo & quần", "📏 Tư vấn chọn size", "🏷️ Mã giảm giá hot" };
+
+        return new ChatResponse
+        {
+            Reply = aiResult.Reply,
+            Intent = "ai_assistant",
+            Suggestions = suggestions,
+            Products = verifiedProducts.Count > 0 ? verifiedProducts : null
+        };
+    }
+
+    private async Task<StoreCatalogSnapshot> GetStoreSnapshotAsync()
+    {
+        if (_memoryCache != null && _memoryCache.TryGetValue(StoreSnapshotCacheKey, out StoreCatalogSnapshot? cached) && cached != null)
+        {
+            return cached;
+        }
+
+        var snapshot = await BuildStoreSnapshotAsync();
+        _memoryCache?.Set(StoreSnapshotCacheKey, snapshot, TimeSpan.FromMinutes(3));
+        return snapshot;
+    }
+
+    private async Task<StoreCatalogSnapshot> BuildStoreSnapshotAsync()
+    {
+        var sb = new StringBuilder();
+        var productsById = new Dictionary<int, ChatProductCardDto>();
+
+        sb.AppendLine("=== CHÍNH SÁCH & THÔNG TIN CỬA HÀNG ===");
+        sb.AppendLine("- Thương hiệu: Endless Shop (phong cách tối giản Bắc Âu / Scandinavian Warm Minimal).");
+        sb.AppendLine("- Giao hàng: Nội thành HN/HCM 1-2 ngày, toàn quốc 2-4 ngày. Phí ship 30.000₫, MIỄN PHÍ SHIP từ 300.000₫ hoặc dùng mã FREESHIP. Được đồng kiểm COD.");
+        sb.AppendLine("- Thanh toán: COD (tiền mặt khi nhận hàng) và chuyển khoản VietQR.");
+        sb.AppendLine("- Đổi trả: Miễn phí đổi size/lỗi NSX tận nhà trong 30 ngày (còn tem mác, chưa giặt tẩy).");
+        sb.AppendLine("- Bảng size: S (<1m60, <52kg) | M (1m60-1m67, 52-62kg) | L (1m68-1m75, 63-72kg) | XL (1m76-1m83, 73-82kg) | XXL (>1m83, >82kg).");
+        sb.AppendLine("- Liên hệ: Hotline 1900 8888 (24/7) | Email support@endlessshop.vn | Showroom 123 Phố Huế, Hai Bà Trưng, Hà Nội (08:30 - 22:00).");
+
+        try
+        {
+            using var connection = _db.CreateConnection();
+            const string productSql = @"
+                SELECT TOP 50 p.san_pham_id, p.ten_sp, p.mo_ta, p.gia, p.ton_kho,
+                       p.sizes_json, p.colors_json, p.images_json, d.ma_danh_muc
+                FROM dbo.SAN_PHAM p
+                JOIN dbo.DANH_MUC d ON d.danh_muc_id = p.danh_muc_id
+                ORDER BY p.la_moi DESC, p.san_pham_id ASC;";
+
+            var productRows = (await connection.QueryAsync<dynamic>(productSql)).ToList();
+            if (productRows.Count > 0)
+            {
+                sb.AppendLine("\n=== DANH MỤC SẢN PHẨM HIỆN CÓ ===");
+                foreach (var r in productRows)
+                {
+                    int id = (int)r.san_pham_id;
+                    string name = (string)r.ten_sp;
+                    int price = (int)r.gia;
+                    int stock = (int)r.ton_kho;
+                    string category = (string)r.ma_danh_muc;
+                    string? desc = (string?)r.mo_ta;
+                    var sizes = ParseJsonStringList((string?)r.sizes_json);
+                    var colors = ParseJsonStringList((string?)r.colors_json);
+
+                    productsById[id] = new ChatProductCardDto
+                    {
+                        Id = id,
+                        Name = name,
+                        Price = price,
+                        Category = category,
+                        Description = desc,
+                        Image = ExtractFirstImage((string?)r.images_json)
+                    };
+
+                    var shortDesc = string.IsNullOrWhiteSpace(desc)
+                        ? ""
+                        : (desc.Length > 120 ? desc.Substring(0, 120) + "..." : desc);
+
+                    sb.Append($"- ID {id} | {name} | Danh mục: {category} | Giá: {price:N0}₫ | Tồn kho: {stock}");
+                    if (sizes.Count > 0) sb.Append($" | Size: {string.Join("/", sizes)}");
+                    if (colors.Count > 0) sb.Append($" | Màu: {string.Join("/", colors)}");
+                    if (!string.IsNullOrEmpty(shortDesc)) sb.Append($" | Mô tả: {shortDesc}");
+                    sb.AppendLine();
+                }
+            }
+
+            const string voucherSql = @"
+                SELECT ma_code, loai_giam, gia_tri
+                FROM dbo.VOUCHER
+                WHERE han_su_dung IS NULL OR han_su_dung > GETDATE()
+                ORDER BY gia_tri DESC;";
+
+            var voucherRows = (await connection.QueryAsync<dynamic>(voucherSql)).ToList();
+            if (voucherRows.Count > 0)
+            {
+                sb.AppendLine("\n=== MÃ GIẢM GIÁ ĐANG HOẠT ĐỘNG ===");
+                foreach (var v in voucherRows)
+                {
+                    string code = (string)v.ma_code;
+                    string type = (string)v.loai_giam;
+                    int val = (int)v.gia_tri;
+                    string desc = type == "percent" ? $"Giảm {val}%" : $"Giảm {val:N0}₫";
+                    sb.AppendLine($"- {code}: {desc}");
+                }
+            }
+        }
+        catch
+        {
+            sb.AppendLine("\n=== MÃ GIẢM GIÁ MẶC ĐỊNH ===");
+            sb.AppendLine("- ENDLESS10: Giảm 10% | FREESHIP: Giảm 30.000₫ phí ship | KM50K: Giảm 50.000₫ | BF100: Giảm 100.000₫");
+        }
+
+        return new StoreCatalogSnapshot(sb.ToString(), productsById);
+    }
+
+    private static string? ExtractFirstImage(string? imgJson)
+    {
+        return ParseJsonStringList(imgJson).FirstOrDefault();
+    }
+
+    private static List<string> ParseJsonStringList(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return new List<string>();
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<List<string>>(json) ?? new List<string>();
+        }
+        catch
+        {
+            return new List<string>();
+        }
+    }
+
+    private sealed record StoreCatalogSnapshot(string ContextText, Dictionary<int, ChatProductCardDto> ProductsById);
 }

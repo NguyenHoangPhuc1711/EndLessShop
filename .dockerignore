@@ -29,3 +29,5 @@
 **/node_modules
 **/bin/
 **/obj/
+**/publish/
+backend-aspnet/wwwroot

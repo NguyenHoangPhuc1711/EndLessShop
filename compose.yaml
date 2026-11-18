@@ -26,6 +26,8 @@ services:
       Cors__AllowedOrigins__3: "http://127.0.0.1:8080"
       Cors__AllowedOrigins__4: "https://nguyenhoangphuc1711.github.io"
       TRUST_PROXY: ${TRUST_PROXY:-0}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      Gemini__Model: ${GEMINI_MODEL:-gemini-4-hydrogen}
     networks:
       database: {}
       tunnel:

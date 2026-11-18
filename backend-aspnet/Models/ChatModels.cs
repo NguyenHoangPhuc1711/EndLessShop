@@ -2,10 +2,22 @@ using System.Text.Json.Serialization;
 
 namespace EndLessShop.Api.Models;
 
+public class ChatHistoryTurn
+{
+    [JsonPropertyName("role")]
+    public string Role { get; set; } = string.Empty;
+
+    [JsonPropertyName("text")]
+    public string Text { get; set; } = string.Empty;
+}
+
 public class ChatMessageRequest
 {
     [JsonPropertyName("message")]
     public string? Message { get; set; }
+
+    [JsonPropertyName("history")]
+    public List<ChatHistoryTurn>? History { get; set; }
 }
 
 public class ChatVoucherItemDto

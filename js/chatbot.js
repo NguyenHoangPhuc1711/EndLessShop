@@ -61,13 +61,30 @@
     return new Intl.NumberFormat('vi-VN').format(amount) + '₫';
   }
 
-  // Parse simple markdown: **bold**, • bullets, and [text](url)
-  function renderMarkdown(text) {
-    if (!text) return '';
-    let escaped = text
+  function escapeHtml(value) {
+    return String(value ?? '')
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function sanitizeLinkUrl(rawUrl) {
+    const trimmed = String(rawUrl || '').trim();
+    if (/^(https?:\/\/|\/|[a-z0-9_-]+\.html(?:#[a-z0-9_-]+)?$|#[a-z0-9_-]+$)/i.test(trimmed)) {
+      return trimmed.replace(/"/g, '&quot;');
+    }
+    return '';
+  }
+
+  // Parse simple markdown: **bold**, bullets, `code`, and safe [text](url)
+  function renderMarkdown(text) {
+    if (!text) return '';
+    let escaped = escapeHtml(text);
+
+    // Normalize leading markdown bullet markers (- or *) to •
+    escaped = escaped.replace(/(^|\r\n|\r|\n)[-*]\s+/g, '$1• ');
 
     // Bold **text**
     escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -75,10 +92,14 @@
     // Code `code`
     escaped = escaped.replace(/`([^`]+)`/g, '<code style="background:rgba(212,175,55,0.15);color:#8c5d1e;padding:1px 5px;border-radius:4px;font-family:monospace;">$1</code>');
 
-    // Links [text](url)
-    escaped = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color:#b89868;text-decoration:underline;font-weight:600;">$1</a>');
+    // Links [text](url) — allow only safe relative/http(s) URLs
+    escaped = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, label, url) => {
+      const safeUrl = sanitizeLinkUrl(url);
+      if (!safeUrl) return label;
+      return `<a href="${safeUrl}" style="color:#b89868;text-decoration:underline;font-weight:600;">${label}</a>`;
+    });
 
-    // Bullets • or -
+    // Line breaks
     escaped = escaped.replace(/(?:\r\n|\r|\n)/g, '<br>');
     return escaped;
   }
@@ -294,13 +315,15 @@
       if (msg.vouchers && msg.vouchers.length > 0) {
         contentHtml += `<div class="endless-chat-vouchers">`;
         msg.vouchers.forEach((v) => {
+          const safeCode = escapeHtml(v.code);
+          const safeDesc = escapeHtml(v.description);
           contentHtml += `
             <div class="endless-voucher-card">
               <div>
-                <span class="endless-voucher-card__code">${v.code}</span>
-                <div class="endless-voucher-card__desc">${v.description}</div>
+                <span class="endless-voucher-card__code">${safeCode}</span>
+                <div class="endless-voucher-card__desc">${safeDesc}</div>
               </div>
-              <button class="endless-voucher-card__btn" data-copy="${v.code}">Sao chép</button>
+              <button class="endless-voucher-card__btn" data-copy="${safeCode}">Sao chép</button>
             </div>
           `;
         });
@@ -311,12 +334,14 @@
       if (msg.products && msg.products.length > 0) {
         contentHtml += `<div class="endless-chat-products">`;
         msg.products.forEach((p) => {
-          const imgUrl = p.image ? p.image.replace('../', '') : 'img/id1.jpg';
+          const rawImg = p.image ? String(p.image).replace('../', '') : 'img/id1.jpg';
+          const imgUrl = escapeHtml(/^(https?:\/\/|img\/)/i.test(rawImg) ? rawImg : 'img/id1.jpg');
+          const safeName = escapeHtml(p.name);
           contentHtml += `
-            <a href="index.html#san-pham" class="endless-product-mini" title="${p.name}">
-              <img src="${imgUrl}" alt="${p.name}" class="endless-product-mini__img" loading="lazy">
+            <a href="index.html#san-pham" class="endless-product-mini" title="${safeName}">
+              <img src="${imgUrl}" alt="${safeName}" class="endless-product-mini__img" loading="lazy">
               <div class="endless-product-mini__body">
-                <span class="endless-product-mini__title">${p.name}</span>
+                <span class="endless-product-mini__title">${safeName}</span>
                 <span class="endless-product-mini__price">${formatMoney(p.price)}</span>
               </div>
             </a>
@@ -418,15 +443,49 @@
 
     try {
       const chatUrl = window.EndlessConfig ? EndlessConfig.apiUrl('chat') : '/api/chat';
-      const res = await fetch(chatUrl, {
+      const recentHistory = chatHistory
+        .slice(-7, -1)
+        .filter((m) => (m.sender === 'user' || m.sender === 'bot') && typeof m.text === 'string' && m.text.trim())
+        .map((m) => ({
+          role: m.sender === 'user' ? 'user' : 'model',
+          text: m.text.slice(0, 500)
+        }));
+
+      const fetchOptions = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ message: text })
-      });
+        body: JSON.stringify({
+          message: text,
+          history: recentHistory
+        })
+      };
+      if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+        fetchOptions.signal = AbortSignal.timeout(20000);
+      }
+      const res = await fetch(chatUrl, fetchOptions);
 
       if (!res.ok) {
+        if (res.status === 429) {
+          let limitMessage = 'Quá nhiều tin nhắn trong thời gian ngắn. Vui lòng thử lại sau 1 phút.';
+          try {
+            const errData = await res.json();
+            if (errData && errData.message) limitMessage = errData.message;
+          } catch (e) {}
+          setTimeout(() => {
+            setTyping(false);
+            chatHistory.push({
+              sender: 'bot',
+              text: limitMessage,
+              time: formatTime(new Date()),
+              suggestions: ['🏷️ Mã giảm giá hot', '📏 Tư vấn chọn size']
+            });
+            saveHistory();
+            renderMessages();
+          }, 300);
+          return;
+        }
         throw new Error(`HTTP ${res.status}`);
       }
 

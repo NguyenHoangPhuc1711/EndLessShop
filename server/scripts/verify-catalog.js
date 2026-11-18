@@ -20,7 +20,8 @@ async function verify() {
   vm.runInContext(fs.readFileSync(path.join(frontend, 'js/catalog.js'), 'utf8'), context);
   const catalog = context.window.EndlessCatalog;
   const products = await catalog.fetchProducts();
-  assert.equal(products.length, 12);
+  assert.equal(products.length, raw.length);
+  assert.ok(products.length >= 12);
   assert.equal(products.find(p => p.id === 2).name, 'Áo sơ mi tay dài');
   assert.equal(products.find(p => p.id === 4).name, 'Quần jean ống suông');
   assert.throws(() => catalog.validateProducts({ products: raw }));
@@ -52,11 +53,38 @@ async function verify() {
   assert.equal(catalog.readOrders().length, 0);
   context.fetch = async () => ({ ok: false });
   await assert.rejects(catalog.fetchProducts());
+  assert.equal(catalog.isFallback(), false);
   context.fetch = async () => { throw new Error('offline'); };
   await assert.rejects(catalog.fetchProducts());
+  assert.equal(catalog.isFallback(), false);
+
+  // Verify GitHub Pages / offline fallback when products.js is loaded alongside catalog.js
+  vm.runInContext(fs.readFileSync(path.join(frontend, 'js/products.js'), 'utf8'), context);
+  const savedCart = JSON.stringify([{ id: 99999, name: 'Admin test product', size: 'M', color: 'Đen', qty: 1, price: 250000, image: 'img/id1.jpg' }]);
+  storage.set('moc_cart', savedCart);
+
+  context.fetch = async () => ({ ok: false, status: 530 });
+  const fallbackOnHttpError = await catalog.fetchProducts();
+  assert.equal(fallbackOnHttpError.length, 12);
+  assert.equal(fallbackOnHttpError.every(p => p.stock === 50), true);
+  assert.equal(fallbackOnHttpError.some(p => p.id === 2044), false);
+  assert.equal(catalog.isFallback(), true);
+  assert.equal(storage.get('moc_cart'), savedCart);
+
+  context.fetch = async () => { throw new Error('offline'); };
+  const fallbackOnOffline = await catalog.fetchProducts();
+  assert.equal(fallbackOnOffline.length, 12);
+  assert.equal(catalog.isFallback(), true);
+  assert.equal(storage.get('moc_cart'), savedCart);
+
+  context.fetch = async () => ({ ok: true, json: async () => raw });
+  const recovered = await catalog.fetchProducts();
+  assert.equal(recovered.length, raw.length);
+  assert.equal(catalog.isFallback(), false);
+
   context.localStorage.setItem = () => { throw new Error('Storage blocked'); };
   assert.equal(catalog.write('moc_cart', '[]'), false);
-  console.log('PASS: API contract, duplicate/unsafe data, URL/HTML safety, corrupt storage, exact legacy ID mapping, repricing, wishlist and no API fallback');
+  console.log('PASS: API contract, duplicate/unsafe data, URL/HTML safety, corrupt storage, exact legacy ID mapping, repricing, wishlist, and offline fallback checks');
 }
 
 verify().catch(() => { console.error('Catalog validation check failed.'); process.exitCode = 1; });
