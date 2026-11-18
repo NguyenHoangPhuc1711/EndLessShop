@@ -1,0 +1,78 @@
+{
+  "version": 2,
+  "dgSpecHash": "O9I0XH0Skz8=",
+  "success": true,
+  "projectFilePath": "/home/komi/web-ban-quan-ao/backend-aspnet.Tests/backend-aspnet.Tests.csproj",
+  "expectedPackageFiles": [
+    "/home/komi/.nuget/packages/coverlet.collector/6.0.4/coverlet.collector.6.0.4.nupkg.sha512",
+    "/home/komi/.nuget/packages/dapper/2.1.89/dapper.2.1.89.nupkg.sha512",
+    "/home/komi/.nuget/packages/isopoh.cryptography.argon2/2.0.0/isopoh.cryptography.argon2.2.0.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/isopoh.cryptography.blake2b/2.0.0/isopoh.cryptography.blake2b.2.0.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/isopoh.cryptography.securearray/2.0.0/isopoh.cryptography.securearray.2.0.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.aspnetcore.openapi/10.0.13/microsoft.aspnetcore.openapi.10.0.13.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.bcl.cryptography/9.0.18/microsoft.bcl.cryptography.9.0.18.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.codecoverage/17.14.1/microsoft.codecoverage.17.14.1.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.data.sqlclient/7.1.1/microsoft.data.sqlclient.7.1.1.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.data.sqlclient.extensions.abstractions/7.1.1/microsoft.data.sqlclient.extensions.abstractions.7.1.1.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.data.sqlclient.internal.logging/7.1.1/microsoft.data.sqlclient.internal.logging.7.1.1.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.data.sqlclient.sni.runtime/7.1.0/microsoft.data.sqlclient.sni.runtime.7.1.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.extensions.caching.abstractions/9.0.18/microsoft.extensions.caching.abstractions.9.0.18.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.extensions.caching.memory/9.0.18/microsoft.extensions.caching.memory.9.0.18.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.0/microsoft.extensions.dependencyinjection.abstractions.10.0.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.extensions.logging.abstractions/10.0.0/microsoft.extensions.logging.abstractions.10.0.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.extensions.options/9.0.18/microsoft.extensions.options.9.0.18.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.extensions.primitives/9.0.18/microsoft.extensions.primitives.9.0.18.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.identitymodel.abstractions/8.16.0/microsoft.identitymodel.abstractions.8.16.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.identitymodel.jsonwebtokens/8.16.0/microsoft.identitymodel.jsonwebtokens.8.16.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.identitymodel.logging/8.16.0/microsoft.identitymodel.logging.8.16.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.identitymodel.protocols/8.16.0/microsoft.identitymodel.protocols.8.16.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.identitymodel.protocols.openidconnect/8.16.0/microsoft.identitymodel.protocols.openidconnect.8.16.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.identitymodel.tokens/8.16.0/microsoft.identitymodel.tokens.8.16.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.net.test.sdk/17.14.1/microsoft.net.test.sdk.17.14.1.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.openapi/2.12.2/microsoft.openapi.2.12.2.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.sqlserver.server/1.0.0/microsoft.sqlserver.server.1.0.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.testplatform.objectmodel/17.14.1/microsoft.testplatform.objectmodel.17.14.1.nupkg.sha512",
+    "/home/komi/.nuget/packages/microsoft.testplatform.testhost/17.14.1/microsoft.testplatform.testhost.17.14.1.nupkg.sha512",
+    "/home/komi/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512",
+    "/home/komi/.nuget/packages/system.configuration.configurationmanager/9.0.18/system.configuration.configurationmanager.9.0.18.nupkg.sha512",
+    "/home/komi/.nuget/packages/system.diagnostics.eventlog/9.0.18/system.diagnostics.eventlog.9.0.18.nupkg.sha512",
+    "/home/komi/.nuget/packages/system.identitymodel.tokens.jwt/8.16.0/system.identitymodel.tokens.jwt.8.16.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/system.security.cryptography.pkcs/9.0.18/system.security.cryptography.pkcs.9.0.18.nupkg.sha512",
+    "/home/komi/.nuget/packages/system.security.cryptography.protecteddata/9.0.18/system.security.cryptography.protecteddata.9.0.18.nupkg.sha512",
+    "/home/komi/.nuget/packages/system.threading.ratelimiting/9.0.18/system.threading.ratelimiting.9.0.18.nupkg.sha512",
+    "/home/komi/.nuget/packages/xunit/2.9.3/xunit.2.9.3.nupkg.sha512",
+    "/home/komi/.nuget/packages/xunit.abstractions/2.0.3/xunit.abstractions.2.0.3.nupkg.sha512",
+    "/home/komi/.nuget/packages/xunit.analyzers/1.18.0/xunit.analyzers.1.18.0.nupkg.sha512",
+    "/home/komi/.nuget/packages/xunit.assert/2.9.3/xunit.assert.2.9.3.nupkg.sha512",
+    "/home/komi/.nuget/packages/xunit.core/2.9.3/xunit.core.2.9.3.nupkg.sha512",
+    "/home/komi/.nuget/packages/xunit.extensibility.core/2.9.3/xunit.extensibility.core.2.9.3.nupkg.sha512",
+    "/home/komi/.nuget/packages/xunit.extensibility.execution/2.9.3/xunit.extensibility.execution.2.9.3.nupkg.sha512",
+    "/home/komi/.nuget/packages/xunit.runner.visualstudio/3.1.4/xunit.runner.visualstudio.3.1.4.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "message": "Package 'System.Security.Cryptography.Pkcs' 9.0.18 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-2fmv-rv2c-59x7",
+      "projectPath": "/home/komi/web-ban-quan-ao/backend-aspnet.Tests/backend-aspnet.Tests.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/komi/web-ban-quan-ao/backend-aspnet.Tests/backend-aspnet.Tests.csproj",
+      "libraryId": "System.Security.Cryptography.Pkcs",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'System.Security.Cryptography.Pkcs' 9.0.18 has a known high severity vulnerability, https://github.com/advisories/GHSA-846f-f764-76mx",
+      "projectPath": "/home/komi/web-ban-quan-ao/backend-aspnet.Tests/backend-aspnet.Tests.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/komi/web-ban-quan-ao/backend-aspnet.Tests/backend-aspnet.Tests.csproj",
+      "libraryId": "System.Security.Cryptography.Pkcs",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
+}
