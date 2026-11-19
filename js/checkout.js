@@ -48,10 +48,13 @@
     const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(value)));
     return Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, '0')).join('');
   }
+  function currentOwnerId() {
+    return user ? user.id : 'guest';
+  }
   function readPending() {
     try {
       const value = JSON.parse(sessionStorage.getItem(pendingStorageKey) || 'null');
-      return value && value.ownerId === user?.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value.key) &&
+      return value && value.ownerId === currentOwnerId() && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value.key) &&
         /^[a-f0-9]{64}$/.test(value.signature) && /^[a-f0-9]{64}$/.test(value.cartStamp) ? value : null;
     } catch { return null; }
   }
@@ -130,10 +133,10 @@
     document.getElementById('checkoutItems').innerHTML = rows.length ? renderItems(confirmedOrder && form.hidden ? rows : quote?.items || cart, false) :
       '<p class="checkout-empty">Giỏ hàng trống. <a href="index.html#san-pham">Chọn sản phẩm</a>.</p>';
     renderTotals(confirmedOrder && form.hidden ? confirmedOrder : quote);
-    document.getElementById('placeOrderBtn').disabled = !user || !ready || !cart.length || !quote || submitting;
+    document.getElementById('placeOrderBtn').disabled = !ready || !cart.length || !quote || submitting;
     updatePaymentUi();
     document.querySelectorAll('#checkoutVoucherApply,#checkoutVoucherRemove,#checkoutVoucherInput,.voucher-chip').forEach(el => {
-      el.disabled = submitting || !ready || !user || !cart.length;
+      el.disabled = submitting || !ready || !cart.length;
     });
     document.getElementById('checkoutVoucherInput').value = voucherCode || '';
     document.getElementById('checkoutVoucherRemove').hidden = !voucherCode;
@@ -144,9 +147,9 @@
     const sequence = ++quoteSequence;
     quote = null;
     renderSummary();
-    if (!ready || !user || !cart.length) return false;
+    if (!ready || !cart.length) return false;
     const result = await api('orders/quote', { body: { items: itemPayload(), voucherCode: code, payment: 'cod' } });
-    if (sequence !== quoteSequence || !user) return false;
+    if (sequence !== quoteSequence) return false;
     quote = result;
     renderSummary();
     return true;
@@ -222,13 +225,15 @@
     const saveMsg = document.getElementById('shippingSaveMsg');
     if (saveMsg) saveMsg.textContent = '';
     if (!user) {
-      notice('Vui lòng đăng nhập để đặt COD và xem đơn hàng. Giỏ hàng được giữ nguyên.');
-      document.getElementById('checkoutLogin').hidden = false;
+      notice('');
+      const loginHint = document.getElementById('checkoutLogin');
+      if (loginHint) loginHint.hidden = true;
       if (savedBadge) savedBadge.hidden = true;
       if (saveWrapper) saveWrapper.hidden = true;
     } else {
       notice('');
-      document.getElementById('checkoutLogin').hidden = true;
+      const loginHint = document.getElementById('checkoutLogin');
+      if (loginHint) loginHint.hidden = true;
       if (saveWrapper) saveWrapper.hidden = false;
       const fullNameInput = document.getElementById('fullName');
       const phoneInput = document.getElementById('phone');
@@ -258,7 +263,7 @@
     }
     renderSummary();
     loadHistory();
-    if (changed && ready && user) recoverOrQuote();
+    if (changed && ready) recoverOrQuote();
   }
   async function completeOrder(order, expectedStamp) {
     if (!order || !Number.isSafeInteger(order.id) || !/^ENDLESS-[0-9]+$/.test(order.code) ||
@@ -290,6 +295,15 @@
     const success = document.getElementById('checkoutSuccess');
     success.hidden = false;
     const isQr = order.payment === 'qr' || order.payment === 'vietqr';
+    const d = order.delivery || {};
+    const shippingSummaryHtml = '<div class="order-delivery-summary" style="text-align:left;background:rgba(44,53,39,0.04);border:1px solid rgba(44,53,39,0.12);border-radius:8px;padding:12px 16px;margin:14px 0;font-size:13.5px;line-height:1.6;">' +
+      '<div><strong>📍 Giao đến:</strong> ' + esc(d.fullName || '') + ' · <strong>' + esc(d.phone || '') + '</strong></div>' +
+      '<div><strong>🏠 Địa chỉ nhận hàng:</strong> ' + esc(d.address || '') + '</div>' +
+      (d.note ? '<div><strong>📝 Ghi chú:</strong> ' + esc(d.note) + '</div>' : '') +
+    '</div>';
+    const historyActionHtml = user
+      ? '<a class="btn btn--primary" href="#lich-su">Xem đơn hàng của tôi</a><a class="btn btn--ghost" href="index.html#san-pham">Tiếp tục mua sắm</a>'
+      : '<a class="btn btn--primary" href="index.html#san-pham">Tiếp tục mua sắm</a><a class="btn btn--ghost" href="login.html?next=checkout.html%23lich-su">Đăng nhập để lưu lịch sử đơn</a>';
     if (isQr) {
       const qr = order.qrInfo || {
         bankId: 'MB',
@@ -305,6 +319,7 @@
         '<h2>Đặt hàng thành công!</h2>' +
         '<p class="order-code-line">Mã đơn hàng: <strong>' + esc(order.code) + '</strong></p>' +
         '<p class="order-total-line">Số tiền cần thanh toán: <strong class="highlight-price">' + esc(money(order.total)) + '</strong></p>' +
+        shippingSummaryHtml +
         '<div class="qr-payment-card">' +
           '<div class="qr-payment-card__header">' +
             '<div class="qr-badge">📱 Quét mã VietQR để thanh toán</div>' +
@@ -325,8 +340,7 @@
           '</div>' +
           '<div class="qr-notice-box">⚠️ <em>Lưu ý:</em> Vui lòng giữ đúng <strong>Nội dung chuyển khoản</strong> để hệ thống tự động xác nhận đơn hàng nhanh chóng nhất.</div>' +
           '<div class="qr-action-buttons">' +
-            '<a class="btn btn--primary" href="#lich-su">Xem đơn hàng của tôi</a>' +
-            '<a class="btn btn--ghost" href="index.html#san-pham">Tiếp tục mua sắm</a>' +
+            historyActionHtml +
           '</div>' +
         '</div>' +
         '<details class="qr-order-items-summary">' +
@@ -340,12 +354,12 @@
         '<h2>Đơn COD đã được ghi nhận!</h2>' +
         '<p class="order-code-line">Mã đơn hàng: <strong>' + esc(order.code) + '</strong></p>' +
         '<p class="order-total-line">Tổng thanh toán khi nhận: <strong class="highlight-price">' + esc(money(order.total)) + '</strong></p>' +
+        shippingSummaryHtml +
         '<div class="cod-success-card">' +
-          '<p>📦 Đơn hàng của bạn đã được lưu vào hệ thống và chuẩn bị đóng gói giao đến bạn.</p>' +
+          '<p>📦 Đơn hàng của bạn đã được lưu vào hệ thống và chuẩn bị đóng gói giao đến địa chỉ bạn đã đăng ký.</p>' +
           '<p>🚚 <strong>Hình thức thanh toán:</strong> Tiền mặt khi nhận hàng (COD · Được đồng kiểm tra trước khi trả tiền).</p>' +
           '<div class="qr-action-buttons">' +
-            '<a class="btn btn--primary" href="#lich-su">Xem đơn hàng của tôi</a>' +
-            '<a class="btn btn--ghost" href="index.html#san-pham">Tiếp tục mua sắm</a>' +
+            historyActionHtml +
           '</div>' +
         '</div>' +
         '<details class="qr-order-items-summary">' +
@@ -362,7 +376,7 @@
     } catch {}
   }
   async function recoverOrQuote() {
-    if (!ready || !user) return;
+    if (!ready) return;
     const pending = readPending();
     if (pending) {
       try {
@@ -394,26 +408,41 @@
   }
   form.addEventListener('submit', async event => {
     event.preventDefault();
-    if (submitting || !ready || !quote || !cart.length || !user) return;
+    if (submitting || !ready || !quote || !cart.length) return;
     const fields = Object.fromEntries(new FormData(form));
+    const fullName = (fields.fullName || '').trim();
+    const phone = (fields.phone || '').trim();
+    const address = (fields.address || '').trim();
+    const note = (fields.note || '').trim();
+    if (!fullName || !address) {
+      notice('Vui lòng nhập đầy đủ họ tên và địa chỉ nhận hàng.');
+      if (!address) document.getElementById('address')?.focus();
+      else document.getElementById('fullName')?.focus();
+      return;
+    }
+    if (!/^[0-9]{9,11}$/.test(phone)) {
+      notice('Vui lòng nhập số điện thoại nhận hàng hợp lệ (9 đến 11 chữ số).');
+      document.getElementById('phone')?.focus();
+      return;
+    }
     const saveCheckbox = document.getElementById('saveShippingInfo');
-    const saveShippingInfo = Boolean(saveCheckbox ? saveCheckbox.checked : true);
+    const saveShippingInfo = Boolean(user && (saveCheckbox ? saveCheckbox.checked : true));
     const body = { items: itemPayload(), voucherCode, payment: fields.payment,
-      delivery: { fullName: fields.fullName.trim(), phone: fields.phone.trim(), address: fields.address.trim(), note: (fields.note || '').trim() },
+      delivery: { fullName, phone, address, note },
       saveShippingInfo };
     submitting = true; renderSummary(); notice('Đang lưu đơn trên máy chủ…');
     try {
       const signature = await stamp(body);
       const cartStamp = await stamp(body.items);
       const old = readPending();
-      const pending = old?.signature === signature ? old : { key: crypto.randomUUID(), signature, cartStamp, ownerId: user.id };
+      const pending = old?.signature === signature ? old : { key: crypto.randomUUID(), signature, cartStamp, ownerId: currentOwnerId() };
       try { sessionStorage.setItem(pendingStorageKey, JSON.stringify(pending)); }
       catch { throw new Error('Không lưu được khóa chống gửi trùng; chưa gửi đơn. Vui lòng cho phép lưu trữ trong trình duyệt.'); }
       const { order } = await api('orders', { body, key: pending.key });
       if (saveShippingInfo && user) {
-        user.fullName = fields.fullName.trim();
-        user.phone = fields.phone.trim();
-        user.address = fields.address.trim();
+        user.fullName = fullName;
+        user.phone = phone;
+        user.address = address;
         window.dispatchEvent(new CustomEvent('endless:auth-changed', { detail: { user } }));
       }
       await completeOrder(order, cartStamp);
@@ -423,9 +452,9 @@
       if (error.status === 400 || error.status === 409) { quote = null; document.getElementById('checkoutCatalogRetry').hidden = false; }
     } finally {
       submitting = false;
-      document.getElementById('placeOrderBtn').disabled = !user || !ready || !quote || !cart.length;
+      document.getElementById('placeOrderBtn').disabled = !ready || !quote || !cart.length;
       updatePaymentUi();
-      document.querySelectorAll('#checkoutVoucherApply,#checkoutVoucherRemove,#checkoutVoucherInput,.voucher-chip').forEach(el => { el.disabled = !user || !ready || !cart.length; });
+      document.querySelectorAll('#checkoutVoucherApply,#checkoutVoucherRemove,#checkoutVoucherInput,.voucher-chip').forEach(el => { el.disabled = !ready || !cart.length; });
     }
   });
 

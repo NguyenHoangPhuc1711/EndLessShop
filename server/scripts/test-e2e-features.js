@@ -484,25 +484,76 @@ async function runTests() {
   console.log('  👑 Quản trị viên xác nhận thông tin đơn hàng QR chính xác');
   console.log('  ✅ [PASS] Tính năng Thanh Toán Bằng Mã QR (VietQR) vận hành hoàn hảo 100%!\n');
 
+  console.log('[15/15] Kiểm thử Đặt Hàng Không Cần Đăng Nhập (Guest Checkout - Bắt Buộc Nhập Địa Chỉ)...');
+  const guestOrderClient = new TestClient('Khách Vãng Lai');
+  await guestOrderClient.fetchCsrf();
+
+  // 15a. Guest quote works without login
+  const guestQuote = await guestOrderClient.call('/api/orders/quote', 'POST', {
+    items: [{ id: sampleProduct.id, size: 'M', color: 'Đen', qty: 1 }],
+    voucherCode: 'FREESHIP'
+  });
+  assert.equal(guestQuote.status, 200);
+  console.log(`  💰 Khách chưa đăng nhập báo giá thành công: Tổng ${guestQuote.body.total.toLocaleString('vi-VN')}đ`);
+
+  // 15b. Guest order without address is rejected (400 Bad Request)
+  const guestNoAddressRes = await guestOrderClient.call('/api/orders', 'POST', {
+    items: [{ id: sampleProduct.id, size: 'M', color: 'Đen', qty: 1 }],
+    payment: 'cod',
+    delivery: {
+      fullName: 'Khách Không Nhập Địa Chỉ',
+      phone: '0911223344',
+      address: '   '
+    }
+  }, { 'Idempotency-Key': randomUUID() });
+  assert.equal(guestNoAddressRes.status, 400, 'Đặt hàng thiếu địa chỉ phải bị từ chối 400');
+  console.log('  🛡️ [VALIDATION] Khách không nhập địa chỉ nhận hàng bị chặn chính xác (400 Bad Request)');
+
+  // 15c. Guest order with valid fullName, phone, and address succeeds without login
+  const guestOrderKey = randomUUID();
+  const guestOrderRes = await guestOrderClient.call('/api/orders', 'POST', {
+    items: [{ id: sampleProduct.id, size: 'M', color: 'Đen', qty: 1 }],
+    voucherCode: 'FREESHIP',
+    payment: 'cod',
+    delivery: {
+      fullName: 'Khách Mua Nhanh Không Cần Tài Khoản',
+      phone: '0933445566',
+      address: '99 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM',
+      note: 'Giao tận nơi không cần đăng nhập'
+    }
+  }, { 'Idempotency-Key': guestOrderKey });
+  assert.equal(guestOrderRes.status, 201, `Guest checkout failed: ${JSON.stringify(guestOrderRes.body)}`);
+  const guestOrderId = guestOrderRes.body.order.id;
+  assert.equal(guestOrderRes.body.order.delivery.address, '99 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM');
+  console.log(`  🛒 Khách vãng lai đặt hàng COD thành công không cần đăng nhập: Mã #${guestOrderRes.body.order.code} (ID: ${guestOrderId})`);
+
+  // 15d. Guest can recover order by Idempotency request key
+  const guestRecoverRes = await guestOrderClient.call(`/api/orders/requests/${guestOrderKey}`);
+  assert.equal(guestRecoverRes.status, 200);
+  assert.equal(guestRecoverRes.body.order.id, guestOrderId);
+  console.log('  🔄 Khách vãng lai khôi phục đơn hàng qua Request Key thành công');
+  console.log('  ✅ [PASS] Tính năng Thanh Toán Không Cần Đăng Nhập (Bắt Buộc Địa Chỉ) vận hành hoàn hảo 100%!\n');
+
   // Cleanup test accounts
   console.log('🧹 Dọn dẹp tài khoản kiểm thử khỏi cơ sở dữ liệu...');
   await pool.request()
     .input('orderId1', sql.Int, createdOrderId)
     .input('orderId2', sql.Int, secondOrderId)
     .input('orderId3', sql.Int, qrOrderId)
+    .input('orderId4', sql.Int, guestOrderId)
     .input('cust', sql.VarChar(50), customerUsername)
     .input('adm', sql.VarChar(50), adminUsername)
     .query(`
       SET QUOTED_IDENTIFIER ON;
-      DELETE FROM dbo.CHI_TIET_HOA_DON WHERE hoa_don_id IN (@orderId1, @orderId2, @orderId3);
-      DELETE FROM dbo.HOA_DON WHERE hoa_don_id IN (@orderId1, @orderId2, @orderId3);
+      DELETE FROM dbo.CHI_TIET_HOA_DON WHERE hoa_don_id IN (@orderId1, @orderId2, @orderId3, @orderId4);
+      DELETE FROM dbo.HOA_DON WHERE hoa_don_id IN (@orderId1, @orderId2, @orderId3, @orderId4);
       DELETE FROM dbo.TAI_KHOAN WHERE ten_dang_nhap IN (@cust, @adm);
     `);
   await pool.close();
   console.log('  ✅ Dữ liệu kiểm thử đã được dọn sạch hoàn toàn, bảo toàn tính toàn vẹn CSDL.\n');
 
   console.log('================================================================');
-  console.log('🎉 TẤT CẢ 14/14 TÍNH NĂNG VÀ LUỒNG VẬN HÀNH ĐÃ PASS 100%!');
+  console.log('🎉 TẤT CẢ 15/15 TÍNH NĂNG VÀ LUỒNG VẬN HÀNH ĐÃ PASS 100%!');
   console.log('================================================================');
 }
 

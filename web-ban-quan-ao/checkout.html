@@ -92,7 +92,7 @@
           <span class="checkout-step">01</span>
           <div>
             <h2>Thông tin giao hàng</h2>
-            <p>Nhập thông tin để cửa hàng gửi đơn đến bạn.</p>
+            <p>Không cần đăng nhập — vui lòng nhập đầy đủ họ tên, số điện thoại và địa chỉ để cửa hàng gửi đơn đến bạn.</p>
           </div>
         </div>
         <div class="checkout-saved-badge" id="checkoutSavedBadge" hidden>
@@ -101,17 +101,17 @@
         </div>
         <form id="checkoutForm" class="checkout-form">
           <div class="checkout-form__fields">
-            <label>Họ và tên
-              <input type="text" id="fullName" name="fullName" autocomplete="name" required>
+            <label>Họ và tên <span style="color:#a33a3a;font-weight:700">*</span>
+              <input type="text" id="fullName" name="fullName" placeholder="Ví dụ: Nguyễn Văn A" autocomplete="name" required>
             </label>
-            <label>Số điện thoại
-              <input type="tel" id="phone" name="phone" autocomplete="tel" pattern="[0-9]{9,11}" title="Nhập số điện thoại gồm 9 đến 11 chữ số" required>
+            <label>Số điện thoại <span style="color:#a33a3a;font-weight:700">*</span>
+              <input type="tel" id="phone" name="phone" placeholder="Ví dụ: 0987654321" autocomplete="tel" pattern="[0-9]{9,11}" title="Nhập số điện thoại gồm 9 đến 11 chữ số" required>
             </label>
-            <label class="checkout-form__wide">Địa chỉ nhận hàng
-              <input type="text" id="address" name="address" autocomplete="street-address" required>
+            <label class="checkout-form__wide">Địa chỉ nhận hàng <span style="color:#a33a3a;font-weight:700">*</span>
+              <input type="text" id="address" name="address" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố" autocomplete="street-address" required>
             </label>
             <label class="checkout-form__wide">Ghi chú <span>(không bắt buộc)</span>
-              <textarea id="note" name="note" rows="3"></textarea>
+              <textarea id="note" name="note" rows="3" placeholder="Lưu ý cho bưu tá khi giao hàng (giờ nhận, tòa nhà...)"></textarea>
             </label>
           </div>
           <div class="checkout-save-wrapper" id="checkoutSaveWrapper" hidden>

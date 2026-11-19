@@ -47,7 +47,7 @@ public class OrdersController : ControllerBase
     [HttpPost("quote")]
     public async Task<IActionResult> Quote([FromBody] OrderCheckoutRequest request)
     {
-        var userId = HttpContext.Session.GetInt32("userId") ?? 1; // Default to demo user for guest quote
+        var userId = HttpContext.Session.GetInt32("userId");
         return await ExecuteCheckout(userId, request, isCreate: false);
     }
 
@@ -55,12 +55,8 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> CreateOrder([FromBody] OrderCheckoutRequest request)
     {
         var userId = HttpContext.Session.GetInt32("userId");
-        if (!userId.HasValue)
-        {
-            return Unauthorized(new { message = "Vui lòng đăng nhập để đặt hàng." });
-        }
 
-        // CSRF Verification
+        // CSRF Verification (supports both authenticated and guest sessions)
         if (!SecurityValidator.ValidateCsrfAndOrigin(HttpContext))
         {
             return StatusCode(403, new { message = "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang.", code = "csrf_invalid" });
@@ -72,7 +68,7 @@ public class OrdersController : ControllerBase
             return BadRequest(new { message = "Cần khóa Idempotency-Key UUID hợp lệ." });
         }
 
-        return await ExecuteCheckout(userId.Value, request, isCreate: true, key.ToLowerInvariant());
+        return await ExecuteCheckout(userId, request, isCreate: true, key.ToLowerInvariant());
     }
 
     [HttpGet]
@@ -112,20 +108,16 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> GetOrderByRequestKey(string key)
     {
         var userId = HttpContext.Session.GetInt32("userId");
-        if (!userId.HasValue)
-        {
-            return Unauthorized(new { message = "Vui lòng đăng nhập để xem đơn hàng." });
-        }
 
         if (!KeyPattern.IsMatch(key))
         {
             return NotFound(new { message = "Không tìm thấy đơn hàng." });
         }
 
-        return await FetchOrder(userId.Value, orderId: null, requestKey: key.ToLowerInvariant());
+        return await FetchOrder(userId, orderId: null, requestKey: key.ToLowerInvariant());
     }
 
-    private async Task<IActionResult> ExecuteCheckout(int userId, OrderCheckoutRequest request, bool isCreate, string? requestKey = null)
+    private async Task<IActionResult> ExecuteCheckout(int? userId, OrderCheckoutRequest request, bool isCreate, string? requestKey = null)
     {
         if (request.Items == null || request.Items.Count == 0 || request.Items.Count > 50)
         {
@@ -297,7 +289,7 @@ public class OrdersController : ControllerBase
         }
     }
 
-    private async Task<IActionResult> FetchOrder(int userId, int? orderId, string? requestKey)
+    private async Task<IActionResult> FetchOrder(int? userId, int? orderId, string? requestKey)
     {
         using var connection = _db.CreateConnection();
         var parameters = new DynamicParameters();

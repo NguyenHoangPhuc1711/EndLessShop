@@ -11,6 +11,12 @@ IF COL_LENGTH('dbo.CHI_TIET_HOA_DON','ten_sp') IS NULL
     ALTER TABLE dbo.CHI_TIET_HOA_DON ADD ten_sp NVARCHAR(150) NULL;
 IF COL_LENGTH('dbo.CHI_TIET_HOA_DON','anh_sp') IS NULL
     ALTER TABLE dbo.CHI_TIET_HOA_DON ADD anh_sp NVARCHAR(500) NULL;
+IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('dbo.HOA_DON') AND name = 'khach_hang_id' AND is_nullable = 0)
+BEGIN
+    IF EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('dbo.HOA_DON') AND name = 'UX_HOA_DON_REQUEST')
+        DROP INDEX UX_HOA_DON_REQUEST ON dbo.HOA_DON;
+    ALTER TABLE dbo.HOA_DON ALTER COLUMN khach_hang_id INT NULL;
+END;
 GO
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id=OBJECT_ID('dbo.HOA_DON') AND name='UX_HOA_DON_CODE')
     CREATE UNIQUE INDEX UX_HOA_DON_CODE ON dbo.HOA_DON(ma_don);
@@ -18,25 +24,34 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id=OBJECT_ID('dbo.HOA_DON'
     CREATE UNIQUE INDEX UX_HOA_DON_REQUEST ON dbo.HOA_DON(khach_hang_id,idempotency_key) WHERE idempotency_key IS NOT NULL;
 GO
 CREATE OR ALTER PROCEDURE dbo.order_get
-    @user_id INT, @order_id INT = NULL, @request_key VARCHAR(36) = NULL, @replayed BIT = 0
+    @user_id INT = NULL, @order_id INT = NULL, @request_key VARCHAR(36) = NULL, @replayed BIT = 0
 AS
 BEGIN
     SET NOCOUNT ON;
     IF @request_key IS NOT NULL
-      SELECT @order_id=hoa_don_id FROM dbo.HOA_DON WHERE khach_hang_id=@user_id AND idempotency_key=@request_key;
-    IF NOT EXISTS (SELECT 1 FROM dbo.HOA_DON WHERE hoa_don_id=@order_id AND khach_hang_id=@user_id)
+      SELECT @order_id=hoa_don_id FROM dbo.HOA_DON
+      WHERE idempotency_key=@request_key
+        AND ((@user_id IS NULL AND khach_hang_id IS NULL) OR khach_hang_id=@user_id);
+    IF NOT EXISTS (
+      SELECT 1 FROM dbo.HOA_DON
+      WHERE hoa_don_id=@order_id
+        AND ((@user_id IS NULL AND khach_hang_id IS NULL) OR khach_hang_id=@user_id)
+    )
       THROW 51040, 'Order not found.', 1;
     SELECT h.hoa_don_id AS id,h.ma_don AS code,h.ngay_dat AS date,h.trang_thai AS status,
       h.phuong_thuc_thanh_toan AS payment,h.tam_tinh AS subtotal,h.tien_giam AS discount,h.tong_tien AS total,
       COALESCE(h.ma_voucher,v.ma_code) AS voucherCode,h.ten_nguoi_nhan AS fullName,
       h.sdt_nguoi_nhan AS phone,h.dia_chi AS address,h.ghi_chu AS note,@replayed AS replayed
     FROM dbo.HOA_DON h LEFT JOIN dbo.VOUCHER v ON v.voucher_id=h.voucher_id
-    WHERE h.hoa_don_id=@order_id AND h.khach_hang_id=@user_id;
+    WHERE h.hoa_don_id=@order_id
+      AND ((@user_id IS NULL AND h.khach_hang_id IS NULL) OR h.khach_hang_id=@user_id);
     SELECT d.san_pham_id AS id,COALESCE(d.ten_sp,p.ten_sp) AS name,d.anh_sp AS image,
       d.size,d.mau AS color,d.so_luong AS qty,d.don_gia AS price
     FROM dbo.CHI_TIET_HOA_DON d JOIN dbo.SAN_PHAM p ON p.san_pham_id=d.san_pham_id
     JOIN dbo.HOA_DON h ON h.hoa_don_id=d.hoa_don_id
-    WHERE d.hoa_don_id=@order_id AND h.khach_hang_id=@user_id ORDER BY d.chi_tiet_id;
+    WHERE d.hoa_don_id=@order_id
+      AND ((@user_id IS NULL AND h.khach_hang_id IS NULL) OR h.khach_hang_id=@user_id)
+    ORDER BY d.chi_tiet_id;
 END;
 GO
 CREATE OR ALTER PROCEDURE dbo.order_list @user_id INT
@@ -55,7 +70,7 @@ SET QUOTED_IDENTIFIER ON;
 GO
 -- Quote and create deliberately share the SAME SQL pricing/validation code.
 CREATE OR ALTER PROCEDURE dbo.order_checkout
-    @user_id INT, @items NVARCHAR(MAX), @voucher_code VARCHAR(30) = NULL,
+    @user_id INT = NULL, @items NVARCHAR(MAX), @voucher_code VARCHAR(30) = NULL,
     @create BIT = 0, @payment VARCHAR(20) = 'cod',
     @full_name NVARCHAR(100) = NULL, @phone VARCHAR(15) = NULL,
     @address NVARCHAR(500) = NULL, @note NVARCHAR(1000) = NULL,
@@ -65,7 +80,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-    IF NOT EXISTS (SELECT 1 FROM dbo.TAI_KHOAN WHERE tai_khoan_id=@user_id)
+    IF @user_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM dbo.TAI_KHOAN WHERE tai_khoan_id=@user_id)
       THROW 51037, 'Authentication required.', 1;
     SET @payment = LOWER(LTRIM(RTRIM(ISNULL(@payment, 'cod'))));
     IF @payment NOT IN ('cod', 'qr', 'vietqr')
@@ -93,11 +108,12 @@ BEGIN
     BEGIN TRY
       BEGIN TRANSACTION;
       IF @create=1 BEGIN
-        SET @lock_name=N'cod:'+CONVERT(NVARCHAR(20),@user_id)+N':'+@request_key;
+        SET @lock_name=N'cod:'+ISNULL(CONVERT(NVARCHAR(20),@user_id),N'guest')+N':'+@request_key;
         EXEC @lock_result=sys.sp_getapplock @Resource=@lock_name,@LockMode='Exclusive',@LockOwner='Transaction',@LockTimeout=10000;
         IF @lock_result<0 THROW 51041,'Order busy. Retry with the same key.',1;
         SELECT @order_id=hoa_don_id,@old_hash=request_hash FROM dbo.HOA_DON
-          WHERE khach_hang_id=@user_id AND idempotency_key=@request_key;
+          WHERE idempotency_key=@request_key
+            AND ((@user_id IS NULL AND khach_hang_id IS NULL) OR khach_hang_id=@user_id);
         IF @order_id IS NOT NULL BEGIN
           IF @old_hash<>@request_hash THROW 51039,'Idempotency key already used for another request.',1;
           COMMIT TRANSACTION;
@@ -152,7 +168,7 @@ BEGIN
         SELECT id,name,image,size,color,qty,price FROM @priced ORDER BY id,size,color;
         RETURN;
       END;
-      IF @save_shipping=1 BEGIN
+      IF @save_shipping=1 AND @user_id IS NOT NULL BEGIN
         UPDATE dbo.TAI_KHOAN
         SET dia_chi = @address,
             sdt = COALESCE(NULLIF(LTRIM(RTRIM(@phone)), ''), sdt),
