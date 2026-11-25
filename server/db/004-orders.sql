@@ -80,7 +80,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-    IF @user_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM dbo.TAI_KHOAN WHERE tai_khoan_id=@user_id)
+    IF @user_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM dbo.TAI_KHOAN WHERE tai_khoan_id=@user_id AND trang_thai <> 'locked')
       THROW 51037, 'Authentication required.', 1;
     SET @payment = LOWER(LTRIM(RTRIM(ISNULL(@payment, 'cod'))));
     IF @payment NOT IN ('cod', 'qr', 'vietqr')
@@ -199,7 +199,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-    IF @user_id IS NULL OR NOT EXISTS (SELECT 1 FROM dbo.TAI_KHOAN WHERE tai_khoan_id = @user_id)
+    IF @user_id IS NULL OR NOT EXISTS (SELECT 1 FROM dbo.TAI_KHOAN WHERE tai_khoan_id = @user_id AND trang_thai <> 'locked')
         THROW 51037, 'Authentication required.', 1;
 
     DECLARE @current_status VARCHAR(20);

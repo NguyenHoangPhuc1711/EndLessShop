@@ -1,7 +1,9 @@
+using System.Data;
 using Dapper;
 using EndLessShop.Api.Data;
 using EndLessShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace EndLessShop.Api.Controllers;
 
@@ -16,6 +18,7 @@ public class FeedbackController : ControllerBase
     public FeedbackController(IDbConnectionFactory db) => _db = db;
 
     [HttpPost]
+    [EnableRateLimiting("feedback-limit")]
     public async Task<IActionResult> Create([FromBody] FeedbackRequest request)
     {
         var userId = HttpContext.Session.GetInt32("userId");
@@ -29,6 +32,15 @@ public class FeedbackController : ControllerBase
             return BadRequest(new { message = "Vui lòng chọn số sao và nhập nội dung từ 5 đến 1000 ký tự.", code = "invalid_feedback" });
 
         using var connection = _db.CreateConnection();
+        var status = await connection.ExecuteScalarAsync<string?>(
+            "SELECT trang_thai FROM dbo.TAI_KHOAN WHERE tai_khoan_id = @userId;",
+            new { userId });
+        if (status is null || string.Equals(status, "locked", StringComparison.OrdinalIgnoreCase))
+        {
+            HttpContext.Session.Clear();
+            return Unauthorized(new { message = "Tài khoản không hợp lệ hoặc đang tạm khóa.", code = "account_locked" });
+        }
+
         await connection.ExecuteAsync(
             "INSERT dbo.PHAN_HOI(tai_khoan_id, so_sao, noi_dung) VALUES(@userId, @rating, @content);",
             new { userId, rating = request.Rating, content });

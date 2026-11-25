@@ -8,6 +8,7 @@ using EndLessShop.Api.Data;
 using EndLessShop.Api.Models;
 using EndLessShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Data.SqlClient;
 
 namespace EndLessShop.Api.Controllers;
@@ -47,6 +48,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost("quote")]
+    [EnableRateLimiting("order-limit")]
     public async Task<IActionResult> Quote([FromBody] OrderCheckoutRequest request)
     {
         var userId = HttpContext.Session.GetInt32("userId");
@@ -54,6 +56,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
+    [EnableRateLimiting("order-limit")]
     public async Task<IActionResult> CreateOrder([FromBody] OrderCheckoutRequest request)
     {
         var userId = HttpContext.Session.GetInt32("userId");

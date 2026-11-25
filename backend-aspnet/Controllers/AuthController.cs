@@ -107,7 +107,11 @@ public class AuthController : ControllerBase
             parameters,
             commandType: CommandType.StoredProcedure);
 
-        if (account == null || !_passwordService.VerifyPassword(request.Password, account.passwordHash))
+        const string dummyArgon2Hash = "$argon2id$v=19$m=65536,t=3,p=1$AAAAAAAAAAAAAAAAAAAAAA$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        var hashToVerify = account?.passwordHash ?? dummyArgon2Hash;
+        var passwordValid = _passwordService.VerifyPassword(request.Password, hashToVerify);
+
+        if (account == null || !passwordValid)
         {
             return Unauthorized(new { message = "Tên đăng nhập hoặc mật khẩu không đúng." });
         }
@@ -121,6 +125,7 @@ public class AuthController : ControllerBase
             });
         }
 
+        HttpContext.Session.Clear();
         HttpContext.Session.SetInt32("userId", account.id);
         HttpContext.Session.SetString("role", account.role);
         var csrfToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
@@ -202,29 +207,15 @@ public class AuthController : ControllerBase
 
         using var connection = _db.CreateConnection();
         const string sql = @"
-            SELECT tai_khoan_id, ten_dang_nhap, email, ho_ten, vai_tro
+            SELECT tai_khoan_id
             FROM dbo.TAI_KHOAN
             WHERE (ten_dang_nhap = @id OR email = @id) AND vai_tro = 'khach_hang';";
 
-        var account = await connection.QuerySingleOrDefaultAsync<dynamic>(sql, new { id = identifier });
-        if (account == null)
-        {
-            return NotFound(new { message = "Không tìm thấy tài khoản khách hàng tương ứng với thông tin này. Vui lòng kiểm tra lại." });
-        }
-
-        string email = (string)account.email;
-        string maskedEmail = email;
-        var parts = email.Split('@');
-        if (parts.Length == 2 && parts[0].Length > 2)
-        {
-            maskedEmail = parts[0].Substring(0, 2) + new string('*', parts[0].Length - 2) + "@" + parts[1];
-        }
+        _ = await connection.QuerySingleOrDefaultAsync<int?>(sql, new { id = identifier });
 
         return Ok(new
         {
-            message = $"Đã tiếp nhận yêu cầu đặt lại mật khẩu cho tài khoản '{account.ten_dang_nhap}'. Hệ thống đã gửi hướng dẫn tới email {maskedEmail}. Quý khách cũng có thể liên hệ Hotline CSKH 1900 8888 để được hỗ trợ tức thì!",
-            username = (string)account.ten_dang_nhap,
-            maskedEmail
+            message = "Nếu thông tin khớp với một tài khoản khách hàng đang hoạt động, hệ thống đã tiếp nhận yêu cầu đặt lại mật khẩu và gửi hướng dẫn tới email đã đăng ký. Quý khách cũng có thể liên hệ Hotline CSKH 1900 8888 để được hỗ trợ."
         });
     }
 
@@ -246,9 +237,16 @@ public class AuthController : ControllerBase
             parameters,
             commandType: CommandType.StoredProcedure);
 
-        if (user == null)
+        if (user == null || string.Equals(user.Status, "locked", StringComparison.OrdinalIgnoreCase))
         {
-            return NotFound(new { message = "Không tìm thấy thông tin tài khoản." });
+            HttpContext.Session.Clear();
+            return Unauthorized(new
+            {
+                message = user != null
+                    ? "Tài khoản của bạn đang tạm khóa. Vui lòng liên hệ Quản trị viên."
+                    : "Không tìm thấy thông tin tài khoản.",
+                code = user != null ? "account_locked" : "unauthorized"
+            });
         }
 
         return Ok(new
@@ -298,6 +296,25 @@ public class AuthController : ControllerBase
         }
 
         using var connection = _db.CreateConnection();
+        var profileParams = new DynamicParameters();
+        profileParams.Add("@id", userId.Value, DbType.Int32);
+        var currentUser = await connection.QuerySingleOrDefaultAsync<UserDto>(
+            "dbo.auth_profile",
+            profileParams,
+            commandType: CommandType.StoredProcedure);
+
+        if (currentUser == null || string.Equals(currentUser.Status, "locked", StringComparison.OrdinalIgnoreCase))
+        {
+            HttpContext.Session.Clear();
+            return Unauthorized(new
+            {
+                message = currentUser != null
+                    ? "Tài khoản của bạn đang tạm khóa. Vui lòng liên hệ Quản trị viên."
+                    : "Không tìm thấy tài khoản.",
+                code = currentUser != null ? "account_locked" : "unauthorized"
+            });
+        }
+
         var parameters = new DynamicParameters();
         parameters.Add("@user_id", userId.Value, DbType.Int32);
         parameters.Add("@full_name", string.IsNullOrWhiteSpace(fullName) ? null : fullName, DbType.String, size: 100);

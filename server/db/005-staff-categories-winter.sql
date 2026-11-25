@@ -140,10 +140,52 @@ WITH EXECUTE AS OWNER
 AS
 BEGIN
     SET NOCOUNT ON;
-    UPDATE dbo.HOA_DON
-    SET trang_thai = @status,
-        nhan_vien_id = COALESCE(@staff_id, nhan_vien_id)
-    WHERE hoa_don_id = @id;
-    SELECT @@ROWCOUNT;
+    SET XACT_ABORT ON;
+
+    DECLARE @current_status VARCHAR(20);
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        SELECT @current_status = trang_thai
+        FROM dbo.HOA_DON WITH (UPDLOCK, HOLDLOCK)
+        WHERE hoa_don_id = @id;
+
+        IF @current_status IS NULL
+        BEGIN
+            ROLLBACK TRANSACTION;
+            SELECT 0;
+            RETURN;
+        END
+
+        IF @current_status IN ('da_huy', 'hoan_thanh') AND @status <> @current_status
+            THROW 51044, N'Đơn hàng ở trạng thái kết thúc không thể chuyển trạng thái.', 1;
+
+        IF @status = 'da_huy' AND @current_status <> 'da_huy'
+        BEGIN
+            DECLARE @restore TABLE (id INT PRIMARY KEY, qty INT NOT NULL);
+            INSERT INTO @restore (id, qty)
+            SELECT san_pham_id, SUM(so_luong)
+            FROM dbo.CHI_TIET_HOA_DON
+            WHERE hoa_don_id = @id
+            GROUP BY san_pham_id;
+
+            UPDATE p
+            SET ton_kho = p.ton_kho + r.qty
+            FROM dbo.SAN_PHAM p
+            JOIN @restore r ON r.id = p.san_pham_id;
+        END
+
+        UPDATE dbo.HOA_DON
+        SET trang_thai = @status,
+            nhan_vien_id = COALESCE(@staff_id, nhan_vien_id)
+        WHERE hoa_don_id = @id;
+
+        DECLARE @rows INT = @@ROWCOUNT;
+        COMMIT TRANSACTION;
+        SELECT @rows;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END;
 GO

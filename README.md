@@ -103,7 +103,7 @@ Backend sẽ tự động phục vụ đồng thời cả RESTful API và static
 
 ### 3. Tài khoản thử nghiệm
 - **Tài khoản Khách hàng:** `testcustomer` / mật khẩu quản trị đặt theo chuẩn.
-- **Tài khoản Quản trị viên (Admin):** `longadmin` / `Yourst0ngp@@word`.
+- **Tài khoản Quản trị viên (Admin):** `longadmin` / `<ADMIN_PASSWORD>` (được cấu hình khi khởi tạo CSDL, không lưu mật khẩu thật trong repo).
 
 ---
 

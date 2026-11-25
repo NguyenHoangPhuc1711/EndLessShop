@@ -1,8 +1,10 @@
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using EndLessShop.Api.Data;
 using EndLessShop.Api.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 
 if (args.Contains("--healthcheck"))
@@ -32,16 +34,43 @@ builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection(Gemin
 builder.Services.AddHttpClient<IGeminiChatService, GeminiChatService>();
 
 // Session & Memory Cache
+var cookieSecureEnv = Environment.GetEnvironmentVariable("SESSION_COOKIE_SECURE")?.Trim();
+var cookieSameSiteEnv = Environment.GetEnvironmentVariable("SESSION_COOKIE_SAMESITE")?.Trim();
+var cookieSecurePolicy = string.Equals(cookieSecureEnv, "true", StringComparison.OrdinalIgnoreCase)
+    ? CookieSecurePolicy.Always
+    : CookieSecurePolicy.SameAsRequest;
+var cookieSameSite = cookieSameSiteEnv?.ToLowerInvariant() switch
+{
+    "strict" => SameSiteMode.Strict,
+    "none" => SameSiteMode.None,
+    _ => SameSiteMode.Lax
+};
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromHours(2);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SameSite = cookieSameSite;
     options.Cookie.Name = "endless.sid";
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SecurePolicy = cookieSecurePolicy;
 });
+
+// Forwarded Headers (when TRUST_PROXY is set, e.g. 172.30.251.2 for cloudflared)
+var trustProxyEnv = Environment.GetEnvironmentVariable("TRUST_PROXY")?.Trim();
+if (!string.IsNullOrWhiteSpace(trustProxyEnv) && trustProxyEnv != "0" && !string.Equals(trustProxyEnv, "false", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        options.ForwardLimit = 2;
+        if (IPAddress.TryParse(trustProxyEnv, out var proxyIp))
+        {
+            options.KnownProxies.Add(proxyIp);
+        }
+    });
+}
 
 // Rate Limiter
 builder.Services.AddRateLimiter(options =>
@@ -69,6 +98,32 @@ builder.Services.AddRateLimiter(options =>
             {
                 PermitLimit = 30,
                 Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
+    });
+    options.AddPolicy("order-limit", httpContext =>
+    {
+        var clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            clientIp,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 20,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
+    });
+    options.AddPolicy("feedback-limit", httpContext =>
+    {
+        var clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            clientIp,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(15),
                 QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                 QueueLimit = 0
             });
@@ -126,6 +181,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+}
+
+if (!string.IsNullOrWhiteSpace(trustProxyEnv) && trustProxyEnv != "0" && !string.Equals(trustProxyEnv, "false", StringComparison.OrdinalIgnoreCase))
+{
+    app.UseForwardedHeaders();
 }
 
 app.UseCors("AllowFrontend");
