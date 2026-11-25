@@ -38,7 +38,7 @@
       '<div id="accountMenu' + index + '" class="account-menu" hidden>' +
       '<a href="account.html">Hồ sơ &amp; Địa chỉ giao hàng</a>' +
       '<a href="checkout.html#lich-su">Đơn hàng của tôi</a>' +
-      '<a href="staff.html" data-staff-link hidden>Quản lý đơn (Nhân viên)</a>' +
+      '<a href="admin.html" data-staff-link hidden>Quản lý đơn &amp; phản hồi (Nhân viên)</a>' +
       '<a href="admin.html" data-admin-link hidden>Trang quản trị (Admin)</a>' +
       '<button type="button" data-auth-logout>Đăng xuất</button></div></div>');
     const session = root.querySelector('.account-session');
@@ -162,7 +162,8 @@
       headers: body ? { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken } : {},
       body: body ? JSON.stringify(body) : undefined
     });
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok && !data.message && response.status >= 500) data.message = 'Máy chủ đang gặp sự cố. Vui lòng thử lại sau.';
     if (!response.ok) {
       if (response.status === 403) csrfToken = null;
       if (endpoint === 'me' && response.status === 401) return { user: null };
@@ -280,6 +281,44 @@
         message(msg, error.message, true);
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = label; }
+      }
+    });
+  }
+
+  // Customer feedback form (account.html)
+  const feedbackForm = document.getElementById('feedbackForm');
+  if (feedbackForm) {
+    feedbackForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      const msg = document.getElementById('feedbackMsg');
+      const button = document.getElementById('btnSendFeedback');
+      const rating = Number(feedbackForm.querySelector('[name="rating"]').value);
+      const content = feedbackForm.querySelector('[name="content"]').value.trim();
+      if (!user) { message(msg, 'Vui lòng đăng nhập để gửi phản hồi.', true); return; }
+      if (!rating || content.length < 5) { message(msg, 'Vui lòng chọn số sao và nhập nội dung tối thiểu 5 ký tự.', true); return; }
+      button.disabled = true;
+      message(msg, '', false);
+      try {
+        if (!csrfToken) {
+          const r = await fetch(EndlessConfig.apiUrl('auth/csrf'), { credentials: EndlessConfig.credentials, cache: 'no-store' });
+          csrfToken = (await r.json()).csrfToken;
+        }
+        const response = await fetch(EndlessConfig.apiUrl('feedback'), {
+          method: 'POST', credentials: EndlessConfig.credentials, cache: 'no-store',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+          body: JSON.stringify({ rating, content })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          if (response.status === 403) csrfToken = null;
+          throw new Error(data.message || 'Không gửi được phản hồi. Vui lòng thử lại.');
+        }
+        message(msg, '✓ ' + data.message, false);
+        feedbackForm.reset();
+      } catch (error) {
+        message(msg, error.message, true);
+      } finally {
+        button.disabled = false;
       }
     });
   }

@@ -44,10 +44,10 @@ public class AuthController : ControllerBase
     {
         if (!SecurityValidator.ValidateCsrfAndOrigin(HttpContext))
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new 
-            { 
-                message = "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang.", 
-                code = "csrf_invalid" 
+            return StatusCode(StatusCodes.Status403Forbidden, new
+            {
+                message = "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang.",
+                code = "csrf_invalid"
             });
         }
 
@@ -76,8 +76,8 @@ public class AuthController : ControllerBase
             parameters.Add("@phone", string.IsNullOrWhiteSpace(phone) ? null : phone, DbType.AnsiString, size: 15);
 
             var createdUser = await connection.QuerySingleAsync<UserDto>(
-                "dbo.auth_create_customer", 
-                parameters, 
+                "dbo.auth_create_customer",
+                parameters,
                 commandType: CommandType.StoredProcedure);
 
             return StatusCode(201, new { user = createdUser, message = "Đăng ký thành công. Bạn có thể đăng nhập." });
@@ -112,6 +112,15 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Tên đăng nhập hoặc mật khẩu không đúng." });
         }
 
+        if (string.Equals(account.status, "locked", StringComparison.OrdinalIgnoreCase))
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new
+            {
+                message = "Tài khoản của bạn đang tạm khóa. Vui lòng liên hệ Quản trị viên.",
+                code = "account_locked"
+            });
+        }
+
         HttpContext.Session.SetInt32("userId", account.id);
         HttpContext.Session.SetString("role", account.role);
         var csrfToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
@@ -125,7 +134,9 @@ public class AuthController : ControllerBase
             Email = account.email,
             Phone = account.phone,
             Address = account.address,
-            Role = account.role
+            Role = account.role,
+            Status = string.IsNullOrWhiteSpace(account.status) ? "active" : account.status,
+            Position = account.position
         };
 
         return Ok(new LoginResponse { User = userDto, CsrfToken = csrfToken });
@@ -149,12 +160,17 @@ public class AuthController : ControllerBase
             parameters,
             commandType: CommandType.StoredProcedure);
 
-        if (user == null)
+        if (user == null || string.Equals(user.Status, "locked", StringComparison.OrdinalIgnoreCase))
         {
             HttpContext.Session.Clear();
-            return Unauthorized(new { user = (object?)null });
+            return Unauthorized(new
+            {
+                user = (object?)null,
+                code = user != null ? "account_locked" : "unauthorized"
+            });
         }
 
+        HttpContext.Session.SetString("role", user.Role);
         return Ok(new { user });
     }
 
@@ -171,10 +187,10 @@ public class AuthController : ControllerBase
     {
         if (!SecurityValidator.ValidateCsrfAndOrigin(HttpContext))
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new 
-            { 
-                message = "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang.", 
-                code = "csrf_invalid" 
+            return StatusCode(StatusCodes.Status403Forbidden, new
+            {
+                message = "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang.",
+                code = "csrf_invalid"
             });
         }
 
@@ -185,10 +201,9 @@ public class AuthController : ControllerBase
         }
 
         using var connection = _db.CreateConnection();
-        // Look up ONLY customer accounts to prevent admin reset via customer portal
         const string sql = @"
-            SELECT tai_khoan_id, ten_dang_nhap, email, ho_ten, vai_tro 
-            FROM dbo.TAI_KHOAN 
+            SELECT tai_khoan_id, ten_dang_nhap, email, ho_ten, vai_tro
+            FROM dbo.TAI_KHOAN
             WHERE (ten_dang_nhap = @id OR email = @id) AND vai_tro = 'khach_hang';";
 
         var account = await connection.QuerySingleOrDefaultAsync<dynamic>(sql, new { id = identifier });
@@ -205,8 +220,8 @@ public class AuthController : ControllerBase
             maskedEmail = parts[0].Substring(0, 2) + new string('*', parts[0].Length - 2) + "@" + parts[1];
         }
 
-        return Ok(new 
-        { 
+        return Ok(new
+        {
             message = $"Đã tiếp nhận yêu cầu đặt lại mật khẩu cho tài khoản '{account.ten_dang_nhap}'. Hệ thống đã gửi hướng dẫn tới email {maskedEmail}. Quý khách cũng có thể liên hệ Hotline CSKH 1900 8888 để được hỗ trợ tức thì!",
             username = (string)account.ten_dang_nhap,
             maskedEmail
@@ -256,10 +271,10 @@ public class AuthController : ControllerBase
 
         if (!SecurityValidator.ValidateCsrfAndOrigin(HttpContext))
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new 
-            { 
-                message = "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang.", 
-                code = "csrf_invalid" 
+            return StatusCode(StatusCodes.Status403Forbidden, new
+            {
+                message = "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang.",
+                code = "csrf_invalid"
             });
         }
 

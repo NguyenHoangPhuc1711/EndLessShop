@@ -605,6 +605,26 @@
   font-weight: 600;
 }
 
+.transaction-status--cho_xu_ly {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.transaction-status--dang_giao {
+  background: #EFF6FF;
+  color: #1D4ED8;
+}
+
+.transaction-status--hoan_thanh {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+}
+
+.transaction-status--da_huy {
+  background: #FEF2F2;
+  color: #B91C1C;
+}
+
 .transaction-card__meta {
   justify-content: flex-start;
   margin-top: 16px;
@@ -1168,7 +1188,6 @@
   flex-direction: column;
   gap: 10px;
 }
-}
 
 .order-repay-qr {
   margin-top: 10px;
@@ -1180,6 +1199,96 @@
   font-size: 12.5px;
   color: var(--color-ink-light);
   margin: 4px 0;
+}
+
+.transaction-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--color-border);
+}
+
+.transaction-cancel-hint {
+  font-size: 12px;
+  color: var(--color-ink-light);
+}
+
+.btn-cancel-order {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid #FCA5A5;
+  border-radius: 6px;
+  background: #fff;
+  color: #B91C1C;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.btn-cancel-order:hover:not(:disabled) {
+  background: #FFF5F5;
+  border-color: #DC2626;
+}
+
+.btn-cancel-order:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.order-success-cancel {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.success-icon--cancelled {
+  background: #FEF2F2;
+  color: #B91C1C;
+}
+
+.history-notice {
+  margin-bottom: 16px;
+  padding: 11px 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.history-notice[hidden] {
+  display: none;
+}
+
+.history-notice.is-success {
+  background: #F0FDF4;
+  border-color: rgba(22, 163, 74, 0.25);
+  color: #166534;
+}
+
+.history-notice.is-error {
+  background: #FEF2F2;
+  border-color: #FECACA;
+  color: #B91C1C;
+}
+
+@media (max-width: 520px) {
+  .transaction-card__actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-cancel-order {
+    width: 100%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

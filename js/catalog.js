@@ -1,4 +1,4 @@
-/* Shared catalog loading, safe storage, offline sample fallback flag, and cart reconciliation. */
+/* Shared catalog loading, dynamic categories, safe storage, offline fallback flag, and cart reconciliation. */
 (function () {
   'use strict';
   const notices = new Set();
@@ -8,6 +8,15 @@
   const validQty = value => Number.isSafeInteger(value) && value > 0 && value <= 999;
   const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
   const sameName = (a, b) => typeof a === 'string' && a.normalize('NFC').trim().toLowerCase() === b.normalize('NFC').trim().toLowerCase();
+
+  const FALLBACK_CATEGORIES = [
+    { id: 1, code: 'bo_mua_dong', name: 'Bộ Mùa Đông', description: 'Trọn bộ phối đồ Thu Đông tiết kiệm đến 33%, hỗ trợ mua nguyên bộ hoặc mua lẻ từng món.', sortOrder: 1, isVisible: true },
+    { id: 2, code: 'ao_khoac', name: 'Áo Khoác Đông', description: 'Áo khoác gió 2 lớp, lớp phủ giữ ấm Bắc Âu.', sortOrder: 2, isVisible: true },
+    { id: 3, code: 'ao', name: 'Áo', description: 'Áo thun cotton compact, sơ mi Oxford, áo giữ nhiệt.', sortOrder: 3, isVisible: true },
+    { id: 4, code: 'quan', name: 'Quần', description: 'Quần âu dạ Flannel, quần tây công sở và jeans ống suông.', sortOrder: 4, isVisible: true },
+    { id: 5, code: 'vay', name: 'Váy', description: 'Chân váy dạ xếp ly, đầm sơ mi thanh lịch.', sortOrder: 5, isVisible: true },
+    { id: 6, code: 'phukien', name: 'Phụ kiện', description: 'Túi tote vải bố, mũ lưỡi trai và thắt lưng da.', sortOrder: 6, isVisible: true }
+  ];
 
   function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
@@ -72,10 +81,43 @@
         const validIndex = Number.isInteger(rawIndex) && rawIndex >= 0 && rawIndex < images.length;
         indices[color] = validIndex ? rawIndex : (images.length > 0 ? (i % images.length) : 0);
       }
-      return { id: p.id, name: p.name, category: p.category, price: p.price, stock: p.stock,
-        sizes: [...new Set(p.sizes)], colors: [...new Set(p.colors)], images,
-        colorImageIndices: indices, description: p.description || '', isNew: p.isNew };
+      const originalPrice = (validMoney(p.originalPrice) && p.originalPrice > p.price) ? p.originalPrice : null;
+      const bundleItems = Array.isArray(p.bundleItems) ? [...new Set(p.bundleItems.filter(validId))] : [];
+      return {
+        id: p.id,
+        name: p.name,
+        category: p.category,
+        categoryName: typeof p.categoryName === 'string' ? p.categoryName : null,
+        price: p.price,
+        originalPrice,
+        bundleItems,
+        stock: p.stock,
+        sizes: [...new Set(p.sizes)],
+        colors: [...new Set(p.colors)],
+        images,
+        colorImageIndices: indices,
+        description: p.description || '',
+        isNew: p.isNew
+      };
     });
+  }
+
+  async function fetchCategories() {
+    const apiUrl = EndlessConfig.apiUrl('categories');
+    if (apiUrl) {
+      try {
+        const response = await fetch(apiUrl, { credentials: EndlessConfig.credentials, cache: 'no-store' });
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data.categories) && data.categories.length > 0) {
+            return data.categories.filter(c => c && typeof c.code === 'string' && typeof c.name === 'string');
+          }
+        }
+      } catch (err) {
+        console.warn('API /api/categories không khả dụng, dùng danh mục mặc định:', err.message);
+      }
+    }
+    return FALLBACK_CATEGORIES.slice();
   }
 
   async function fetchProducts() {
@@ -100,7 +142,6 @@
       }
     }
 
-    // Dự phòng khi trang tải FALLBACK_PRODUCTS (chỉ dùng cho storefront tĩnh khi backend/tunnel chưa bật)
     if (Array.isArray(window.FALLBACK_PRODUCTS) && window.FALLBACK_PRODUCTS.length > 0) {
       usingFallback = true;
       return validateProducts(window.FALLBACK_PRODUCTS);
@@ -118,7 +159,6 @@
       const id = typeof item.id === 'string' && /^[1-9][0-9]*$/.test(item.id) ? Number(item.id) : item.id;
       const p = byId.get(id);
       const qty = typeof item.qty === 'string' && /^[1-9][0-9]*$/.test(item.qty) ? Number(item.qty) : item.qty;
-      // Legacy rows must match both ID and name. Never relabel old ID 2 jeans as the current shirt.
       if (!p || !validQty(qty) || !p.sizes.includes(item.size) || !p.colors.includes(item.color) ||
           (item.catalogSource !== 'sql-v1' && !sameName(item.name, p.name))) { skipped++; continue; }
       const existing = items.find(row => row.id === id && row.size === item.size && row.color === item.color);
@@ -154,7 +194,7 @@
       voucherCode: typeof order.voucherCode === 'string' ? order.voucherCode : null }));
   }
 
-  window.EndlessCatalog = { fetchProducts, validateProducts, imagePath, escapeHtml, readArray, readText,
+  window.EndlessCatalog = { fetchProducts, fetchCategories, validateProducts, imagePath, escapeHtml, readArray, readText,
     write, reconcileCart, reconcileWishlist, readOrders, isFallback: () => usingFallback,
     notice: () => [...notices].join(' ') };
 }());

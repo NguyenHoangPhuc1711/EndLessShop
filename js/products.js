@@ -1,8 +1,4 @@
-// Display configuration & fallback catalog.
-// When backend API is online, products are fetched dynamically from /api/products.
-// When deployed on static hosting (e.g. GitHub Pages) without an active API tunnel,
-// FALLBACK_PRODUCTS ensures the shop functions smoothly with all 13 Scandinavian items.
-
+// Display configuration & fallback catalog (synchronized with SQL Server seed).
 const outfitSuggestions = {
   1: [4, 6, 10],
   2: [5, 12, 11],
@@ -15,7 +11,15 @@ const outfitSuggestions = {
   9: [12, 11],
   10: [1, 6],
   11: [2, 8],
-  12: [5, 2]
+  12: [5, 2],
+  13: [14, 16, 17, 18],
+  14: [13, 16, 17, 12],
+  15: [13, 4, 11, 19],
+  16: [13, 14, 12, 18],
+  17: [13, 14, 11, 20],
+  18: [13, 14, 16, 12],
+  19: [13, 15, 4, 11],
+  20: [13, 14, 17, 11]
 };
 
 const sizeChart = [
@@ -27,355 +31,143 @@ const sizeChart = [
 
 window.FALLBACK_PRODUCTS = [
   {
-    "id": 1,
-    "name": "Áo thun basic cotton",
-    "category": "ao",
-    "price": 189000,
-    "stock": 50,
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL"
-    ],
-    "colors": [
-      "Xanh",
-      "Đen",
-      "Xanh navy",
-      "Be",
-      "Trắng"
-    ],
-    "images": [
-      "img/id1.jpg",
-      "img/id1.1.jpg",
-      "img/id1.2.jpg",
-      "img/id1.3.jpg",
-      "img/id1.4.jpg"
-    ],
-    "colorImageIndices": {
-      "Xanh": 0,
-      "Đen": 1,
-      "Xanh navy": 2,
-      "Be": 3,
-      "Trắng": 4
-    },
-    "description": "Áo thun cotton 100%, form rộng vừa, mặc thoải mái, dễ phối đồ hằng ngày.",
-    "isNew": true
+    "id": 1, "name": "Áo thun basic cotton", "category": "ao", "price": 189000, "stock": 50,
+    "sizes": ["S", "M", "L", "XL"], "colors": ["Xanh", "Đen", "Xanh navy", "Be", "Trắng"],
+    "images": ["img/id1.jpg", "img/id1.1.jpg", "img/id1.2.jpg", "img/id1.3.jpg", "img/id1.4.jpg"],
+    "colorImageIndices": { "Xanh": 0, "Đen": 1, "Xanh navy": 2, "Be": 3, "Trắng": 4 },
+    "description": "Áo thun cotton 100%, form rộng vừa, mặc thoải mái, dễ phối đồ hằng ngày.", "isNew": true
   },
   {
-    "id": 2,
-    "name": "Áo sơ mi tay dài",
-    "category": "ao",
-    "price": 329000,
-    "stock": 50,
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ],
-    "colors": [
-      "Xanh",
-      "Đen",
-      "Trắng"
-    ],
-    "images": [
-      "img/id 2.jpg",
-      "img/id 2.1.jpg",
-      "img/id 2.2.jpg"
-    ],
-    "colorImageIndices": {
-      "Xanh": 0,
-      "Đen": 1,
-      "Trắng": 2
-    },
-    "description": "Áo sơ mi vải linen mềm mại, form suông, phù hợp đi học đi làm.",
-    "isNew": false
+    "id": 2, "name": "Áo sơ mi tay dài", "category": "ao", "price": 329000, "stock": 50,
+    "sizes": ["S", "M", "L"], "colors": ["Xanh", "Đen", "Trắng"],
+    "images": ["img/id 2.jpg", "img/id 2.1.jpg", "img/id 2.2.jpg"],
+    "colorImageIndices": { "Xanh": 0, "Đen": 1, "Trắng": 2 },
+    "description": "Áo sơ mi vải linen mềm mại, form suông, phù hợp đi học đi làm.", "isNew": false
   },
   {
-    "id": 3,
-    "name": "Áo khoác dù 2 lớp",
-    "category": "ao",
-    "price": 459000,
-    "stock": 50,
-    "sizes": [
-      "M",
-      "L",
-      "XL"
-    ],
-    "colors": [
-      "Xanh navy",
-      "Đen",
-      "Trắng"
-    ],
-    "images": [
-      "img/id 3.jpg",
-      "img/id 3.1.jpg",
-      "img/id 3.2.jpg"
-    ],
-    "colorImageIndices": {
-      "Xanh navy": 0,
-      "Đen": 1,
-      "Trắng": 2
-    },
-    "description": "Áo khoác dù chống nước nhẹ, có mũ, giữ ấm tốt cho ngày se lạnh.",
-    "isNew": true
+    "id": 3, "name": "Áo khoác dù 2 lớp", "category": "ao", "price": 459000, "originalPrice": 549000, "stock": 50,
+    "sizes": ["M", "L", "XL"], "colors": ["Xanh navy", "Đen", "Trắng"],
+    "images": ["img/id 3.jpg", "img/id 3.1.jpg", "img/id 3.2.jpg"],
+    "colorImageIndices": { "Xanh navy": 0, "Đen": 1, "Trắng": 2 },
+    "description": "Áo khoác dù chống nước nhẹ, có mũ, giữ ấm tốt cho ngày se lạnh.", "isNew": true
   },
   {
-    "id": 4,
-    "name": "Quần jean ống suông",
-    "category": "quan",
-    "price": 379000,
-    "stock": 50,
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL"
-    ],
-    "colors": [
-      "Xanh",
-      "Đen",
-      "Trắng"
-    ],
-    "images": [
-      "img/id 4.jpg",
-      "img/id 4.1.jpg",
-      "img/id 4.2.jpg"
-    ],
-    "colorImageIndices": {
-      "Xanh": 0,
-      "Đen": 1,
-      "Trắng": 2
-    },
-    "description": "Quần jean form suông, chất vải dày dặn, lên form đẹp.",
-    "isNew": false
+    "id": 4, "name": "Quần jean ống suông", "category": "quan", "price": 379000, "originalPrice": 449000, "stock": 50,
+    "sizes": ["S", "M", "L", "XL"], "colors": ["Xanh", "Đen", "Trắng"],
+    "images": ["img/id 4.jpg", "img/id 4.1.jpg", "img/id 4.2.jpg"],
+    "colorImageIndices": { "Xanh": 0, "Đen": 1, "Trắng": 2 },
+    "description": "Quần jean form suông, chất vải dày dặn, lên form đẹp.", "isNew": false
   },
   {
-    "id": 5,
-    "name": "Quần tây công sở",
-    "category": "quan",
-    "price": 349000,
-    "stock": 50,
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL"
-    ],
-    "colors": [
-      "Xám",
-      "Đen",
-      "Trắng"
-    ],
-    "images": [
-      "img/id 5.jpg",
-      "img/id 5.1.jpg",
-      "img/id 5.2.jpg"
-    ],
-    "colorImageIndices": {
-      "Xám": 0,
-      "Đen": 1,
-      "Trắng": 2
-    },
-    "description": "Quần tây ống đứng, vải co giãn nhẹ, phù hợp môi trường công sở.",
-    "isNew": false
+    "id": 5, "name": "Quần tây công sở", "category": "quan", "price": 349000, "originalPrice": 419000, "stock": 50,
+    "sizes": ["S", "M", "L", "XL"], "colors": ["Xám", "Đen", "Trắng"],
+    "images": ["img/id 5.jpg", "img/id 5.1.jpg", "img/id 5.2.jpg"],
+    "colorImageIndices": { "Xám": 0, "Đen": 1, "Trắng": 2 },
+    "description": "Quần tây ống đứng, vải co giãn nhẹ, phù hợp môi trường công sở.", "isNew": false
   },
   {
-    "id": 6,
-    "name": "Quần short kaki",
-    "category": "quan",
-    "price": 219000,
-    "stock": 50,
-    "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL"
-    ],
-    "colors": [
-      "Be",
-      "Đen",
-      "Trắng"
-    ],
-    "images": [
-      "img/id 6.jpg",
-      "img/id 6.1.jpg",
-      "img/id 6.2.jpg"
-    ],
-    "colorImageIndices": {
-      "Be": 0,
-      "Đen": 1,
-      "Trắng": 2
-    },
-    "description": "Quần short kaki basic, form gọn, mặc mát mẻ ngày hè.",
-    "isNew": true
+    "id": 6, "name": "Quần short kaki", "category": "quan", "price": 219000, "stock": 50,
+    "sizes": ["S", "M", "L", "XL"], "colors": ["Be", "Đen", "Trắng"],
+    "images": ["img/id 6.jpg", "img/id 6.1.jpg", "img/id 6.2.jpg"],
+    "colorImageIndices": { "Be": 0, "Đen": 1, "Trắng": 2 },
+    "description": "Quần short kaki basic, form gọn, mặc mát mẻ ngày hè.", "isNew": true
   },
   {
-    "id": 7,
-    "name": "Váy liền hoa nhí",
-    "category": "vay",
-    "price": 299000,
-    "stock": 50,
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ],
-    "colors": [
-      "Vàng",
-      "Đen",
-      "Trắng"
-    ],
-    "images": [
-      "img/id 7.jpg",
-      "img/id 7.1.jpg",
-      "img/id 7.2.jpg"
-    ],
-    "colorImageIndices": {
-      "Vàng": 0,
-      "Đen": 1,
-      "Trắng": 2
-    },
-    "description": "Váy liền thân họa tiết hoa nhí, chất vải mềm rũ, nhẹ nhàng nữ tính.",
-    "isNew": true
+    "id": 7, "name": "Váy liền hoa nhí", "category": "vay", "price": 299000, "stock": 50,
+    "sizes": ["S", "M", "L"], "colors": ["Vàng", "Đen", "Trắng"],
+    "images": ["img/id 7.jpg", "img/id 7.1.jpg", "img/id 7.2.jpg"],
+    "colorImageIndices": { "Vàng": 0, "Đen": 1, "Trắng": 2 },
+    "description": "Váy liền thân họa tiết hoa nhí, chất vải mềm rũ, nhẹ nhàng nữ tính.", "isNew": true
   },
   {
-    "id": 8,
-    "name": "Chân váy xếp ly",
-    "category": "vay",
-    "price": 259000,
-    "stock": 50,
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ],
-    "colors": [
-      "Be",
-      "Đen",
-      "Trắng"
-    ],
-    "images": [
-      "img/id 8.jpg",
-      "img/id 8.1.jpg",
-      "img/id 8.2.jpg"
-    ],
-    "colorImageIndices": {
-      "Be": 0,
-      "Đen": 1,
-      "Trắng": 2
-    },
-    "description": "Chân váy xếp ly dáng chữ A, dễ phối cùng áo thun hoặc sơ mi.",
-    "isNew": false
+    "id": 8, "name": "Chân váy xếp ly", "category": "vay", "price": 259000, "originalPrice": 319000, "stock": 50,
+    "sizes": ["S", "M", "L"], "colors": ["Be", "Đen", "Trắng"],
+    "images": ["img/id 8.jpg", "img/id 8.1.jpg", "img/id 8.2.jpg"],
+    "colorImageIndices": { "Be": 0, "Đen": 1, "Trắng": 2 },
+    "description": "Chân váy xếp ly dáng chữ A, dễ phối cùng áo thun hoặc sơ mi.", "isNew": false
   },
   {
-    "id": 9,
-    "name": "Váy sơ mi dáng dài",
-    "category": "vay",
-    "price": 339000,
-    "stock": 50,
-    "sizes": [
-      "M",
-      "L",
-      "XL"
-    ],
-    "colors": [
-      "Xanh",
-      "Đen",
-      "Trắng"
-    ],
-    "images": [
-      "img/id 9.jpg",
-      "img/id 9.1.jpg",
-      "img/id 9.2.jpg"
-    ],
-    "colorImageIndices": {
-      "Xanh": 0,
-      "Đen": 1,
-      "Trắng": 2
-    },
-    "description": "Váy sơ mi dáng dài, có thắt eo, phong cách thanh lịch.",
-    "isNew": false
+    "id": 9, "name": "Váy sơ mi dáng dài", "category": "vay", "price": 339000, "stock": 50,
+    "sizes": ["M", "L", "XL"], "colors": ["Xanh", "Đen", "Trắng"],
+    "images": ["img/id 9.jpg", "img/id 9.1.jpg", "img/id 9.2.jpg"],
+    "colorImageIndices": { "Xanh": 0, "Đen": 1, "Trắng": 2 },
+    "description": "Váy sơ mi dáng dài, có thắt eo, phong cách thanh lịch.", "isNew": false
   },
   {
-    "id": 10,
-    "name": "Mũ lưỡi trai basic",
-    "category": "phukien",
-    "price": 99000,
-    "stock": 50,
-    "sizes": [
-      "Freesize"
-    ],
-    "colors": [
-      "Xanh navy",
-      "Đen",
-      "Trắng"
-    ],
-    "images": [
-      "img/id 10.jpg",
-      "img/id 10.1.jpg",
-      "img/id 10.2.jpg"
-    ],
-    "colorImageIndices": {
-      "Xanh navy": 0,
-      "Đen": 1,
-      "Trắng": 2
-    },
-    "description": "Mũ lưỡi trai form chuẩn, có khóa điều chỉnh phía sau.",
-    "isNew": false
+    "id": 10, "name": "Mũ lưỡi trai basic", "category": "phukien", "price": 99000, "stock": 50,
+    "sizes": ["Freesize"], "colors": ["Xanh navy", "Đen", "Trắng"],
+    "images": ["img/id 10.jpg", "img/id 10.1.jpg", "img/id 10.2.jpg"],
+    "colorImageIndices": { "Xanh navy": 0, "Đen": 1, "Trắng": 2 },
+    "description": "Mũ lưỡi trai form chuẩn, có khóa điều chỉnh phía sau.", "isNew": false
   },
   {
-    "id": 11,
-    "name": "Túi tote vải bố",
-    "category": "phukien",
-    "price": 149000,
-    "stock": 50,
-    "sizes": [
-      "Freesize"
-    ],
-    "colors": [
-      "Be",
-      "Đen",
-      "Trắng"
-    ],
-    "images": [
-      "img/id 11.jpg",
-      "img/id 11.1.jpg",
-      "img/id 11.2.jpg"
-    ],
-    "colorImageIndices": {
-      "Be": 0,
-      "Đen": 1,
-      "Trắng": 2
-    },
-    "description": "Túi tote vải bố dày dặn, sức chứa lớn, tiện dụng khi đi học đi làm.",
-    "isNew": true
+    "id": 11, "name": "Túi tote vải bố", "category": "phukien", "price": 149000, "stock": 50,
+    "sizes": ["Freesize"], "colors": ["Be", "Đen", "Trắng"],
+    "images": ["img/id 11.jpg", "img/id 11.1.jpg", "img/id 11.2.jpg"],
+    "colorImageIndices": { "Be": 0, "Đen": 1, "Trắng": 2 },
+    "description": "Túi tote vải bố dày dặn, sức chứa lớn, tiện dụng khi đi học đi làm.", "isNew": true
   },
   {
-    "id": 12,
-    "name": "Thắt lưng da basic",
-    "category": "phukien",
-    "price": 179000,
-    "stock": 50,
-    "sizes": [
-      "105 cm",
-      "110 cm",
-      "115 cm",
-      "120 cm"
-    ],
-    "colors": [
-      "Nâu",
-      "Đen"
-    ],
-    "images": [
-      "img/id 12.jpg",
-      "img/id 12.1.jpg"
-    ],
-    "colorImageIndices": {
-      "Nâu": 0,
-      "Đen": 1
-    },
-    "description": "Thắt lưng da tổng hợp, khóa kim loại chắc chắn, dễ phối nhiều loại quần.",
-    "isNew": false
+    "id": 12, "name": "Thắt lưng da basic", "category": "phukien", "price": 179000, "stock": 50,
+    "sizes": ["105 cm", "110 cm", "115 cm", "120 cm"], "colors": ["Nâu", "Đen"],
+    "images": ["img/id 12.jpg", "img/id 12.1.jpg"],
+    "colorImageIndices": { "Nâu": 0, "Đen": 1 },
+    "description": "Thắt lưng da tổng hợp, khóa kim loại chắc chắn, dễ phối nhiều loại quần.", "isNew": false
+  },
+  {
+    "id": 13, "name": "Áo khoác gió Bắc Âu 2 lớp Winter", "category": "ao_khoac", "price": 429000, "originalPrice": 529000, "stock": 50,
+    "sizes": ["S", "M", "L", "XL"], "colors": ["Đen Obsidian", "Xanh navy", "Kem Alabaster"],
+    "images": ["img/winter-coat-obsidian.jpg", "img/winter-coat-navy.jpg", "img/winter-coat-alabaster.jpg"],
+    "colorImageIndices": { "Đen Obsidian": 0, "Xanh navy": 1, "Kem Alabaster": 2 },
+    "description": "Áo khoác gió 2 lớp cản gió giữ nhiệt chuẩn Bắc Âu, bề mặt trượt nước nhẹ, khóa kéo ẩn tinh tế.", "isNew": true
+  },
+  {
+    "id": 14, "name": "Áo sơ mi Oxford dệt dày Thu Đông", "category": "ao", "price": 279000, "originalPrice": 349000, "stock": 50,
+    "sizes": ["S", "M", "L", "XL"], "colors": ["Trắng", "Xanh"],
+    "images": ["img/winter-shirt-oxford-white.jpg", "img/winter-shirt-oxford-blue.jpg"],
+    "colorImageIndices": { "Trắng": 0, "Xanh": 1 },
+    "description": "Áo sơ mi vải Oxford cotton dệt mật độ cao giữ phom đứng, mặc đơn hoặc khoác layering mùa lạnh.", "isNew": true
+  },
+  {
+    "id": 15, "name": "Áo thun dài tay Thermal Cotton", "category": "ao", "price": 219000, "originalPrice": 279000, "stock": 50,
+    "sizes": ["S", "M", "L", "XL"], "colors": ["Rêu & Than", "Be Yến Mạch"],
+    "images": ["img/winter-knit-olive.jpg", "img/winter-knit-oatmeal.jpg"],
+    "colorImageIndices": { "Rêu & Than": 0, "Be Yến Mạch": 1 },
+    "description": "Áo giữ nhiệt cotton compact chải kỹ mềm mịn, co giãn 4 chiều thoải mái làm lớp lót mùa đông.", "isNew": true
+  },
+  {
+    "id": 16, "name": "Quần âu dạ Flannel giữ nhiệt", "category": "quan", "price": 299000, "originalPrice": 379000, "stock": 50,
+    "sizes": ["S", "M", "L", "XL"], "colors": ["Đen", "Xám"],
+    "images": ["img/winter-trousers-charcoal.jpg", "img/winter-trousers-grey.jpg"],
+    "colorImageIndices": { "Đen": 0, "Xám": 1 },
+    "description": "Quần tây ống đứng pha dạ Flannel mềm ấm, đường ly sắc nét tôn dáng công sở mùa lạnh.", "isNew": true
+  },
+  {
+    "id": 17, "name": "Chân váy dạ xếp ly dáng dài Thu Đông", "category": "vay", "price": 289000, "originalPrice": 359000, "stock": 50,
+    "sizes": ["S", "M", "L"], "colors": ["Be Yến Mạch", "Đen Tuyền"],
+    "images": ["img/winter-skirt-oatmeal.jpg", "img/winter-skirt-obsidian.jpg"],
+    "colorImageIndices": { "Be Yến Mạch": 0, "Đen Tuyền": 1 },
+    "description": "Chân váy chữ A xếp ly chất dạ mềm rũ giữ ấm, cạp cao tôn eo thanh lịch.", "isNew": true
+  },
+  {
+    "id": 18, "name": "Bộ Đông Công Sở Bắc Âu", "category": "bo_mua_dong", "price": 799000, "originalPrice": 1186000, "bundleItems": [13, 14, 16, 12], "stock": 50,
+    "sizes": ["S", "M", "L", "XL"], "colors": ["Đen Obsidian", "Xanh navy"],
+    "images": ["img/winter-set1-obsidian.png", "img/winter-set1-navy.png"],
+    "colorImageIndices": { "Đen Obsidian": 0, "Xanh navy": 1 },
+    "description": "Trọn bộ 4 món công sở Bắc Âu: Áo khoác gió 2 lớp + Sơ mi Oxford dệt dày + Quần âu dạ Flannel + Thắt lưng da. Mua trọn bộ tiết kiệm 387.000₫ hoặc tách lẻ từng món.", "isNew": true
+  },
+  {
+    "id": 19, "name": "Bộ Đông Dạo Phố Layering", "category": "bo_mua_dong", "price": 829000, "originalPrice": 1176000, "bundleItems": [13, 15, 4, 11], "stock": 50,
+    "sizes": ["S", "M", "L", "XL"], "colors": ["Kem Alabaster", "Rêu & Than"],
+    "images": ["img/winter-set2-alabaster.png", "img/winter-set2-charcoal.png"],
+    "colorImageIndices": { "Kem Alabaster": 0, "Rêu & Than": 1 },
+    "description": "Trọn bộ 4 món dạo phố Layering: Áo khoác gió 2 lớp + Áo dài tay Thermal Cotton + Quần jean ống suông + Túi tote vải bố. Mua trọn bộ tiết kiệm 347.000₫ hoặc tách lẻ từng món.", "isNew": true
+  },
+  {
+    "id": 20, "name": "Bộ Thu Đông Thanh Lịch Nữ", "category": "bo_mua_dong", "price": 849000, "originalPrice": 1146000, "bundleItems": [13, 14, 17, 11], "stock": 50,
+    "sizes": ["S", "M", "L"], "colors": ["Be Yến Mạch", "Đen Tuyền"],
+    "images": ["img/winter-set3-beige.png", "img/winter-set3-obsidian.png"],
+    "colorImageIndices": { "Be Yến Mạch": 0, "Đen Tuyền": 1 },
+    "description": "Trọn bộ 4 món thanh lịch: Áo khoác gió 2 lớp + Sơ mi Oxford dệt dày + Chân váy dạ xếp ly dáng dài + Túi tote vải bố. Mua trọn bộ tiết kiệm 297.000₫ hoặc tách lẻ từng món.", "isNew": true
   }
 ];

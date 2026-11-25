@@ -262,14 +262,6 @@ curl -s http://127.0.0.1:3000/api/health
 ---
 
 ## 7. THÔNG TIN MÔI TRƯỜNG & TÀI KHOẢN MẪU (TEST ACCOUNTS)
-
-| Tài khoản | Mật khẩu | Vai trò | Mục đích sử dụng |
-|:---|:---|:---|:---|
-| `longadmin` | `Yourst0ngp@@word` | `admin` | Đăng nhập cổng quản trị [`/admin-login.html`](./admin-login.html) |
-| `admin_ui` | `AdminUiPass12345!` | `admin` | Tài khoản quản trị dự phòng cho automated test |
-| `testcustomer` | *(Theo CSDL)* | `khach_hang` | Tài khoản khách hàng mẫu kiểm thử luồng mua hàng |
-| `komi` | *(Theo CSDL)* | `khach_hang` | Tài khoản khách hàng kiểm thử thực tế |
-
 - **Địa chỉ truy cập Storefront:** `http://127.0.0.1:3000/index.html`
 - **Địa chỉ truy cập Admin Portal:** `http://127.0.0.1:3000/admin-login.html`
 - **Chuỗi kết nối CSDL nội bộ:** `Server=127.0.0.1,1433;Database=web_thoi_trang;User Id=endless_runtime;Password=LocalDevOnly!ChangeInEnv12345;TrustServerCertificate=True;Encrypt=True;`

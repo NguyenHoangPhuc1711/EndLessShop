@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Đăng Nhập Quản Trị | Endless Shop</title>
+  <title>Đăng Nhập Quản Trị &amp; Nhân Viên | Endless Shop</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -123,9 +124,7 @@
     }
 
     /* FORM STYLES */
-    .form-group {
-      margin-bottom: 18px;
-    }
+    .form-group { margin-bottom: 18px; }
     .form-label {
       display: block;
       font-size: 13px;
@@ -155,9 +154,7 @@
       display: flex;
       align-items: center;
     }
-    .password-wrap .form-input {
-      padding-right: 42px;
-    }
+    .password-wrap .form-input { padding-right: 42px; }
     .password-toggle {
       position: absolute;
       right: 10px;
@@ -171,9 +168,7 @@
       justify-content: center;
       border-radius: 3px;
     }
-    .password-toggle:hover {
-      color: var(--text-main);
-    }
+    .password-toggle:hover { color: var(--text-main); }
 
     .btn-submit {
       width: 100%;
@@ -193,13 +188,8 @@
       gap: 8px;
       margin-top: 24px;
     }
-    .btn-submit:hover {
-      background: #000;
-    }
-    .btn-submit:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+    .btn-submit:hover { background: #000; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
     /* MESSAGES */
     .message-box {
@@ -248,7 +238,7 @@
   <!-- TOP STRIP -->
   <div class="admin-top-strip">
     <div>
-      🛡️ <strong>Hệ Thống Quản Trị EndLess Shop</strong> &nbsp;·&nbsp; Cổng Xác Thực Quản Trị Viên
+      🛡️ <strong>Hệ Thống Quản Trị EndLess Shop</strong> &nbsp;·&nbsp; Cổng Xác Thực Quản Trị &amp; Nhân Viên
     </div>
     <div>
       <a href="index.html">← Quay lại Trang Khách Hàng (Storefront)</a>
@@ -260,12 +250,12 @@
     <div class="login-card">
       <div class="login-brand">
         <span class="brand-title">Endless.</span>
-        <span class="brand-tag">Quản Trị</span>
+        <span class="brand-tag">Nội Bộ</span>
       </div>
 
       <div class="login-header">
-        <h1>Đăng Nhập Quản Trị</h1>
-        <p>Khu vực giới hạn dành riêng cho Ban quản trị &amp; Điều hành hệ thống EndLess Shop.</p>
+        <h1>Đăng Nhập Quản Trị &amp; Nhân Viên</h1>
+        <p>Khu vực dành riêng cho Ban quản trị (Admin) &amp; Nhân viên vận hành (Staff) hệ thống EndLess Shop.</p>
       </div>
 
       <div id="loginMsg" class="message-box" role="alert"></div>
@@ -273,13 +263,13 @@
       <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
         <div class="form-group">
           <label class="form-label" for="adminUsername">Tên đăng nhập (Username)</label>
-          <input type="text" id="adminUsername" class="form-input" placeholder="VD: longadmin" required autofocus autocomplete="username">
+          <input type="text" id="adminUsername" class="form-input" placeholder="VD: longadmin hoặc nhanvien_kho" required autofocus autocomplete="username">
         </div>
 
         <div class="form-group">
           <label class="form-label" for="adminPassword">Mật khẩu (Password)</label>
           <div class="password-wrap">
-            <input type="password" id="adminPassword" class="form-input" placeholder="Nhập mật khẩu quản trị" required autocomplete="current-password">
+            <input type="password" id="adminPassword" class="form-input" placeholder="Nhập mật khẩu tài khoản nội bộ" required autocomplete="current-password">
             <button type="button" class="password-toggle" onclick="togglePasswordVisibility()" aria-label="Hiện/ẩn mật khẩu">
               <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -300,7 +290,7 @@
 
       <div class="security-notice">
         <div>🔒 <strong>Bảo mật cấp độ doanh nghiệp:</strong></div>
-        <div>Mã hoá mật khẩu Argon2id · Anti-CSRF Token · Kiểm soát truy cập RBAC</div>
+        <div>Mã hoá mật khẩu Argon2id · Anti-CSRF Token · Phân quyền theo vai trò RBAC</div>
       </div>
     </div>
   </main>
@@ -308,6 +298,7 @@
   <script src="js/config.js"></script>
   <script>
     let csrfToken = null;
+    const ALLOWED_ROLES = new Set(['admin', 'nhan_vien']);
 
     function showMessage(text, type = 'error') {
       const msgBox = document.getElementById('loginMsg');
@@ -336,11 +327,12 @@
         });
         if (res.ok) {
           const data = await res.json();
-          if (data.user && data.user.role === 'admin') {
-            showMessage(`Bạn đã đăng nhập với tài khoản Admin "${data.user.username}". Đang chuyển hướng vào bảng điều khiển...`, 'info');
+          if (data.user && ALLOWED_ROLES.has(data.user.role)) {
+            const label = data.user.role === 'admin' ? 'Admin' : 'Nhân viên';
+            showMessage(`Bạn đã đăng nhập với tài khoản ${label} "${data.user.username}". Đang chuyển hướng vào bảng điều khiển...`, 'info');
             setTimeout(() => {
               location.replace('admin.html');
-            }, 800);
+            }, 600);
           }
         }
       } catch (err) {
@@ -366,7 +358,6 @@
       btn.innerHTML = '<span>Đang xác thực thông tin...</span>';
 
       try {
-        // 1. Get CSRF Token
         if (!csrfToken) {
           const csrfRes = await fetch(EndlessConfig.apiUrl('auth/csrf'), {
             credentials: EndlessConfig.credentials,
@@ -376,7 +367,6 @@
           csrfToken = (await csrfRes.json()).csrfToken;
         }
 
-        // 2. Submit Login Request
         const res = await fetch(EndlessConfig.apiUrl('auth/login'), {
           method: 'POST',
           credentials: EndlessConfig.credentials,
@@ -391,27 +381,25 @@
         const data = await res.json();
 
         if (!res.ok) {
-          if (res.status === 403) csrfToken = null;
+          if (res.status === 403 && data.code === 'csrf_invalid') csrfToken = null;
           throw new Error(data.message || 'Tên đăng nhập hoặc mật khẩu không chính xác.');
         }
 
-        // 3. Verify Admin Role
-        if (!data.user || data.user.role !== 'admin') {
-          // If customer account, immediately logout to prevent lingering session
+        if (!data.user || !ALLOWED_ROLES.has(data.user.role)) {
           await fetch(EndlessConfig.apiUrl('auth/logout'), {
             method: 'POST',
             credentials: EndlessConfig.credentials,
             headers: { 'X-CSRF-Token': csrfToken }
           }).catch(() => {});
 
-          throw new Error(`Tài khoản "${data.user ? data.user.username : username}" không có đặc quyền Quản trị viên (Admin). Vui lòng sử dụng tài khoản quản trị.`);
+          throw new Error(`Tài khoản "${data.user ? data.user.username : username}" thuộc vai trò Khách hàng, không có quyền truy cập cổng Quản trị / Nhân viên.`);
         }
 
-        // 4. Success -> Redirect
-        showMessage(`✓ Đăng nhập thành công! Chào mừng Quản trị viên ${data.user.fullName || data.user.username}. Đang chuyển hướng...`, 'success');
+        const roleLabel = data.user.role === 'admin' ? 'Quản trị viên' : 'Nhân viên';
+        showMessage(`✓ Đăng nhập thành công! Chào mừng ${roleLabel} ${data.user.fullName || data.user.username}. Đang chuyển hướng...`, 'success');
         setTimeout(() => {
           location.replace('admin.html');
-        }, 600);
+        }, 500);
 
       } catch (err) {
         showMessage(err.message, 'error');

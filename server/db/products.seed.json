@@ -67,6 +67,7 @@
     "name": "Áo khoác dù 2 lớp",
     "category": "ao",
     "price": 459000,
+    "originalPrice": 549000,
     "sizes": [
       "M",
       "L",
@@ -95,6 +96,7 @@
     "name": "Quần jean ống suông",
     "category": "quan",
     "price": 379000,
+    "originalPrice": 449000,
     "sizes": [
       "S",
       "M",
@@ -124,6 +126,7 @@
     "name": "Quần tây công sở",
     "category": "quan",
     "price": 349000,
+    "originalPrice": 419000,
     "sizes": [
       "S",
       "M",
@@ -210,6 +213,7 @@
     "name": "Chân váy xếp ly",
     "category": "vay",
     "price": 259000,
+    "originalPrice": 319000,
     "sizes": [
       "S",
       "M",
@@ -338,5 +342,240 @@
     },
     "description": "Thắt lưng da tổng hợp, khóa kim loại chắc chắn, dễ phối nhiều loại quần.",
     "isNew": false
+  },
+  {
+    "id": 13,
+    "name": "Áo khoác gió Bắc Âu 2 lớp Winter",
+    "category": "ao_khoac",
+    "price": 429000,
+    "originalPrice": 529000,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "Đen Obsidian",
+      "Xanh navy",
+      "Kem Alabaster"
+    ],
+    "images": [
+      "../img/winter-coat-obsidian.jpg",
+      "../img/winter-coat-navy.jpg",
+      "../img/winter-coat-alabaster.jpg"
+    ],
+    "colorImageIndices": {
+      "Đen Obsidian": 0,
+      "Xanh navy": 1,
+      "Kem Alabaster": 2
+    },
+    "description": "Áo khoác gió 2 lớp cản gió giữ nhiệt chuẩn Bắc Âu, bề mặt trượt nước nhẹ, khóa kéo ẩn tinh tế.",
+    "isNew": true
+  },
+  {
+    "id": 14,
+    "name": "Áo sơ mi Oxford dệt dày Thu Đông",
+    "category": "ao",
+    "price": 279000,
+    "originalPrice": 349000,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "Trắng",
+      "Xanh"
+    ],
+    "images": [
+      "../img/winter-shirt-oxford-white.jpg",
+      "../img/winter-shirt-oxford-blue.jpg"
+    ],
+    "colorImageIndices": {
+      "Trắng": 0,
+      "Xanh": 1
+    },
+    "description": "Áo sơ mi vải Oxford cotton dệt mật độ cao giữ phom đứng, mặc đơn hoặc khoác layering mùa lạnh.",
+    "isNew": true
+  },
+  {
+    "id": 15,
+    "name": "Áo thun dài tay Thermal Cotton",
+    "category": "ao",
+    "price": 219000,
+    "originalPrice": 279000,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "Rêu & Than",
+      "Be Yến Mạch"
+    ],
+    "images": [
+      "../img/winter-knit-olive.jpg",
+      "../img/winter-knit-oatmeal.jpg"
+    ],
+    "colorImageIndices": {
+      "Rêu & Than": 0,
+      "Be Yến Mạch": 1
+    },
+    "description": "Áo giữ nhiệt cotton compact chải kỹ mềm mịn, co giãn 4 chiều thoải mái làm lớp lót mùa đông.",
+    "isNew": true
+  },
+  {
+    "id": 16,
+    "name": "Quần âu dạ Flannel giữ nhiệt",
+    "category": "quan",
+    "price": 299000,
+    "originalPrice": 379000,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "Đen",
+      "Xám"
+    ],
+    "images": [
+      "../img/winter-trousers-charcoal.jpg",
+      "../img/winter-trousers-grey.jpg"
+    ],
+    "colorImageIndices": {
+      "Đen": 0,
+      "Xám": 1
+    },
+    "description": "Quần tây ống đứng pha dạ Flannel mềm ấm, đường ly sắc nét tôn dáng công sở mùa lạnh.",
+    "isNew": true
+  },
+  {
+    "id": 17,
+    "name": "Chân váy dạ xếp ly dáng dài Thu Đông",
+    "category": "vay",
+    "price": 289000,
+    "originalPrice": 359000,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "colors": [
+      "Be Yến Mạch",
+      "Đen Tuyền"
+    ],
+    "images": [
+      "../img/winter-skirt-oatmeal.jpg",
+      "../img/winter-skirt-obsidian.jpg"
+    ],
+    "colorImageIndices": {
+      "Be Yến Mạch": 0,
+      "Đen Tuyền": 1
+    },
+    "description": "Chân váy chữ A xếp ly chất dạ mềm rũ giữ ấm, cạp cao tôn eo thanh lịch.",
+    "isNew": true
+  },
+  {
+    "id": 18,
+    "name": "Bộ Đông Công Sở Bắc Âu",
+    "category": "bo_mua_dong",
+    "price": 799000,
+    "originalPrice": 1186000,
+    "bundleItems": [
+      13,
+      14,
+      16,
+      12
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "Đen Obsidian",
+      "Xanh navy"
+    ],
+    "images": [
+      "../img/winter-set1-obsidian.png",
+      "../img/winter-set1-navy.png"
+    ],
+    "colorImageIndices": {
+      "Đen Obsidian": 0,
+      "Xanh navy": 1
+    },
+    "description": "Trọn bộ 4 món công sở Bắc Âu: Áo khoác gió 2 lớp + Sơ mi Oxford dệt dày + Quần âu dạ Flannel + Thắt lưng da. Mua trọn bộ tiết kiệm 387.000₫ hoặc tách lẻ từng món.",
+    "isNew": true
+  },
+  {
+    "id": 19,
+    "name": "Bộ Đông Dạo Phố Layering",
+    "category": "bo_mua_dong",
+    "price": 829000,
+    "originalPrice": 1176000,
+    "bundleItems": [
+      13,
+      15,
+      4,
+      11
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "Kem Alabaster",
+      "Rêu & Than"
+    ],
+    "images": [
+      "../img/winter-set2-alabaster.png",
+      "../img/winter-set2-charcoal.png"
+    ],
+    "colorImageIndices": {
+      "Kem Alabaster": 0,
+      "Rêu & Than": 1
+    },
+    "description": "Trọn bộ 4 món dạo phố Layering: Áo khoác gió 2 lớp + Áo dài tay Thermal Cotton + Quần jean ống suông + Túi tote vải bố. Mua trọn bộ tiết kiệm 347.000₫ hoặc tách lẻ từng món.",
+    "isNew": true
+  },
+  {
+    "id": 20,
+    "name": "Bộ Thu Đông Thanh Lịch Nữ",
+    "category": "bo_mua_dong",
+    "price": 849000,
+    "originalPrice": 1146000,
+    "bundleItems": [
+      13,
+      14,
+      17,
+      11
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "colors": [
+      "Be Yến Mạch",
+      "Đen Tuyền"
+    ],
+    "images": [
+      "../img/winter-set3-beige.png",
+      "../img/winter-set3-obsidian.png"
+    ],
+    "colorImageIndices": {
+      "Be Yến Mạch": 0,
+      "Đen Tuyền": 1
+    },
+    "description": "Trọn bộ 4 món thanh lịch: Áo khoác gió 2 lớp + Sơ mi Oxford dệt dày + Chân váy dạ xếp ly dáng dài + Túi tote vải bố. Mua trọn bộ tiết kiệm 297.000₫ hoặc tách lẻ từng món.",
+    "isNew": true
   }
 ]

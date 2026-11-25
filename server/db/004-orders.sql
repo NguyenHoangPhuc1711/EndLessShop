@@ -191,3 +191,62 @@ BEGIN
       THROW;
     END CATCH;
 END;
+GO
+CREATE OR ALTER PROCEDURE dbo.order_cancel
+    @user_id INT,
+    @order_id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+    IF @user_id IS NULL OR NOT EXISTS (SELECT 1 FROM dbo.TAI_KHOAN WHERE tai_khoan_id = @user_id)
+        THROW 51037, 'Authentication required.', 1;
+
+    DECLARE @current_status VARCHAR(20);
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        SELECT @current_status = trang_thai
+        FROM dbo.HOA_DON WITH (UPDLOCK, HOLDLOCK)
+        WHERE hoa_don_id = @order_id AND khach_hang_id = @user_id;
+
+        IF @current_status IS NULL
+            THROW 51040, 'Order not found.', 1;
+        IF @current_status = 'da_huy'
+            THROW 51043, 'Order already cancelled.', 1;
+        IF @current_status <> 'cho_xu_ly'
+            THROW 51042, 'Only pending orders can be cancelled.', 1;
+
+        DECLARE @restore TABLE (id INT PRIMARY KEY, qty INT NOT NULL);
+        INSERT INTO @restore (id, qty)
+        SELECT san_pham_id, SUM(so_luong)
+        FROM dbo.CHI_TIET_HOA_DON
+        WHERE hoa_don_id = @order_id
+        GROUP BY san_pham_id;
+
+        DECLARE @pid INT, @rqty INT;
+        DECLARE restore_cursor CURSOR LOCAL FAST_FORWARD FOR
+            SELECT id, qty FROM @restore ORDER BY id;
+        OPEN restore_cursor;
+        FETCH NEXT FROM restore_cursor INTO @pid, @rqty;
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            UPDATE dbo.SAN_PHAM WITH (UPDLOCK, HOLDLOCK)
+            SET ton_kho = ton_kho + @rqty
+            WHERE san_pham_id = @pid;
+            FETCH NEXT FROM restore_cursor INTO @pid, @rqty;
+        END;
+        CLOSE restore_cursor;
+        DEALLOCATE restore_cursor;
+
+        UPDATE dbo.HOA_DON
+        SET trang_thai = 'da_huy'
+        WHERE hoa_don_id = @order_id AND khach_hang_id = @user_id;
+
+        COMMIT TRANSACTION;
+        EXEC dbo.order_get @user_id = @user_id, @order_id = @order_id, @replayed = 0;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH;
+END;

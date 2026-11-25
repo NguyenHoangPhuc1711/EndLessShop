@@ -24,6 +24,12 @@ public class UserDto
 
     [JsonPropertyName("role")]
     public string Role { get; set; } = "khach_hang";
+
+    [JsonPropertyName("status")]
+    public string Status { get; set; } = "active";
+
+    [JsonPropertyName("position")]
+    public string? Position { get; set; }
 }
 
 public class UpdateShippingInfoRequest
@@ -90,4 +96,6 @@ public class AccountEntity
     public string? phone { get; set; }
     public string? address { get; set; }
     public string role { get; set; } = string.Empty;
+    public string status { get; set; } = "active";
+    public string? position { get; set; }
 }

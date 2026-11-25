@@ -2229,3 +2229,581 @@ img {
   .club-form input { width: 100%; }
   .footer__inner { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   BLACK FRIDAY HƯỚNG 01 (ANGLED TWILIGHT HORIZON) & 3 BỘ MÙA ĐÔNG TÁCH LẺ
+   ========================================================================== */
+.nav__link--highlight {
+  color: #9D5C3B !important;
+  font-weight: 700 !important;
+}
+
+.hero-bf-wrap {
+  position: relative;
+  background: var(--color-bg);
+}
+
+.hero-bf-diagonal {
+  position: relative;
+  min-height: 540px;
+  padding: 64px 0 116px;
+  color: #FAF9F5;
+  overflow: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% 86%, 0 100%);
+  background: linear-gradient(125deg, #141413 0%, rgba(20, 20, 19, 0.92) 38%, rgba(44, 53, 39, 0.86) 68%, rgba(143, 79, 51, 0.8) 100%);
+}
+
+.hero-bf-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  opacity: 0.34;
+  mix-blend-mode: luminosity;
+  pointer-events: none;
+}
+
+.hero-bf-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 44px;
+  align-items: center;
+}
+
+.hero-bf-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #E7B79B;
+  margin-bottom: 16px;
+}
+
+.hero-bf-eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: #C07B57;
+}
+
+.hero-bf-title {
+  font-family: 'Hanken Grotesk', 'Be Vietnam Pro', sans-serif;
+  font-size: clamp(2.15rem, 1.5rem + 2.4vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  margin-bottom: 18px;
+  color: #FAF9F5;
+}
+
+.hero-bf-title em {
+  font-style: normal;
+  color: #E6A987;
+}
+
+.hero-bf-desc {
+  max-width: 560px;
+  font-size: 15.5px;
+  color: #DCD9D0;
+  margin-bottom: 26px;
+  line-height: 1.65;
+}
+
+.hero-bf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-bf-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 24px;
+  border-radius: 999px;
+  background: #C07B57;
+  color: #FFFFFF;
+  border: 1px solid #C07B57;
+  font-size: 14.5px;
+  font-weight: 600;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.btn-bf-primary:hover {
+  background: #9D5C3B;
+  transform: translateY(-1px);
+}
+
+.btn-bf-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 22px;
+  border-radius: 999px;
+  background: rgba(250, 249, 245, 0.08);
+  color: #FAF9F5;
+  border: 1px solid rgba(250, 249, 245, 0.35);
+  font-size: 14.5px;
+  font-weight: 500;
+  transition: background 0.18s ease;
+}
+
+.btn-bf-secondary:hover {
+  background: rgba(250, 249, 245, 0.16);
+}
+
+.bf-countdown-card {
+  background: rgba(20, 20, 19, 0.78);
+  border: 1px solid rgba(250, 249, 245, 0.18);
+  border-radius: 14px;
+  padding: 22px;
+  backdrop-filter: blur(10px);
+}
+
+.bf-countdown-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: #CFCBC1;
+  gap: 8px;
+}
+
+.bf-live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #F4CBB2;
+  font-weight: 700;
+}
+
+.bf-timer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.bf-timer-box {
+  background: rgba(250, 249, 245, 0.07);
+  border: 1px solid rgba(250, 249, 245, 0.14);
+  border-radius: 8px;
+  padding: 13px 6px;
+  text-align: center;
+}
+
+.bf-timer-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  color: #FAF9F5;
+  font-variant-numeric: tabular-nums;
+}
+
+.bf-timer-label {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #B4B0A6;
+}
+
+.bf-countdown-foot {
+  font-size: 12.5px;
+  color: #D7D3C9;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(250, 249, 245, 0.12);
+  padding-top: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* FLOATING VOUCHER WALLET */
+.bf-ticket-wallet {
+  position: relative;
+  z-index: 12;
+  margin-top: -54px;
+  margin-bottom: 44px;
+}
+
+.bf-ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.bf-ticket-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(20, 20, 19, 0.18);
+  border-radius: 10px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  box-shadow: 0 12px 28px rgba(20, 20, 19, 0.08);
+}
+
+.bf-ticket-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bf-ticket-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #141413;
+  letter-spacing: 0.04em;
+}
+
+.bf-ticket-desc {
+  font-size: 12.5px;
+  color: #5F5E58;
+}
+
+.bf-ticket-right {
+  padding-left: 14px;
+  border-left: 1px dashed rgba(20, 20, 19, 0.22);
+  flex-shrink: 0;
+}
+
+.bf-copy-btn {
+  padding: 7px 13px;
+  border-radius: 6px;
+  border: 1px solid #2C3527;
+  background: #2C3527;
+  color: #FAF9F5;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.bf-copy-btn:hover,
+.bf-copy-btn.is-applied {
+  background: #C07B57;
+  border-color: #C07B57;
+}
+
+/* WINTER COLLECTION SPOTLIGHT: BUNDLE + SPLIT INDIVIDUAL ITEMS */
+.winter-spotlight {
+  padding: 8px 0 44px;
+}
+
+.winter-spotlight__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.winter-bundles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.winter-bundle-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(20, 20, 19, 0.10);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.winter-bundle-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(20, 20, 19, 0.08);
+}
+
+.winter-bundle-media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #F2EFE9;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.winter-bundle-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.winter-bundle-card:hover .winter-bundle-media img {
+  transform: scale(1.03);
+}
+
+.winter-bundle-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.winter-badge-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-sale {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: #C07B57;
+  color: #FFFFFF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge-bundle-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: #141413;
+  color: #FAF9F5;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.winter-bundle-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #141413;
+  line-height: 1.3;
+  cursor: pointer;
+}
+
+.winter-bundle-title:hover {
+  color: #9D5C3B;
+}
+
+.winter-bundle-desc {
+  font-size: 13px;
+  color: #6E6D68;
+  line-height: 1.5;
+}
+
+.winter-swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.winter-swatch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(20, 20, 19, 0.18);
+  background: #FAF9F5;
+  font-size: 12px;
+  color: #141413;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.winter-swatch-btn.active {
+  background: #141413;
+  color: #FAF9F5;
+  border-color: #141413;
+}
+
+.winter-swatch-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.winter-price-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.winter-price-now {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #9D5C3B;
+}
+
+.winter-price-old {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  color: #6E6D68;
+  text-decoration: line-through;
+  margin-left: 6px;
+}
+
+.winter-split-box {
+  margin-top: 4px;
+  background: #FAF9F5;
+  border: 1px solid rgba(20, 20, 19, 0.08);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.winter-split-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #2C3527;
+  margin-bottom: 8px;
+}
+
+.winter-split-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.winter-split-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFFFFF;
+  border: 1px solid rgba(20, 20, 19, 0.08);
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+
+.winter-split-item img {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.winter-split-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.winter-split-item__name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #141413;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.winter-split-item__price {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #9D5C3B;
+}
+
+.winter-split-item__btn {
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid #2C3527;
+  background: transparent;
+  color: #2C3527;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.winter-split-item__btn:hover {
+  background: #2C3527;
+  color: #FFFFFF;
+}
+
+/* SALE & BUNDLE ADDITIONS ON MAIN PRODUCT GRID & MODAL */
+.product-card__badge--sale {
+  background: #C07B57;
+  color: #FFFFFF;
+  border-color: #C07B57;
+}
+
+.product-card__badge--bundle {
+  left: auto;
+  right: 10px;
+  background: #141413;
+  color: #FAF9F5;
+  border-color: #141413;
+}
+
+.product-card__price-old {
+  font-size: 12.5px;
+  font-weight: 400;
+  color: #6E6D68;
+  text-decoration: line-through;
+  margin-left: 6px;
+}
+
+.pm-bundle-panel {
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #FAF9F5;
+  border: 1px solid rgba(20, 20, 19, 0.10);
+}
+
+.pm-bundle-panel h4 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #2C3527;
+  margin-bottom: 10px;
+}
+
+.pm-bundle-items-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 960px) {
+  .hero-bf-grid,
+  .bf-ticket-grid,
+  .winter-bundles-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-bf-diagonal {
+    clip-path: polygon(0 0, 100% 0, 100% 94%, 0 100%);
+    padding-bottom: 84px;
+  }
+  .bf-ticket-wallet {
+    margin-top: -30px;
+  }
+}
+
+@media (max-width: 560px) {
+  .pm-bundle-items-grid {
+    grid-template-columns: 1fr;
+  }
+}

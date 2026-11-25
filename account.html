@@ -175,6 +175,30 @@
               <p class="account-message" id="changePasswordMsg" role="status" aria-live="polite"></p>
             </form>
           </section>
+
+          <!-- Gửi phản hồi cho cửa hàng -->
+          <section class="account-profile-card" style="margin-top: 24px;">
+            <h2>Gửi phản hồi cho Endless</h2>
+            <p class="card-subtext">Góp ý về sản phẩm, dịch vụ hoặc trải nghiệm mua sắm. Nhân viên cửa hàng sẽ đọc phản hồi của bạn.</p>
+
+            <form id="feedbackForm" class="account-form">
+              <label for="feedbackRating">Mức độ hài lòng</label>
+              <select id="feedbackRating" name="rating" required>
+                <option value="">Chọn số sao</option>
+                <option value="5">★★★★★ Rất hài lòng</option>
+                <option value="4">★★★★ Hài lòng</option>
+                <option value="3">★★★ Bình thường</option>
+                <option value="2">★★ Chưa hài lòng</option>
+                <option value="1">★ Rất tệ</option>
+              </select>
+
+              <label for="feedbackContent">Nội dung phản hồi</label>
+              <textarea id="feedbackContent" name="content" rows="4" required minlength="5" maxlength="1000" placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+
+              <button type="submit" class="btn btn--primary" id="btnSendFeedback">Gửi phản hồi</button>
+              <p class="account-message" id="feedbackMsg" role="status" aria-live="polite"></p>
+            </form>
+          </section>
         </div>
       </div>
     </div>
@@ -204,7 +228,7 @@
   <script src="js/config.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/navigation.js"></script>
-  <script src="js/account.js?v=2.3"></script>
+  <script src="js/account.js?v=2.4"></script>
   <script src="js/chatbot.js"></script>
 </body>
 </html>

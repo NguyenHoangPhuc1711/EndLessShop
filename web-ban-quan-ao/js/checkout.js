@@ -166,6 +166,63 @@
       }
     } catch (error) { document.getElementById('checkoutVoucherMessage').textContent = error.message; }
   }
+  function showHistoryNotice(text, isError = false) {
+    const el = document.getElementById('historyNotice');
+    if (!el) return;
+    el.hidden = !text;
+    el.textContent = text || '';
+    el.className = 'history-notice' + (text ? (isError ? ' is-error' : ' is-success') : '');
+  }
+
+  async function cancelOrder(orderId, orderCode, button) {
+    if (!user || !Number.isSafeInteger(orderId) || orderId < 1) return;
+    if (!window.confirm('Bạn có chắc chắn muốn hủy đơn hàng ' + orderCode + ' không? Số lượng sản phẩm sẽ được hoàn lại kho.')) {
+      return;
+    }
+    const fromSuccessCard = Boolean(button.closest('#checkoutSuccess'));
+    const prevText = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Đang hủy đơn…';
+    showHistoryNotice('', false);
+    try {
+      const data = await api('orders/' + orderId + '/cancel', { body: {} });
+      if (confirmedOrder && confirmedOrder.id === orderId) {
+        confirmedOrder = data.order;
+        const successEl = document.getElementById('checkoutSuccess');
+        if (successEl && !successEl.hidden) {
+          successEl.innerHTML = '<div class="qr-order-success">' +
+            '<div class="success-icon success-icon--cancelled">✕</div>' +
+            '<h2>Đơn hàng đã được hủy</h2>' +
+            '<p class="order-code-line">Mã đơn hàng: <strong>' + esc(data.order.code) + '</strong></p>' +
+            '<p class="order-total-line">Trạng thái: <span class="transaction-status transaction-status--da_huy">Đã hủy</span></p>' +
+            '<div class="cod-success-card">' +
+              '<p>Số lượng sản phẩm trong đơn đã được hoàn lại về kho hàng.</p>' +
+              '<div class="qr-action-buttons">' +
+                '<a class="btn btn--primary" href="#lich-su">Xem lịch sử giao dịch</a>' +
+                '<a class="btn btn--ghost" href="index.html#san-pham">Tiếp tục mua sắm</a>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }
+        notice('');
+      }
+      showHistoryNotice('✓ ' + (data.message || ('Đã hủy đơn hàng ' + orderCode + ' thành công.')), false);
+      await loadHistory();
+      C.fetchProducts().catch(() => {});
+    } catch (error) {
+      showHistoryNotice(error.message, true);
+      if (fromSuccessCard) notice(error.message);
+      if (error.status === 401) {
+        setUser(null);
+      } else if (error.status === 409 || error.status === 404) {
+        await loadHistory();
+      } else if (button.isConnected) {
+        button.disabled = false;
+        button.textContent = prevText;
+      }
+    }
+  }
+
   async function loadHistory() {
     const sequence = ++historySequence;
     const list = document.getElementById('transactionList');
@@ -177,10 +234,18 @@
       list.innerHTML = orders.length ? orders.map(order => {
         const isQr = order.payment === 'qr' || order.payment === 'vietqr';
         const paymentLabel = isQr ? 'Chuyển khoản QR (VietQR)' : 'Thanh toán khi nhận hàng (COD)';
+        const canCancel = order.status === 'cho_xu_ly';
         return '<article class="transaction-card"><div class="transaction-card__top"><div><span class="transaction-card__label">Mã đơn hàng</span>' +
-          '<h3>' + esc(order.code) + '</h3></div><span class="transaction-status">' + esc(statuses[order.status] || order.status) + '</span></div>' +
+          '<h3>' + esc(order.code) + '</h3></div><span class="transaction-status transaction-status--' + esc(order.status) + '">' + esc(statuses[order.status] || order.status) + '</span></div>' +
           '<div class="transaction-card__meta"><span>' + esc(dateText(order.date)) + '</span><span>' + esc(paymentLabel) + '</span><strong>' + esc(money(order.total)) + '</strong></div>' +
-          '<details class="transaction-card__details" data-order-id="' + order.id + '"><summary>Chi tiết đơn hàng (' + order.itemCount + ')</summary><div class="order-details-body"></div></details></article>';
+          '<details class="transaction-card__details" data-order-id="' + order.id + '"><summary>Chi tiết đơn hàng (' + order.itemCount + ')</summary><div class="order-details-body"></div></details>' +
+          (canCancel
+            ? '<div class="transaction-card__actions">' +
+                '<span class="transaction-cancel-hint">Đơn đang chờ xác nhận — có thể hủy miễn phí</span>' +
+                '<button type="button" class="btn-cancel-order" data-cancel-order-id="' + order.id + '" data-cancel-order-code="' + esc(order.code) + '">✕ Hủy đơn hàng</button>' +
+              '</div>'
+            : '') +
+          '</article>';
       }).join('') :
         '<div class="transaction-empty"><h3>Chưa có đơn hàng nào</h3><p>Đơn hàng đã lưu trên máy chủ sẽ hiển thị tại đây.</p></div>';
       list.querySelectorAll('details').forEach(details => details.addEventListener('toggle', async () => {
@@ -219,7 +284,7 @@
       if (billingHeading) billingHeading.hidden = false;
     }
     user = next;
-    if (changed) { csrfToken = null; quote = null; ++quoteSequence; }
+    if (changed) { csrfToken = null; quote = null; ++quoteSequence; showHistoryNotice('', false); }
     const savedBadge = document.getElementById('checkoutSavedBadge');
     const saveWrapper = document.getElementById('checkoutSaveWrapper');
     const saveMsg = document.getElementById('shippingSaveMsg');
@@ -304,6 +369,9 @@
     const historyActionHtml = user
       ? '<a class="btn btn--primary" href="#lich-su">Xem đơn hàng của tôi</a><a class="btn btn--ghost" href="index.html#san-pham">Tiếp tục mua sắm</a>'
       : '<a class="btn btn--primary" href="index.html#san-pham">Tiếp tục mua sắm</a><a class="btn btn--ghost" href="login.html?next=checkout.html%23lich-su">Đăng nhập để lưu lịch sử đơn</a>';
+    const cancelSuccessHtml = user && order.status === 'cho_xu_ly'
+      ? '<div class="order-success-cancel"><button type="button" class="btn-cancel-order" data-cancel-order-id="' + order.id + '" data-cancel-order-code="' + esc(order.code) + '">✕ Hủy đơn hàng này</button></div>'
+      : '';
     if (isQr) {
       const qr = order.qrInfo || {
         bankId: 'MB',
@@ -342,6 +410,7 @@
           '<div class="qr-action-buttons">' +
             historyActionHtml +
           '</div>' +
+          cancelSuccessHtml +
         '</div>' +
         '<details class="qr-order-items-summary">' +
           '<summary>Chi tiết ' + order.items.reduce((s, it) => s + it.qty, 0) + ' món hàng trong đơn ▾</summary>' +
@@ -361,6 +430,7 @@
           '<div class="qr-action-buttons">' +
             historyActionHtml +
           '</div>' +
+          cancelSuccessHtml +
         '</div>' +
         '<details class="qr-order-items-summary">' +
           '<summary>Chi tiết ' + order.items.reduce((s, it) => s + it.qty, 0) + ' món hàng trong đơn ▾</summary>' +
@@ -502,6 +572,13 @@
   });
   document.getElementById('checkoutCatalogRetry').addEventListener('click', loadCatalog);
   document.getElementById('historyRetry').addEventListener('click', loadHistory);
+  document.addEventListener('click', event => {
+    const cancelBtn = event.target.closest('.btn-cancel-order[data-cancel-order-id]');
+    if (!cancelBtn || cancelBtn.disabled) return;
+    const orderId = Number(cancelBtn.dataset.cancelOrderId);
+    const orderCode = cancelBtn.dataset.cancelOrderCode || ('#' + orderId);
+    cancelOrder(orderId, orderCode, cancelBtn);
+  });
   form.querySelectorAll('input[name="payment"]').forEach(radio => {
     radio.addEventListener('change', updatePaymentUi);
   });

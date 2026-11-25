@@ -35,7 +35,9 @@ public class OrdersController : ControllerBase
         [51038] = (400, "Tổng giá trị đơn vượt giới hạn cho phép."),
         [51039] = (409, "Khóa yêu cầu đã được dùng cho nội dung đơn khác."),
         [51040] = (404, "Không tìm thấy đơn hàng của bạn."),
-        [51041] = (409, "Đơn đang được xử lý. Vui lòng thử lại cùng yêu cầu.")
+        [51041] = (409, "Đơn đang được xử lý. Vui lòng thử lại cùng yêu cầu."),
+        [51042] = (409, "Chỉ có thể hủy đơn hàng đang ở trạng thái chờ xử lý."),
+        [51043] = (409, "Đơn hàng này đã được hủy trước đó.")
     };
 
     public OrdersController(IDbConnectionFactory db, IConfiguration config)
@@ -115,6 +117,55 @@ public class OrdersController : ControllerBase
         }
 
         return await FetchOrder(userId, orderId: null, requestKey: key.ToLowerInvariant());
+    }
+
+    [HttpPost("{id:int}/cancel")]
+    public async Task<IActionResult> CancelOrder(int id)
+    {
+        var userId = HttpContext.Session.GetInt32("userId");
+        if (!userId.HasValue)
+        {
+            return Unauthorized(new { message = "Vui lòng đăng nhập để hủy đơn hàng.", code = "unauthorized" });
+        }
+
+        if (!SecurityValidator.ValidateCsrfAndOrigin(HttpContext))
+        {
+            return StatusCode(403, new { message = "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang.", code = "csrf_invalid" });
+        }
+
+        if (id < 1)
+        {
+            return NotFound(new { message = "Không tìm thấy đơn hàng của bạn.", code = "order_51040" });
+        }
+
+        using var connection = _db.CreateConnection();
+        var parameters = new DynamicParameters();
+        parameters.Add("@user_id", userId.Value, DbType.Int32);
+        parameters.Add("@order_id", id, DbType.Int32);
+
+        try
+        {
+            using var multi = await connection.QueryMultipleAsync(
+                "dbo.order_cancel",
+                parameters,
+                commandType: CommandType.StoredProcedure);
+
+            var order = await ReadOrderDetailAsync(multi);
+            if (order == null)
+            {
+                return NotFound(new { message = "Không tìm thấy đơn hàng của bạn.", code = "order_51040" });
+            }
+
+            return Ok(new { message = "Đã hủy đơn hàng thành công.", order });
+        }
+        catch (SqlException ex) when (ErrorMap.TryGetValue(ex.Number, out var err))
+        {
+            return StatusCode(err.Status, new { message = err.Message, code = $"order_{ex.Number}" });
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, new { message = "Lỗi xử lý hủy đơn hàng. Vui lòng thử lại sau.", code = "order_cancel_error" });
+        }
     }
 
     private async Task<IActionResult> ExecuteCheckout(int? userId, OrderCheckoutRequest request, bool isCreate, string? requestKey = null)
@@ -246,34 +297,10 @@ public class OrdersController : ControllerBase
             }
             else
             {
-                var orderHeader = await multi.ReadSingleAsync<dynamic>();
-                var orderItems = (await multi.ReadAsync<PricedItemDto>()).ToList();
-
-                var order = new OrderDetailDto
+                var order = await ReadOrderDetailAsync(multi);
+                if (order == null)
                 {
-                    Id = (int)orderHeader.id,
-                    Code = (string)orderHeader.code,
-                    Date = (DateTime)orderHeader.date,
-                    Status = (string)orderHeader.status,
-                    Payment = (string)orderHeader.payment,
-                    Subtotal = (int?)orderHeader.subtotal,
-                    Discount = (int)orderHeader.discount,
-                    Total = (int)orderHeader.total,
-                    VoucherCode = (string?)orderHeader.voucherCode,
-                    Delivery = new DeliveryInfo
-                    {
-                        FullName = (string)orderHeader.fullName,
-                        Phone = (string)orderHeader.phone,
-                        Address = (string)orderHeader.address,
-                        Note = (string?)orderHeader.note
-                    },
-                    Items = orderItems,
-                    Replayed = (bool)orderHeader.replayed
-                };
-
-                if (order.Payment == "qr" || order.Payment == "vietqr")
-                {
-                    order.QrInfo = BuildQrInfo(order.Code, order.Total);
+                    return StatusCode(500, new { message = "Lỗi xử lý đơn hàng. Vui lòng thử lại sau.", code = "order_error" });
                 }
 
                 return StatusCode(order.Replayed ? 200 : 201, new { order });
@@ -304,38 +331,10 @@ public class OrdersController : ControllerBase
                 parameters,
                 commandType: CommandType.StoredProcedure);
 
-            var orderHeader = await multi.ReadSingleOrDefaultAsync<dynamic>();
-            if (orderHeader == null)
+            var order = await ReadOrderDetailAsync(multi);
+            if (order == null)
             {
                 return NotFound(new { message = "Không tìm thấy đơn hàng của bạn." });
-            }
-
-            var orderItems = (await multi.ReadAsync<PricedItemDto>()).ToList();
-
-            var order = new OrderDetailDto
-            {
-                Id = (int)orderHeader.id,
-                Code = (string)orderHeader.code,
-                Date = (DateTime)orderHeader.date,
-                Status = (string)orderHeader.status,
-                Payment = (string)orderHeader.payment,
-                Subtotal = (int?)orderHeader.subtotal,
-                Discount = (int)orderHeader.discount,
-                Total = (int)orderHeader.total,
-                VoucherCode = (string?)orderHeader.voucherCode,
-                Delivery = new DeliveryInfo
-                {
-                    FullName = (string)orderHeader.fullName,
-                    Phone = (string)orderHeader.phone,
-                    Address = (string)orderHeader.address,
-                    Note = (string?)orderHeader.note
-                },
-                Items = orderItems
-            };
-
-            if (order.Payment == "qr" || order.Payment == "vietqr")
-            {
-                order.QrInfo = BuildQrInfo(order.Code, order.Total);
             }
 
             return Ok(new { order });
@@ -344,6 +343,46 @@ public class OrdersController : ControllerBase
         {
             return NotFound(new { message = "Không tìm thấy đơn hàng của bạn." });
         }
+    }
+
+    private async Task<OrderDetailDto?> ReadOrderDetailAsync(SqlMapper.GridReader multi)
+    {
+        var orderHeader = await multi.ReadSingleOrDefaultAsync<dynamic>();
+        if (orderHeader == null)
+        {
+            return null;
+        }
+
+        var orderItems = (await multi.ReadAsync<PricedItemDto>()).ToList();
+
+        var order = new OrderDetailDto
+        {
+            Id = (int)orderHeader.id,
+            Code = (string)orderHeader.code,
+            Date = (DateTime)orderHeader.date,
+            Status = (string)orderHeader.status,
+            Payment = (string)orderHeader.payment,
+            Subtotal = (int?)orderHeader.subtotal,
+            Discount = (int)orderHeader.discount,
+            Total = (int)orderHeader.total,
+            VoucherCode = (string?)orderHeader.voucherCode,
+            Delivery = new DeliveryInfo
+            {
+                FullName = (string)orderHeader.fullName,
+                Phone = (string)orderHeader.phone,
+                Address = (string)orderHeader.address,
+                Note = (string?)orderHeader.note
+            },
+            Items = orderItems,
+            Replayed = (bool)(orderHeader.replayed ?? false)
+        };
+
+        if ((order.Payment == "qr" || order.Payment == "vietqr") && order.Status != "da_huy")
+        {
+            order.QrInfo = BuildQrInfo(order.Code, order.Total);
+        }
+
+        return order;
     }
 
     private PaymentQrInfo BuildQrInfo(string orderCode, int total)
